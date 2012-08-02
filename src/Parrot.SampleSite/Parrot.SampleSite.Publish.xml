@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="\\10.1.10.25\d\dornis.org\parrot" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="Web.config" publishTime="08/01/2012 22:43:04" />
+    <file relUrl="bin/Parrot.SampleSite.pdb" publishTime="08/01/2012 22:48:37" />
+    <file relUrl="packages.config" publishTime="07/27/2012 19:40:58" />
+    <file relUrl="bin/Parrot.SampleSite.dll" publishTime="08/01/2012 22:48:37" />
+    <file relUrl="bin/Newtonsoft.Json.xml" publishTime="07/26/2012 16:13:03" />
+    <file relUrl="Views/Home/hattan.parrot" publishTime="07/31/2012 17:37:03" />
+    <file relUrl="bin/Parrot.Mvc.dll" publishTime="08/01/2012 22:48:36" />
+    <file relUrl="Views/Web.config" publishTime="07/27/2012 19:40:58" />
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="07/26/2012 16:13:03" />
+    <file relUrl="bin/GoldParser.dll" publishTime="04/18/2007 07:22:14" />
+    <file relUrl="Global.asax" publishTime="07/27/2012 19:40:58" />
+    <file relUrl="bin/Parrot.dll" publishTime="08/01/2012 22:48:35" />
+    <file relUrl="Content/Site.css" publishTime="07/27/2012 19:40:58" />
+    <file relUrl="bin/Parrot.Mvc.pdb" publishTime="08/01/2012 22:48:36" />
+    <file relUrl="bin/Parrot.pdb" publishTime="08/01/2012 22:48:35" />
+    <file relUrl="Views/Home/Index.parrot" publishTime="07/30/2012 07:24:35" />
+  </publishProfile>
+</publishData>

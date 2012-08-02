@@ -1,0 +1,63 @@
+"Name"     = 'Parrot'
+"Author"   = 'Ben Dornis'
+"Version"  = '0.1'
+"About"    = ''
+
+"Start Symbol" = <Statements>
+
+! -------------------------------------------------
+! Character Sets
+! -------------------------------------------------
+
+{String Chars}           = {Printable} + {HT} - ['']
+{MultiLine String Chars} = {Printable} + {HT} + {CR} + {LF}
+
+! -------------------------------------------------
+! Terminals
+! -------------------------------------------------
+
+Identifier       = {Letter}({AlphaNumeric})*
+HtmlIdentifier   = '#'{Letter}({AlphaNumeric})*
+ClassIdentifier  = '.'{Letter}({AlphaNumeric})*
+                                  
+StringLiteral = '' {String Chars}* '' | '"' {String Chars}* '"'
+MultiLineStringLiteral = '@' '"' {MultiLine String Chars}* '"' 
+                       | '@' '' {MultiLine String Chars}* ''
+
+! -------------------------------------------------
+! Rules
+! -------------------------------------------------
+
+! The grammar starts below
+
+<Parameter> ::= '(' StringLiteral ')'
+              | '(' Identifier ')'
+              |
+                           
+
+<Attribute> ::= Identifier '=' StringLiteral
+              | Identifier '=' Identifier
+
+<Attribute List>
+       ::= <Attribute>
+        |  <Attribute List> ',' <Attribute>
+
+<Attributes> ::= '[' <Attribute List> ']'
+               |
+
+<Classes> ::= ClassIdentifier
+            | ClassIdentifier <Classes>
+           
+
+<IdClass> ::= HtmlIdentifier
+            | HtmlIdentifier <Classes>
+            | <Classes>
+            |
+
+<Statements> ::= <Statement>
+            | <Statement> <Statements>
+
+<Statement> ::= Identifier<IdClass><Attributes><Parameter> '{' <Statement> '}'
+              | Identifier<IdClass><Attributes><Parameter> '{' StringLiteral '}'
+              | Identifier<IdClass><Attributes><Parameter> '{' MultiLineStringLiteral '}'
+              | Identifier<IdClass><Attributes><Parameter> '{' '}'
