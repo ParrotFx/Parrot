@@ -31,7 +31,13 @@
 		  <pre>
 return View(new {
   Header = "Parrot",
-  Description = "Something something about Parrot"
+  Description = "Something something about Parrot",
+  Features = new [] {
+    "Familiar syntax",
+	"Extensible output",
+	"Simple model binding",
+	""
+  }
 });
 		  </pre>
 		
@@ -44,7 +50,10 @@ html {
     h1#header(Header)
     p#tagname.small("All new Asp.Net View Engine")
     div#description.rounded-corners {
-      :Description
+      h2("Features")
+      ul(Features) {
+	    li(this)
+      }	  
     }
   }
 }</pre>
@@ -57,7 +66,12 @@ html {
     &lt;h1 id="header"&gt;Parrot&lt;/h1&gt;
     &lt;p class="small" id="tagname"&gt;All new Asp.Net View Engine&lt;/p&gt;
     &lt;div class="rounded-corners" id="description"&gt;
-        Something something about Parrot
+        &lt;h2&gt;Features&lt;/h2&gt;
+		&lt;ul&gt;
+          &lt;li&gt;Familiar syntax&lt;/li&gt;
+          &lt;li&gt;Extensible output&lt;/li&gt;
+          &lt;li&gt;Simple model binding&lt;/li&gt;
+        &lt;/ul&gt;
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;</pre>
