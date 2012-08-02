@@ -1,3 +1,4 @@
+##Sample View Model
     return View(new {
       Header = "Parrot",
       Description = "Something something about Parrot",
@@ -9,6 +10,7 @@
     });
 
 
+##Sample Template
     doctype
     html {
       head {
@@ -27,6 +29,7 @@
     }
 
 
+##Html Output
     <!DOCTYPE html>
     <html>
       <head>
