@@ -61,6 +61,7 @@
     <Compile Include="Nodes\Output.cs" />
     <Compile Include="Nodes\StringLiteral.cs" />
     <Compile Include="Nodes\ParameterList.cs" />
+    <Compile Include="Nodes\StringLiteralPipe.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserFactory.cs" />
