@@ -54,6 +54,8 @@
     <Compile Include="Nodes\AttributeNodeList.cs" />
     <Compile Include="Nodes\ClassIdentifierNode.cs" />
     <Compile Include="Nodes\AttributeList.cs" />
+    <Compile Include="Nodes\Identifier.cs" />
+    <Compile Include="Nodes\IdentifierType.cs" />
     <Compile Include="Nodes\Statement.cs" />
     <Compile Include="Nodes\StatementList.cs" />
     <Compile Include="Nodes\Document.cs" />
@@ -76,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="parrot-with-unicode.cgt" />
     <EmbeddedResource Include="parrot.egt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

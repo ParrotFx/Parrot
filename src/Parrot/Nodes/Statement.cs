@@ -29,32 +29,32 @@ namespace Parrot.Nodes
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
-                    if (part.StartsWith("#"))
+                    switch (part.Type)
                     {
-                        if (part.Length < 2)
-                        {
-                            throw new ParserException("Id must have a length");
-                        }
+                        case IdentifierType.Id:
+                            if (part.Name.Length == 1)
+                            {
+                                throw new ParserException("Id must have a length");
+                            }
 
-                        if (Attributes.Any(a => a.Key == "id"))
-                        {
-                            throw new ParserException("Id added more than once");
-                        }
-                        AddAttribute(new AttributeNode("id", part.Substring(1)));
-                    }
+                            if (Attributes.Any(a => a.Key == "id"))
+                            {
+                                throw new ParserException("Id added more than once");
+                            }
 
-                    else if (part.StartsWith("."))
-                    {
-                        if (part.Length < 2)
-                        {
-                            throw new ParserException("Class must have a length");
-                        }
+                            AddAttribute(new AttributeNode("id", part.Name));
+                            break;
+                        case IdentifierType.Class:
+                            if (part.Name.Length == 1)
+                            {
+                                throw new ParserException("Id must have a length");
+                            }
 
-                        AddAttribute(new AttributeNode("class", part.Substring(1)));
-                    }
-                    else
-                    {
-                        Name = part;
+                            AddAttribute(new AttributeNode("class", part.Name));
+                            break;
+                        case IdentifierType.Literal:
+                            Name = part.Name;
+                            break;
                     }
                 }
             }
@@ -62,10 +62,11 @@ namespace Parrot.Nodes
             {
                 Name = name;
             }
-        
+
         }
 
-        public Statement(string name, StatementTail statementTail) : this(name)
+        public Statement(string name, StatementTail statementTail)
+            : this(name)
         {
             if (statementTail != null)
             {
@@ -107,7 +108,6 @@ namespace Parrot.Nodes
                 }
             }
         }
-
         private void AddAttribute(AttributeNode node)
         {
             if (node.Key == "id")
@@ -133,7 +133,7 @@ namespace Parrot.Nodes
             get { return false; }
         }
 
-        private IEnumerable<string> GetIdentifierParts(string source)
+        private IEnumerable<Identifier> GetIdentifierParts(string source)
         {
             char[] splitBy = new[] { '.', '#' };
             int start = 0;
@@ -146,13 +146,60 @@ namespace Parrot.Nodes
                 index++;
                 index = Interlocked.Exchange(ref start, index);
 
-                yield return previousCharacter + source.Substring(index, start - index - 1);
+                switch (previousCharacter)
+                {
+                    case "#":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(index, start - index - 1),
+                            Type = IdentifierType.Id
+                        };
+                        break;
+                    case ".":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(index, start - index - 1),
+                            Type = IdentifierType.Class
+                        };
+                        break;
+                    default:
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(index, start - index - 1),
+                            Type = IdentifierType.Literal
+                        };
+                        break;
+                }
+
                 previousCharacter = source.Substring(start - 1, 1);
             }
 
             if (start < source.Length)
             {
-                yield return previousCharacter + source.Substring(start);
+                switch (previousCharacter)
+                {
+                    case "#":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(start),
+                            Type = IdentifierType.Id
+                        };
+                        break;
+                    case ".":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(start),
+                            Type = IdentifierType.Class
+                        };
+                        break;
+                    default:
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(start),
+                            Type = IdentifierType.Literal
+                        };
+                        break;
+                }
             }
         }
     }
