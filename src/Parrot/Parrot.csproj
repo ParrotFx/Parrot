@@ -63,7 +63,6 @@
     <Compile Include="Nodes\ParameterList.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Parser\ParserContext.cs" />
     <Compile Include="Parser\ParserFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\RawOutput.cs" />

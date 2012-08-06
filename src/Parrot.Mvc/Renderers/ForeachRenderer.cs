@@ -16,9 +16,9 @@ namespace Parrot.Mvc.Renderers
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class ForeachRenderer : IRenderer
+    public class ForeachRenderer : HtmlRenderer
     {
-        public string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object model)
         {
             object localModel = model;
             
@@ -57,7 +57,7 @@ namespace Parrot.Mvc.Renderers
             return sb.ToString();
         }
 
-        public string Render(AbstractNode node)
+        public override string Render(AbstractNode node)
         {
             return Render(node, null);
         }

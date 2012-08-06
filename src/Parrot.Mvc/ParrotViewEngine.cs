@@ -157,9 +157,9 @@ namespace Parrot.Mvc
             Parser.Parser parser = new Parser.Parser();
             Document document;
 
-            //if (parser.Parse(template, out document))
+            if (parser.Parse(new StringReader(template), out document))
             {
-                //return document;
+                return document;
             }
 
             throw new Exception("Unable to parse: ");

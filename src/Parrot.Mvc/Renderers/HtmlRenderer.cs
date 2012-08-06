@@ -11,6 +11,44 @@ namespace Parrot.Mvc.Renderers
 
     public class HtmlRenderer : IRenderer
     {
+        public virtual string DefaultTag
+        {
+            get { return "div"; }
+        }
+
+        public virtual string RenderChildren(Statement statement, object localModel)
+        {
+            var sb = new StringBuilder();
+            if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
+            {
+                foreach (object item in localModel as IEnumerable)
+                {
+                    var localItem = item;
+
+                    foreach (var child in statement.Children)
+                    {
+                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+
+                        sb.AppendLine(renderer.Render(child, localItem));
+                    }
+                }
+            }
+            else
+            {
+                foreach (var child in statement.Children)
+                {
+                    if (child != null)
+                    {
+                        var renderer =
+                        Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+
+                        sb.Append(renderer.Render(child, localModel));
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
 
         public virtual string Render(AbstractNode node)
         {
@@ -77,39 +115,7 @@ namespace Parrot.Mvc.Renderers
 
             if (statement.Children.Any())
             {
-                if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (object item in localModel as IEnumerable)
-                    {
-                        var localItem = item;
-
-                        foreach (var child in statement.Children)
-                        {
-                            var renderer =
-                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
-
-                            sb.AppendLine(renderer.Render(child, localItem));
-                        }
-                    }
-                    builder.InnerHtml += sb.ToString();
-                }
-                else
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var child in statement.Children)
-                    {
-                        if (child != null)
-                        {
-                            var renderer =
-                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
-
-                            sb.Append(renderer.Render(child, localModel));
-                        }
-                    }
-
-                    builder.InnerHtml = sb.ToString();
-                }
+                builder.InnerHtml = RenderChildren(statement, localModel);
             }
             else
             {

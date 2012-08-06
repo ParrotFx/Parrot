@@ -255,7 +255,7 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Statement:
                     // <Statement> ::= <OutputStatement>
-                    break;
+                    return r[0].Data;
 
                 case ProductionIndex.Statement_Identifier:
                     // <Statement> ::= Identifier <Statement Tail>
@@ -266,20 +266,18 @@ namespace Parrot.Parser
                     break;
 
                 case ProductionIndex.Statement_Multilinestringliteral:
-                    // <Statement> ::= MultiLineStringLiteral
-                    break;
-
                 case ProductionIndex.Statement_Stringliteral:
+                    // <Statement> ::= MultiLineStringLiteral
                     // <Statement> ::= StringLiteral
-                    break;
+                    return new StringLiteral(r[0].Data as string);
 
                 case ProductionIndex.Outputstatement_Colon_Identifier:
                     // <OutputStatement> ::= ':' Identifier
-                    break;
+                    return new RawOutput(r[1].Data as string);
 
                 case ProductionIndex.Outputstatement_Eq_Identifier:
                     // <OutputStatement> ::= '=' Identifier
-                    break;
+                    return new Output(r[1].Data as string);
 
             }  //switch
 
