@@ -84,26 +84,26 @@ ul#phoneNumbers.phone(PhoneNumber) {
 
             Document document;
             string result = null;
-            if (parser.Parse(template, out document))
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var element in document.Children)
-                {
-                    if (element != null)
-                    {
-                        var renderer =
-                        Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(
-                        element.BlockName);
-                        sb.AppendLine(renderer.Render(element, modelObject));
-                    }
-                }
+            //if (parser.Parse(template, out document))
+            //{
+            //    StringBuilder sb = new StringBuilder();
+            //    foreach (var element in document.Children)
+            //    {
+            //        if (element != null)
+            //        {
+            //            var renderer =
+            //            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(
+            //            element.BlockName);
+            //            sb.AppendLine(renderer.Render(element, modelObject));
+            //        }
+            //    }
 
-                result = sb.ToString();
-            }
-            else
-            {
-                result = parser.ErrorString;
-            }
+            //    result = sb.ToString();
+            //}
+            //else
+            //{
+            //    result = "Oops!"; // parser.ErrorString;
+            //}
 
             return View(Tuple.Create(template, model, result));
         }

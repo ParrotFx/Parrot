@@ -2,7 +2,7 @@ namespace Parrot.Nodes
 {
     using Parrot.Nodes;
 
-    public class RawOutputNode : BlockNode
+    public class RawOutputNode : Statement
     {
         public string VariableName { get; set; }
 

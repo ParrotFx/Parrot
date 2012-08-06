@@ -27,7 +27,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var blockNode = node as BlockNode;
+            var blockNode = node as Statement;
             if (blockNode == null)
             {
                 //somehow we're not rendering a blockNode

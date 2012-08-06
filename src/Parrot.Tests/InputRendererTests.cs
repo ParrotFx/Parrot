@@ -9,6 +9,8 @@ using Parrot.Nodes;
 
 namespace Parrot.Tests
 {
+    using System.IO;
+
     [TestFixture]
     public class InputRendererTests
     {
@@ -17,7 +19,7 @@ namespace Parrot.Tests
             Parser.Parser parsr = new Parser.Parser();
             Document document;
 
-            parsr.Parse(text, out document);
+            parsr.Parse(new StringReader(text), out document);
 
             return document;
         }
@@ -31,7 +33,7 @@ namespace Parrot.Tests
             IRendererFactory factory = new RendererFactory();
 
             factory.RegisterFactory("input", new InputRenderer());
-            var renderer = factory.GetRenderer(nodes.Children.First().BlockName);
+            var renderer = factory.GetRenderer(nodes.Children.First().Name);
 
             var result = renderer.Render(nodes.Children.First(), null);
 
@@ -48,7 +50,7 @@ namespace Parrot.Tests
             IRendererFactory factory = new RendererFactory();
 
             factory.RegisterFactory("input", new InputRenderer());
-            var renderer = factory.GetRenderer(nodes.Children.First().BlockName);
+            var renderer = factory.GetRenderer(nodes.Children.First().Name);
 
             var result = renderer.Render(nodes.Children.First(), null);
 

@@ -157,12 +157,13 @@ namespace Parrot.Mvc
             Parser.Parser parser = new Parser.Parser();
             Document document;
 
-            if (parser.Parse(template, out document))
+            //if (parser.Parse(template, out document))
             {
-                return document;
+                //return document;
             }
 
-            throw new Exception("Unable to parse: " + parser.ErrorString);
+            throw new Exception("Unable to parse: ");
+            //throw new Exception("Unable to parse: " + parser.ErrorString);
         }
         
         string Parse(ViewContext viewContext, string template)

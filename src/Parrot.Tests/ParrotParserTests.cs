@@ -8,10 +8,14 @@ using Parrot.Mvc.Renderers;
 
 namespace Parrot.Tests
 {
+    using System;
+    using System.IO;
     using System.Linq;
     using Nodes;
     using Parrot;
     using NUnit.Framework;
+    using Parser;
+    using ValueType = Nodes.ValueType;
 
     /// <summary>
     /// TODO: Update summary.
@@ -25,206 +29,135 @@ namespace Parrot.Tests
         //block followed by ; with block
         //attribute name/values
         //parameter name/values
-        private Document Parse(string text)
+        public static Document Parse(string text)
         {
-            Parser.Parser parsr = new Parser.Parser();
+            Parser parsr = new Parser();
             Document document;
 
-            parsr.Parse(text, out document);
+            parsr.Parse(new StringReader(text), out document);
 
             return document;
         }
 
-        [Test]
-        public void StringWithBlockNameReturnsBlockNodeWithProperName()
+        [TestCase("div")]
+        [TestCase("a")]
+        [TestCase("span")]
+        public void ElementProducesBlockElement(string element)
         {
-            string block = "div";
-            Document nodes = Parse(block);
-
-            Assert.IsNotNull(nodes);
-            Assert.AreEqual(block, nodes.Children.Single().BlockName);
+            var document = Parse(element);
+            Assert.IsNotNull(document);
+            Assert.AreEqual(element, document.Children[0].Name);
         }
 
-        [Test]
-        public void StringWithInvalidStartCharacterReturnsNull()
+        [TestCase("div1", "div2")]
+        public void ElementFollowedByWhitespaceAndAnotherElementProduceTwoBlockElements(string element1, string element2)
         {
-            var block = "1div";
-            var nodes = Parse(block);
-
-            Assert.IsNull(nodes);
+            var document = Parse(string.Format("{0} {1}", element1, element2));
+            Assert.AreEqual(2, document.Children.Count);
         }
 
-        [Test]
-        public void BlockWithSingleAttributeHasAllRequiredStuff()
-        {
-            var block = "div[attr=\"value\"]";
-            var nodes = Parse(block);
 
-            Assert.AreEqual(1, nodes.Children.Single().Attributes.Count);
-            Assert.AreEqual("attr", nodes.Children.Single().Attributes.Single().Key);
-            Assert.AreEqual("value", nodes.Children.Single().Attributes.Single().Value);
+        public class IdTests
+        {
+            [TestCase("div", "sample-id")]
+            public void ElementWithIdProducesBlockElementWithIdAttribute(string element, string id)
+            {
+                var document = Parse(string.Format("{0}#{1}", element, id));
+                Assert.AreEqual(element, document.Children[0].Name);
+                Assert.AreEqual("id", document.Children[0].Attributes[0].Key);
+                Assert.AreEqual(id, document.Children[0].Attributes[0].Value);
+            }
+
+            [Test]
+            public void ElementWithMultipleIdsThrowsParserException()
+            {
+                Assert.Throws<ParserException>(() =>
+                {
+                    var document = Parse("div#first-id#second-id");
+                });
+            }
         }
 
-        [Test]
-        public void MultipleAttributes()
+        public class ClassTests
         {
-            var block = "div[attr0=\"value0\" attr1=\"value1\"]";
-            var nodes = Parse(block);
+            [TestCase("div", "sample-class")]
+            public void ElementWithIdProducesBlockElementWithClassAttribute(string element, string @class)
+            {
+                var document = Parse(string.Format("{0}.{1}", element, @class));
+                Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
+                Assert.AreEqual(@class, document.Children[0].Attributes[0].Value);
+            }
 
-            var blockNode = nodes.Children.Single();
-
-            Assert.AreEqual(2, blockNode.Attributes.Count);
-            Assert.AreEqual("attr0", blockNode.Attributes[0].Key);
-            Assert.AreEqual("value0", blockNode.Attributes[0].Value);
-            Assert.AreEqual(ValueType.StringLiteral, blockNode.Attributes[0].ValueType);
-
-            Assert.AreEqual("attr1", blockNode.Attributes[1].Key);
-            Assert.AreEqual("value1", blockNode.Attributes[1].Value);
+            [TestCase("div", "class1", "class2", "class3")]
+            public void ElementWithMultipleClassProducesBlockElementWithClassElementAndSpaceSeparatedClasses(string element, params string[] classes)
+            {
+                var document = Parse(string.Format("{0}.{1}", element, string.Join(".", classes)));
+                Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
+                for (int i = 0; i < classes.Length; i++)
+                {
+                    Assert.AreEqual(classes[i], document.Children[0].Attributes[i].Value);
+                }
+            }
         }
 
-        [Test]
-        public void BlockWithParameter()
+        public class AttributeTests
         {
-            var block = "div(parameter)";
-            var nodes = Parse(block);
+            [Test]
+            public void ElementWithSingleAttributeProducesBlockElementWithAttributes()
+            {
+                var document = Parse("div[attr1='value1']");
+                Assert.AreEqual(1, document.Children[0].Attributes.Count);
+            }
 
-            var blockNode = nodes.Children.Single();
+            [Test]
+            public void ElementWithMultipleAttributesProducesBlockElementWithMultipleAttributes()
+            {
+                var document = Parse("div[attr1='value1' attr2='value2']");
+                Assert.AreEqual(2, document.Children[0].Attributes.Count);
+            }
 
-            Assert.AreEqual(1, blockNode.Parameters.Count);
-            Assert.AreEqual("parameter", blockNode.Parameters[0].Value);
-            Assert.AreEqual(ValueType.Property, blockNode.Parameters[0].ValueType);
-        }
+            [Test]
+            public void ElementWithAttributeValueNotSurroundedByQuotesProducesAttributeWithValueTypeAsProperty()
+            {
+                var document = Parse("div[attr1=Value]");
+                Assert.AreEqual(1, document.Children[0].Attributes.Count);
+                Assert.AreEqual(ValueType.Property, document.Children[0].Attributes[0].ValueType);
+            }
 
-        [Test]
-        public void BlockWithMultipleParameter()
-        {
-            var block = "div(parameter1 parameter2)";
-            var nodes = Parse(block);
+            [Test]
+            public void ElementWithAttributeValueSetTothisProducesAttributeWithValueTypeAsLocal()
+            {
+                var document = Parse("div[attr1=this]");
+                Assert.AreEqual(1, document.Children[0].Attributes.Count);
+                Assert.AreEqual(ValueType.Local, document.Children[0].Attributes[0].ValueType);
+            }
 
-            var blockNode = nodes.Children.Single();
+            [Test]
+            public void ElementWithAttributeWithNoValueProducesAttributeWithValueSetToNull()
+            {
+                var document = Parse("div[attr]");
+                Assert.IsNull(document.Children[0].Attributes[0].Value);
+                Assert.AreEqual("attr", document.Children[0].Attributes[0].Key);
+            }
 
-            Assert.AreEqual(2, blockNode.Parameters.Count);
-            Assert.AreEqual("parameter1", blockNode.Parameters[0].Value);
-            Assert.AreEqual(ValueType.Property, blockNode.Parameters[0].ValueType);
+            [Test]
+            public void ElementWithOutElementDeclarationButWithClassDeclarationCreatesDivElement()
+            {
+                var document = Parse(".sample-class");
+                Assert.IsNullOrEmpty(null, document.Children[0].Name);
+                Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
+                Assert.AreEqual("sample-class", document.Children[0].Attributes[0].Value);
+            }
 
-            Assert.AreEqual("parameter2", blockNode.Parameters[1].Value);
-            Assert.AreEqual(ValueType.Property, blockNode.Parameters[1].ValueType);
-        }
-
-        //something to do with sequential elements
-        [Test]
-        public void TwoElements()
-        {
-            string block = "div div";
-            var nodes = Parse(block);
-
-            Assert.AreEqual(2, nodes.Children.Count);
-            Assert.IsNotNull(nodes.Children.First());
-            Assert.IsNotNull(nodes.Children.Last());
-        }
-
-        //something to do with sequential elements and children
-        [Test]
-        public void TwoElementsWithChildren()
-        {
-            string block = "div { span } div";
-            var nodes = Parse(block);
-
-            Assert.AreEqual(2, nodes.Children.Count);
-            Assert.IsNotNull(nodes.Children.First());
-            Assert.AreEqual(1, nodes.Children.First().Children.Count);
-            Assert.IsNotNull(nodes.Children.Last());
-        }
-
-        //something to do with children
-        [Test]
-        public void Children()
-        {
-            string block = "div { span }";
-            var nodes = Parse(block);
-
-            Assert.AreEqual(1, nodes.Children.First().Children.Count);
-            Assert.AreEqual("span", nodes.Children.First().Children.First().BlockName);
-        }
-
-        //Renderers
-        [Test]
-        public void FunctionStyleElement()
-        {
-            IRendererFactory factory = new RendererFactory();
-
-            factory.RegisterFactory("div", new HtmlRenderer());
-
-            string block = "div";
-            var nodes = Parse(block);
-
-            var renderer = factory.GetRenderer(block);
-
-            var result = renderer.Render(nodes.Children.First(), null);
-
-            Assert.AreEqual("<div></div>", result);
-        }
-
-        [Test]
-        public void TestingHomeControllerDefaultTemplate()
-        {
-            var block = Parrot.SampleSite.Controllers.HomeController.DefaultHtmlTemplate;
-            var nodes = Parse(block);
-
-            Assert.AreEqual(5, nodes.Children.Count);
-        }
-
-        [Test]
-        public void OutputTest()
-        {
-            var block = "div { =test }";
-            var nodes = Parse(block);
-
-            Assert.IsNotNull(nodes.Children.First());
-            Assert.AreEqual(1, nodes.Children.First().Children.Count);
-            Assert.AreEqual("test", (nodes.Children.First().Children.First() as OutputNode).VariableName);
-        }
-
-        [Test]
-        public void RawOutputTest()
-        {
-            var block = "div { :test }";
-            var nodes = Parse(block);
-
-            Assert.IsNotNull(nodes.Children.First());
-            Assert.AreEqual(1, nodes.Children.First().Children.Count);
-            Assert.AreEqual("test", (nodes.Children.First().Children.First() as RawOutputNode).VariableName);
-        }
-
-        [Test]
-        public void Classes()
-        {
-            var block = "div.test-class";
-            var nodes = Parse(block);
-            Assert.IsNotNull(nodes.Children.First());
-            Assert.AreEqual(1, nodes.Children.First().Attributes.Count);
-            Assert.AreEqual("class", nodes.Children.First().Attributes[0].Key);
-            Assert.AreEqual("test-class", nodes.Children.First().Attributes[0].Value);
-        }
-
-        [Test]
-        public void Ids()
-        {
-            var block = "div#sample-id";
-            var nodes = Parse(block);
-            Assert.AreEqual("id", nodes.Children.First().Attributes.First().Key);
-            Assert.AreEqual("sample-id", nodes.Children.First().Attributes.First().Value);
-        }
-
-        [Test]
-        public void ClassAndIds()
-        {
-            var block = "div#sample-id.test-class";
-            var nodes = Parse(block);
-            Assert.AreEqual("class", nodes.Children.First().Attributes.First().Key);
-            Assert.AreEqual("test-class", nodes.Children.First().Attributes.First().Value);
-            Assert.AreEqual("id", nodes.Children.First().Attributes.Last().Key);
-            Assert.AreEqual("sample-id", nodes.Children.First().Attributes.Last().Value);
+            [Test]
+            public void ElementWithInvalidAttributeDeclarationsThrowsParserException()
+            {
+                Assert.Throws<ParserException>(() => Parse("div[attr1=]"));
+                Assert.Throws<ParserException>(() => Parse("div[]"));
+                Assert.Throws<ParserException>(() => Parse("div[=\"value only\"]"));
+                Assert.Throws<ParserException>(() => Parse("div[attr1=\"missing closing quote]"));
+                Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]")); //why is this one failing
+            }
         }
     }
 

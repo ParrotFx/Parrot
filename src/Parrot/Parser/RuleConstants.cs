@@ -1,6 +1,6 @@
 namespace Parrot.Parser
 {
-    enum RuleConstants : int
+    enum RuleConstants
     {
         RULE_PARAMETER_STRINGLITERAL = 0, // <Parameter> ::= StringLiteral
         RULE_PARAMETER_IDENTIFIER = 1, // <Parameter> ::= Identifier

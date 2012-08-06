@@ -15,6 +15,7 @@ namespace Parrot.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
 
@@ -53,13 +54,13 @@ namespace Parrot.Tests
             Parser.Parser parser = new Parser.Parser();
             Document document;
 
-            parser.Parse(parrot, out document);
+            parser.Parse(new StringReader(parrot), out document);
             var factory = GetFactory();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
             {
-                var renderer = factory.GetRenderer(element.BlockName);
+                var renderer = factory.GetRenderer(element.Name);
                 sb.AppendLine(renderer.Render(element, model));
             }
 

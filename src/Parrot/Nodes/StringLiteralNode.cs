@@ -11,7 +11,7 @@ namespace Parrot.Nodes
     using System.Linq;
     using System.Text;
 
-    public class StringLiteralNode : BlockNode
+    public class StringLiteralNode : Statement
     {
         public string Value { get; private set; }
         public ValueType ValueType { get; private set; }

@@ -1,15 +1,16 @@
 using System;
 using System.IO;
 using System.Reflection;
-using GoldParser;
+using GOLD;
 
 namespace Parrot.Parser
 {
     public static class ParserFactory
     {
-        static Grammar _grammar;
         private static readonly object Locker = new object();
         static bool _init;
+
+        private static GOLD.Parser _parser;
 
         private static BinaryReader GetResourceReader(string resourceName)
         {
@@ -18,35 +19,24 @@ namespace Parrot.Parser
             return new BinaryReader(stream);
         }
 
-        public static void InitializeFactoryFromFile(string fullCGTFilePath)
-        {
-            if (!_init)
-            {
-                BinaryReader reader = new BinaryReader(new FileStream(fullCGTFilePath, FileMode.Open));
-
-                _grammar = new Grammar(reader);
-                _init = true;
-            }
-        }
-
         public static void InitializeFactoryFromResource(string resourceName)
         {
             lock (Locker)
             {
                 if (!_init)
                 {
-                    BinaryReader reader = GetResourceReader(resourceName);
-                    _grammar = new Grammar(reader);
+                    _parser = new GOLD.Parser();
+                    _parser.LoadTables(GetResourceReader("Parrot.parrot.egt"));
                     _init = true;
                 }
             }
         }
 
-        public static GoldParser.Parser CreateParser(TextReader reader)
+        public static GOLD.Parser CreateParser(TextReader reader)
         {
             if (_init)
             {
-                return new GoldParser.Parser(reader, _grammar);
+                return _parser;
             }
             throw new Exception("You must first Initialize the Factory before creating a parser!");
         }

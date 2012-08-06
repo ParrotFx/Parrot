@@ -13,7 +13,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var blockNode = node as BlockNode;
+            var blockNode = node as Statement;
 
             //this tag can't have any children
             if (blockNode.Children.Any())

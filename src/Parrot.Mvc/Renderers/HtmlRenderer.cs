@@ -22,7 +22,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var blockNode = node as BlockNode;
+            var blockNode = node as Statement;
             if (blockNode == null)
             {
                 throw new ArgumentException("node");
@@ -40,26 +40,26 @@ namespace Parrot.Mvc.Renderers
             {
                 var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
 
-                var renderer = factory.GetRenderer(element.BlockName);
+                var renderer = factory.GetRenderer(element.Name);
                 sb.AppendLine(renderer.Render(element, model));
             }
 
             return sb.ToString();
         }
 
-        protected TagBuilder CreateTag(object model, BlockNode blockNode)
+        protected TagBuilder CreateTag(object model, Statement statement)
         {
             object localModel = model;
 
-            if (blockNode.Parameters != null && blockNode.Parameters.Any())
+            if (statement.Parameters != null && statement.Parameters.Any())
             {
-                blockNode.Parameters.First().SetModel(model);
+                statement.Parameters.First().SetModel(model);
 
-                localModel = (blockNode.Parameters.First() as ParameterNode).GetPropertyValue();
+                localModel = (statement.Parameters.First() as ParameterNode).GetPropertyValue();
             }
 
-            TagBuilder builder = new TagBuilder(blockNode.BlockName);
-            foreach (var attribute in blockNode.Attributes.Cast<AttributeNode>())
+            TagBuilder builder = new TagBuilder(statement.Name);
+            foreach (var attribute in statement.Attributes.Cast<AttributeNode>())
             {
                 attribute.SetModel(model);
 
@@ -73,19 +73,19 @@ namespace Parrot.Mvc.Renderers
                 }
             }
 
-            if (blockNode.Children.Any())
+            if (statement.Children.Any())
             {
-                if (localModel is IEnumerable && blockNode.Parameters != null && blockNode.Parameters.Any())
+                if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
                 {
                     StringBuilder sb = new StringBuilder();
                     foreach (object item in localModel as IEnumerable)
                     {
                         var localItem = item;
 
-                        foreach (var child in blockNode.Children)
+                        foreach (var child in statement.Children)
                         {
                             var renderer =
-                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.BlockName);
+                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
 
                             sb.AppendLine(renderer.Render(child, localItem));
                         }
@@ -95,12 +95,12 @@ namespace Parrot.Mvc.Renderers
                 else
                 {
                     StringBuilder sb = new StringBuilder();
-                    foreach (var child in blockNode.Children)
+                    foreach (var child in statement.Children)
                     {
                         if (child != null)
                         {
                             var renderer =
-                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.BlockName);
+                            Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
 
                             sb.Append(renderer.Render(child, localModel));
                         }
@@ -111,7 +111,7 @@ namespace Parrot.Mvc.Renderers
             }
             else
             {
-                if (blockNode.Parameters != null && blockNode.Parameters.Any())
+                if (statement.Parameters != null && statement.Parameters.Any())
                 {
                     builder.InnerHtml = localModel != null ? localModel.ToString() : "";
                 }

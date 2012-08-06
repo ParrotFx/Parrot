@@ -1,8 +1,8 @@
 namespace Parrot.Nodes
 {
     using System.Collections;
-    using GoldParser;
     using Parrot.Nodes;
+    using GOLD;
 
     /// <summary>
     /// Derive this class for NonTerminal AST Nodes
@@ -10,12 +10,10 @@ namespace Parrot.Nodes
     public class NonTerminalNode : AbstractNode
     {
         private int m_reductionNumber;
-        private Rule m_rule;
         private ArrayList m_array = new ArrayList();
 
         public NonTerminalNode(Parser theParser)
         {
-            m_rule = theParser.ReductionRule;
         }
 
         public override bool IsTerminal
@@ -49,11 +47,6 @@ namespace Parrot.Nodes
                 return;
             }
             m_array.Add(node);
-        }
-
-        public Rule Rule
-        {
-            get { return m_rule; }
         }
 
     }

@@ -16,11 +16,17 @@ namespace Parrot.Nodes
     /// </summary>
     public class Document
     {
-        public BlockNodeList Children;
+        public StatementList Children;
 
         public Document()
         {
-            Children = new BlockNodeList();
+            Children = new StatementList();
+        }
+
+        public Document(Document document, Statement statement)
+        {
+            this.Children = document.Children;
+            this.Children.Add(statement);
         }
 
         public string Render(object model)
@@ -30,7 +36,7 @@ namespace Parrot.Nodes
             {
                 var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
 
-                var renderer = factory.GetRenderer(element.BlockName);
+                var renderer = factory.GetRenderer(element.Name);
                 sb.AppendLine(renderer.Render(element, model));
             }
 

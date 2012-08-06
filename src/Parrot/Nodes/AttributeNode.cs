@@ -23,6 +23,10 @@ namespace Parrot.Nodes
 
             if (value != null)
             {
+                if (IsWrappedInInvalidQuotes(value))
+                {
+                    throw new ParserException("Unterminated string literal");
+                } else 
                 if (IsWrappedInQuotes(value))
                 {
                     ValueType = ValueType.StringLiteral;
@@ -72,7 +76,13 @@ namespace Parrot.Nodes
 
         private bool IsWrappedInQuotes(string value)
         {
-            return value != null && ((value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") || value.EndsWith("'")));
+            return value != null && ((value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") && value.EndsWith("'")));
+        }
+
+        private bool IsWrappedInInvalidQuotes(string value)
+        {
+            return value != null && (((value.StartsWith("\"") && !value.EndsWith("\"")) || (value.StartsWith("'") && !value.EndsWith("'")))
+                                 || ((!value.StartsWith("\"") && value.EndsWith("\"")) || (!value.StartsWith("'") && value.EndsWith("'"))));
         }
 
         public override bool IsTerminal

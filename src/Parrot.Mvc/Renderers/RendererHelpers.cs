@@ -17,13 +17,13 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public static class RendererHelpers
     {
-        public static string Render(this IList<BlockNode> nodes, object model )
+        public static string Render(this IList<Statement> nodes, object model )
         {
             var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
             StringBuilder sb = new StringBuilder();
             foreach (var child in nodes)
             {
-                sb.Append(factory.GetRenderer(child.BlockName).Render(child, model));
+                sb.Append(factory.GetRenderer(child.Name).Render(child, model));
             }
 
             return sb.ToString();

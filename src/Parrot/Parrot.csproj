@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GoldParser">
-      <HintPath>..\packages\GoldParser\GoldParser.dll</HintPath>
+    <Reference Include="GOLD Engine">
+      <HintPath>..\packages\Gold-Parser.5.0.0\GOLD Engine.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\net40\Newtonsoft.Json.dll</HintPath>
@@ -54,14 +54,15 @@
     <Compile Include="Nodes\AttributeNodeList.cs" />
     <Compile Include="Nodes\ClassIdentifierNode.cs" />
     <Compile Include="Nodes\AttributeList.cs" />
-    <Compile Include="Nodes\BlockNode.cs" />
-    <Compile Include="Nodes\BlockNodeList.cs" />
+    <Compile Include="Nodes\Statement.cs" />
+    <Compile Include="Nodes\StatementList.cs" />
     <Compile Include="Nodes\Document.cs" />
     <Compile Include="Nodes\NonTerminalNode.cs" />
     <Compile Include="Nodes\ParameterNode.cs" />
     <Compile Include="Nodes\OutputNode.cs" />
     <Compile Include="Nodes\StringLiteralNode.cs" />
     <Compile Include="Nodes\ParameterNodeList.cs" />
+    <Compile Include="ParserException.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserContext.cs" />
     <Compile Include="Parser\ParserFactory.cs" />
@@ -76,6 +77,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <EmbeddedResource Include="parrot-with-unicode.cgt" />
+    <EmbeddedResource Include="parrot.egt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

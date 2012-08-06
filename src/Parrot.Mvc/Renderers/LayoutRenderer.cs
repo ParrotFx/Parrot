@@ -32,7 +32,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var blockNode = node as BlockNode;
+            var blockNode = node as Statement;
             if (blockNode == null)
             {
                 throw new InvalidCastException("node");
@@ -62,7 +62,7 @@ namespace Parrot.Mvc.Renderers
 
                     return document.Render(new
                     {
-                        Children = new BlockNodeList(blockNode.Children.ToArray()),
+                        Children = new StatementList(blockNode.Children.ToArray()),
                         Model = model
                     });
                 }

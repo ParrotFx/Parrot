@@ -3,7 +3,7 @@ namespace Parrot.Nodes
     using System.Reflection;
     using Parrot.Nodes;
 
-    public class OutputNode : BlockNode
+    public class OutputNode : Statement
     {
         public string VariableName { get; private set; }
 
