@@ -31,10 +31,10 @@ namespace Parrot.Tests
         //parameter name/values
         public static Document Parse(string text)
         {
-            Parser parsr = new Parser();
+            Parser parser = new Parser();
             Document document;
 
-            parsr.Parse(new StringReader(text), out document);
+            parser.Parse(new StringReader(text), out document);
 
             return document;
         }
@@ -71,10 +71,8 @@ namespace Parrot.Tests
             [Test]
             public void ElementWithMultipleIdsThrowsParserException()
             {
-                Assert.Throws<ParserException>(() =>
-                {
-                    var document = Parse("div#first-id#second-id");
-                });
+                Assert.Throws<ParserException>(() => Parse("div#first-id#second-id"));
+                Assert.Throws<ParserException>(() => Parse("div#first-id.class-name#second-id"));
             }
         }
 
@@ -156,7 +154,7 @@ namespace Parrot.Tests
                 Assert.Throws<ParserException>(() => Parse("div[]"));
                 Assert.Throws<ParserException>(() => Parse("div[=\"value only\"]"));
                 Assert.Throws<ParserException>(() => Parse("div[attr1=\"missing closing quote]"));
-                Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]")); //why is this one failing
+                Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]"));
             }
         }
     }
