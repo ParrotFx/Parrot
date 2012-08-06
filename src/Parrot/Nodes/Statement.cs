@@ -14,7 +14,7 @@ namespace Parrot.Nodes
     public class Statement : AbstractNode
     {
         public ParameterList Parameters { get; private set; }
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 

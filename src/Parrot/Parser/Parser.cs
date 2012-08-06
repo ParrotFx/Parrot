@@ -70,9 +70,9 @@ namespace Parrot.Parser
             @Statementtail = 18,                       // <Statement Tail> ::= <Attributes> <Parameters>
             @Statement_Identifier = 19,                // <Statement> ::= Identifier <Statement Tail>
             @Statement = 20,                           // <Statement> ::= <OutputStatement>
-            @Statement_Stringliteralpipe = 21,         // <Statement> ::= StringLiteralPipe
-            @Statement_Multilinestringliteral = 22,    // <Statement> ::= MultiLineStringLiteral
-            @Statement_Stringliteral = 23,             // <Statement> ::= StringLiteral
+            @Statement_Multilinestringliteral = 21,    // <Statement> ::= MultiLineStringLiteral
+            @Statement_Stringliteral = 22,             // <Statement> ::= StringLiteral
+            @Statement_Stringliteralpipe = 23,         // <Statement> ::= StringLiteralPipe
             @Outputstatement_Colon_Identifier = 24,    // <OutputStatement> ::= ':' Identifier
             @Outputstatement_Eq_Identifier = 25        // <OutputStatement> ::= '=' Identifier
         }
@@ -263,7 +263,7 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Statement_Stringliteralpipe:
                     // <Statement> ::= StringLiteralPipe
-                    break;
+                    return new StringLiteralPipe((r[0].Data as string).Substring(1));
 
                 case ProductionIndex.Statement_Multilinestringliteral:
                 case ProductionIndex.Statement_Stringliteral:

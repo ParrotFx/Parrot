@@ -57,6 +57,7 @@
     <Compile Include="Renderers\RendererHelpers.cs" />
     <Compile Include="Renderers\SelfClosingRenderer.cs" />
     <Compile Include="Renderers\StringLiteralRenderer.cs" />
+    <Compile Include="Renderers\UlRenderer.cs" />
     <Compile Include="TagBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -37,6 +37,7 @@ namespace Parrot.Tests
             factory.RegisterFactory("input", new InputRenderer());
             factory.RegisterFactory("string", new StringLiteralRenderer());
             factory.RegisterFactory("foreach", new ForeachRenderer());
+            factory.RegisterFactory("ul", new UlRenderer());
 
             //default renderer
             factory.RegisterFactory("*", new HtmlRenderer());
@@ -145,6 +146,21 @@ namespace Parrot.Tests
             //Assert.AreEqual("<p></p>", Render("p[id=name]", new { name = "" }));
             //Assert.AreEqual("<p id=\"tj\"></p>", Render("p[id= name]", new { name = "tj" }));
             Assert.AreEqual("<p id=\"something\"></p>", Render("p[id='something']", new { name = "" }));
+        }
+    
+        [Test]
+        public void TagOverrideRendering()
+        {
+            Assert.AreEqual("<ul><li class=\"sample-class\"></li></ul>", Render("ul { .sample-class }"));
+            Assert.AreEqual("<div class=\"sample-class\"></div>", Render(".sample-class"));
+        }
+
+        [Test]
+        public void StringLiteralPipeTests()
+        {
+            Assert.AreEqual("<div>this is a string literal test\r</div>", Render("div { |this is a string literal test\r\n}"));
+            Assert.AreEqual("<div>1\r2\r</div>", Render("div { |1\r\n|2\r\n}"));
+            Assert.AreEqual("this is a string literal test", Render("|this is a string literal test\r"));
         }
     }
 }

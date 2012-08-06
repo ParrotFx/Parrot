@@ -16,8 +16,7 @@ namespace Parrot.Nodes
         public string Value { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteral(string value)
-            : base("string")
+        public StringLiteral(string value) : base("string")
         {
             if (IsWrappedInQuotes(value))
             {
@@ -52,7 +51,7 @@ namespace Parrot.Nodes
 
             if (ValueType == ValueType.Keyword)
             {
-                switch(Value)
+                switch (Value)
                 {
                     case "null":
                         return null;
@@ -68,7 +67,7 @@ namespace Parrot.Nodes
 
         private bool IsWrappedInQuotes(string value)
         {
-            return ((value.StartsWith("\"")|| value.StartsWith("@\"")) && value.EndsWith("\"")) || ((value.StartsWith("'")||value.StartsWith("@'")) && value.EndsWith("'"));
+            return ((value.StartsWith("\"") || value.StartsWith("@\"")) && value.EndsWith("\"")) || ((value.StartsWith("'") || value.StartsWith("@'")) && value.EndsWith("'"));
         }
 
         public override bool IsTerminal

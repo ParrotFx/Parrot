@@ -11,13 +11,20 @@ namespace Parrot.Mvc.Renderers
 
     public class HtmlRenderer : IRenderer
     {
-        public virtual string DefaultTag
+        public virtual string DefaultChildTag
         {
             get { return "div"; }
         }
 
-        public virtual string RenderChildren(Statement statement, object localModel)
+        public virtual string RenderChildren(Statement statement, object localModel, string defaultTag = null)
         {
+            if (string.IsNullOrEmpty(defaultTag))
+            {
+                defaultTag = DefaultChildTag;
+            }
+
+            Func<string, string> tagName = (s) => string.IsNullOrEmpty(s) ? defaultTag : s;
+
             var sb = new StringBuilder();
             if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
             {
@@ -27,6 +34,7 @@ namespace Parrot.Mvc.Renderers
 
                     foreach (var child in statement.Children)
                     {
+                        child.Name = tagName(child.Name);
                         var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
 
                         sb.AppendLine(renderer.Render(child, localItem));
@@ -39,8 +47,8 @@ namespace Parrot.Mvc.Renderers
                 {
                     if (child != null)
                     {
-                        var renderer =
-                        Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+                        child.Name = tagName(child.Name);
+                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
 
                         sb.Append(renderer.Render(child, localModel));
                     }
@@ -97,6 +105,8 @@ namespace Parrot.Mvc.Renderers
 
                 localModel = (statement.Parameters.First() as Parameter).GetPropertyValue();
             }
+
+            statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
 
             TagBuilder builder = new TagBuilder(statement.Name);
             foreach (var attribute in statement.Attributes.Cast<Attribute>())

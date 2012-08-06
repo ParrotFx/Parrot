@@ -156,6 +156,7 @@ namespace Parrot.Tests
                 Assert.Throws<ParserException>(() => Parse("div[attr1=\"missing closing quote]"));
                 Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]"));
             }
+
         }
     }
 
