@@ -3,11 +3,11 @@ namespace Parrot.Nodes
     using System.Reflection;
     using Parrot.Nodes;
 
-    public class OutputNode : Statement
+    public class Output : Statement
     {
         public string VariableName { get; private set; }
 
-        public OutputNode(string variableName) : base("output")
+        public Output(string variableName) : base("output")
         {
             VariableName = variableName;
         }

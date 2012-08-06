@@ -10,14 +10,14 @@ namespace Parrot.Nodes
         Keyword
     }
 
-    public class AttributeNode : AbstractNode
+    public class Attribute : AbstractNode
     {
         public string Key { get; internal set; }
         public string Value { get; internal set; }
 
         public ValueType ValueType { get; internal set; }
 
-        public AttributeNode(string key, string value)
+        public Attribute(string key, string value)
         {
             Key = key;
 

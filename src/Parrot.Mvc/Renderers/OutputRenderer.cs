@@ -12,7 +12,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var outputNode = node as OutputNode;
+            var outputNode = node as Output;
             if (outputNode == null)
             {
                 throw new ArgumentNullException("node");

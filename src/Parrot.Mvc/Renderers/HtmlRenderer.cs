@@ -7,6 +7,8 @@ using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
+    using Attribute = Nodes.Attribute;
+
     public class HtmlRenderer : IRenderer
     {
 
@@ -55,11 +57,11 @@ namespace Parrot.Mvc.Renderers
             {
                 statement.Parameters.First().SetModel(model);
 
-                localModel = (statement.Parameters.First() as ParameterNode).GetPropertyValue();
+                localModel = (statement.Parameters.First() as Parameter).GetPropertyValue();
             }
 
             TagBuilder builder = new TagBuilder(statement.Name);
-            foreach (var attribute in statement.Attributes.Cast<AttributeNode>())
+            foreach (var attribute in statement.Attributes.Cast<Attribute>())
             {
                 attribute.SetModel(model);
 

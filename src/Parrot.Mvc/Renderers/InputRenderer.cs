@@ -4,6 +4,8 @@ using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
+    using Attribute = Nodes.Attribute;
+
     public class InputRenderer : IRenderer
     {
         public string Render(AbstractNode node, object model)
@@ -24,7 +26,7 @@ namespace Parrot.Mvc.Renderers
             var localModel = model;
 
             TagBuilder tag = new TagBuilder("input");
-            foreach (var attribute in blockNode.Attributes.Cast<AttributeNode>())
+            foreach (var attribute in blockNode.Attributes.Cast<Attribute>())
             {
                 attribute.SetModel(localModel);
 

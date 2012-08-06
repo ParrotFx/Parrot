@@ -3,13 +3,13 @@ namespace Parrot.Nodes
     using Parrot;
     using Parrot.Nodes;
 
-    public class ParameterNode : AbstractNode
+    public class Parameter : AbstractNode
     {
         public string Value { get; private set; }
 
         public ValueType ValueType { get; private set; }
 
-        public ParameterNode(string value)
+        public Parameter(string value)
         {
 
             if (IsWrappedInQuotes(value))

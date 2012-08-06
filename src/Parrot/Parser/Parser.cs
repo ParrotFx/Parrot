@@ -174,11 +174,11 @@ namespace Parrot.Parser
             {
                 case ProductionIndex.Parameter_Stringliteral:
                     // <Parameter> ::= StringLiteral
-                    return new ParameterNode(r[0].Data as string);
+                    return new Parameter(r[0].Data as string);
 
                 case ProductionIndex.Parameter_Identifier:
                     // <Parameter> ::= Identifier
-                    return new ParameterNode(r[0].Data as string);
+                    return new Parameter(r[0].Data as string);
 
                 case ProductionIndex.Parameterlist:
                     // <Parameter List> ::= <Parameter>
@@ -186,7 +186,7 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Parameters_Lparan_Rparan:
                     // <Parameters> ::= '(' <Parameter List> ')'
-                    return r[1].Data as ParameterNodeList;
+                    return r[1].Data as ParameterList;
 
                 case ProductionIndex.Parameters:
                     // <Parameters> ::= 
@@ -202,7 +202,7 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Attribute_Identifier:
                     // <Attribute> ::= Identifier
-                    return new AttributeNode(r[0].Data as string, null);
+                    return new Attribute(r[0].Data as string, null);
 
                 case ProductionIndex.Attributelist:
                     // <Attribute List> ::= <Attribute>
@@ -210,11 +210,11 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Attributelist2:
                     // <Attribute List> ::= <Attribute List> <Attribute>
-                    return new AttributeNodeList(r[0].Data as AttributeNodeList, r[1].Data as AttributeNode);
+                    return new AttributeList(r[0].Data as AttributeList, r[1].Data as Attribute);
 
                 case ProductionIndex.Attributes_Lbracket_Rbracket:
                     // <Attributes> ::= '[' <Attribute List> ']'
-                    return r[1].Data as AttributeNodeList;
+                    return r[1].Data as AttributeList;
 
                 case ProductionIndex.Attributes:
                     // <Attributes> ::= 
@@ -236,16 +236,16 @@ namespace Parrot.Parser
                     // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
                     return new StatementTail
                     {
-                        Attributes = r[0].Data as AttributeNodeList,
-                        Parameters = r[1].Data as ParameterNodeList
+                        Attributes = r[0].Data as AttributeList,
+                        Parameters = r[1].Data as ParameterList
                     };
 
                 case ProductionIndex.Statementtail_Lbrace_Rbrace:
                     // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
                     return new StatementTail
                     {
-                        Attributes = r[0].Data as AttributeNodeList,
-                        Parameters = r[1].Data as ParameterNodeList,
+                        Attributes = r[0].Data as AttributeList,
+                        Parameters = r[1].Data as ParameterList,
                         Children = (r[3].Data as Document).Children
                     };
 
@@ -286,9 +286,9 @@ namespace Parrot.Parser
             return result;
         }
 
-        private AttributeNode CreateAttributeNodeFromIdentifierIdentifier(Reduction reduction)
+        private Attribute CreateAttributeNodeFromIdentifierIdentifier(Reduction reduction)
         {
-            return new AttributeNode(reduction[0].Data as string, reduction[2].Data as string);
+            return new Attribute(reduction[0].Data as string, reduction[2].Data as string);
         }
 
         private Document CreateBlockNodeList(Reduction reduction)
@@ -301,24 +301,24 @@ namespace Parrot.Parser
         {
             return new StatementTail
             {
-                Attributes = reduction[0].Data as AttributeNodeList,
-                Parameters = reduction[1].Data as ParameterNodeList
+                Attributes = reduction[0].Data as AttributeList,
+                Parameters = reduction[1].Data as ParameterList
             };
         }
 
-        private AttributeNode CreateAttributeNodeFromIdentifierStringLiteral(Reduction reduction)
+        private Attribute CreateAttributeNodeFromIdentifierStringLiteral(Reduction reduction)
         {
-            return new AttributeNode(reduction[0].Data as string, reduction[2].Data as string);
+            return new Attribute(reduction[0].Data as string, reduction[2].Data as string);
         }
 
-        private ParameterNodeList CreateParameterListFromParameter(Reduction reduction)
+        private ParameterList CreateParameterListFromParameter(Reduction reduction)
         {
-            return new ParameterNodeList(reduction[0].Data as ParameterNode);
+            return new ParameterList(reduction[0].Data as Parameter);
         }
 
-        private AttributeNodeList CreateAttributeListFromAttribute(Reduction reduction)
+        private AttributeList CreateAttributeListFromAttribute(Reduction reduction)
         {
-            return new AttributeNodeList(reduction[0].Data as AttributeNode);
+            return new AttributeList(reduction[0].Data as Attribute);
         }
 
         private Document CreateDocumentNode(Reduction reduction)
@@ -345,8 +345,8 @@ namespace Parrot.Parser
             get { return false; }
         }
 
-        public ParameterNodeList Parameters { get; set; }
-        public AttributeNodeList Attributes { get; set; }
+        public ParameterList Parameters { get; set; }
+        public AttributeList Attributes { get; set; }
         public StatementList Children { get; set; }
     }
 }

@@ -11,12 +11,12 @@ namespace Parrot.Nodes
     using System.Linq;
     using System.Text;
 
-    public class StringLiteralNode : Statement
+    public class StringLiteral : Statement
     {
         public string Value { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteralNode(string value)
+        public StringLiteral(string value)
             : base("string")
         {
             if (IsWrappedInQuotes(value))

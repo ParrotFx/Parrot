@@ -2,14 +2,17 @@ namespace Parrot.Nodes
 {
     using Parrot.Nodes;
 
-    public class AttributeList : AbstractNodeList
+    public class AttributeList : AbstractNodeList<Attribute>
     {
-
-        public AttributeList(AttributeNode attributeNode, string key, string value)
+        public AttributeList(params Attribute[] nodes) : base()
         {
-            _list.Add(attributeNode);
-            _list.Add(new AttributeNode(key, value));
+            _list.AddRange(nodes);
         }
 
+        public AttributeList(AttributeList list, params Attribute[] nodes) : base()
+        {
+            _list.AddRange(list);
+            _list.AddRange(nodes);
+        }
     }
 }

@@ -2,11 +2,11 @@ namespace Parrot.Nodes
 {
     using Parrot.Nodes;
 
-    public class RawOutputNode : Statement
+    public class RawOutput : Statement
     {
         public string VariableName { get; set; }
 
-        public RawOutputNode(string variableName) : base("rawoutput")
+        public RawOutput(string variableName) : base("rawoutput")
         {
             VariableName = variableName;
         }

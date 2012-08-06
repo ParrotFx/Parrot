@@ -13,16 +13,16 @@ namespace Parrot.Nodes
 
     public class Statement : AbstractNode
     {
-        public ParameterNodeList Parameters { get; private set; }
+        public ParameterList Parameters { get; private set; }
         public string Name { get; private set; }
-        public AttributeNodeList Attributes { get; private set; }
+        public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 
         protected Statement(string name)
         {
-            Attributes = new AttributeNodeList();
+            Attributes = new AttributeList();
             Children = new StatementList();
-            Parameters = new ParameterNodeList();
+            Parameters = new ParameterList();
 
             //required bullshit
             if (name.Contains(".") || name.Contains("#"))
@@ -42,7 +42,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id added more than once");
                             }
 
-                            AddAttribute(new AttributeNode("id", part.Name));
+                            AddAttribute(new Attribute("id", part.Name));
                             break;
                         case IdentifierType.Class:
                             if (part.Name.Length == 1)
@@ -50,7 +50,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id must have a length");
                             }
 
-                            AddAttribute(new AttributeNode("class", part.Name));
+                            AddAttribute(new Attribute("class", part.Name));
                             break;
                         case IdentifierType.Literal:
                             Name = part.Name;
@@ -76,7 +76,7 @@ namespace Parrot.Nodes
             }
         }
 
-        private void AddAttributes(AttributeNodeList attributes)
+        private void AddAttributes(AttributeList attributes)
         {
             if (attributes != null && attributes.Any())
             {
@@ -87,7 +87,7 @@ namespace Parrot.Nodes
             }
         }
 
-        private void AddParameters(ParameterNodeList parameters)
+        private void AddParameters(ParameterList parameters)
         {
             if (parameters != null && parameters.Any())
             {
@@ -108,7 +108,7 @@ namespace Parrot.Nodes
                 }
             }
         }
-        private void AddAttribute(AttributeNode node)
+        private void AddAttribute(Attribute node)
         {
             if (node.Key == "id")
             {
@@ -117,10 +117,10 @@ namespace Parrot.Nodes
                     var values = node.Value.Split(".".ToCharArray());
                     foreach (var value in values.Skip(1))
                     {
-                        Attributes.Add(new AttributeNode("class", value));
+                        Attributes.Add(new Attribute("class", value));
                     }
 
-                    Attributes.Add(new AttributeNode(node.Key, values[0]));
+                    Attributes.Add(new Attribute(node.Key, values[0]));
                     return;
                 }
             }

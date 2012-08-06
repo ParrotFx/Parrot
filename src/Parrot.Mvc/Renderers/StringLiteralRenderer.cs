@@ -11,7 +11,7 @@ namespace Parrot.Tests
                 throw new ArgumentNullException("node");
             }
 
-            var stringNode = node as StringLiteralNode;
+            var stringNode = node as StringLiteral;
             if (stringNode == null)
             {
                 throw new InvalidCastException("node");
