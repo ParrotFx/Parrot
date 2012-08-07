@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Web.Mvc;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -18,12 +20,14 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public class LayoutRenderer : IRenderer
     {
-        private ParrotViewEngine engine;
+        private readonly ParrotViewEngine _engine;
 
-        public LayoutRenderer()
+        public LayoutRenderer(IViewEngine engine)
         {
-            engine = new ParrotViewEngine();
+            _engine = new ParrotViewEngine();
         }
+
+        public LayoutRenderer() : this(new ParrotViewEngine()) { }
 
         public string Render(AbstractNode node, object model)
         {
@@ -50,7 +54,7 @@ namespace Parrot.Mvc.Renderers
             //ok...we need to load the layoutpage
             //then pass the node's children into the layout page
             //then return the result
-            var result = engine.FindView(null, layout, null, false);
+            var result = _engine.FindView(null, layout, null, false);
             if (result != null)
             {
                 var parrotView = (result.View as ParrotView);

@@ -4,12 +4,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Web.Mvc;
 using Moq;
 using NUnit.Framework;
 using Parrot.Infrastructure;
 using Parrot.Mvc;
 using Parrot.Mvc.Renderers;
 using Parrot.Nodes;
+using IDependencyResolver = Parrot.Infrastructure.IDependencyResolver;
 
 namespace Parrot.Tests
 {
@@ -38,6 +40,9 @@ namespace Parrot.Tests
             factory.RegisterFactory("string", new StringLiteralRenderer());
             factory.RegisterFactory("foreach", new ForeachRenderer());
             factory.RegisterFactory("ul", new UlRenderer());
+            factory.RegisterFactory("layout", new LayoutRenderer());
+            factory.RegisterFactory("content", new ContentRenderer());
+
 
             //default renderer
             factory.RegisterFactory("*", new HtmlRenderer());
@@ -45,7 +50,7 @@ namespace Parrot.Tests
             return factory;
         }
 
-        private string Render(string parrot, object model)
+        private string Render(string parrot, object model, IRendererFactory factory)
         {
             var resolver = new Mock<IDependencyResolver>();
             resolver.Setup(f => f.Get<IRendererFactory>()).Returns(GetFactory());
@@ -56,7 +61,6 @@ namespace Parrot.Tests
             Document document;
 
             parser.Parse(new StringReader(parrot), out document);
-            var factory = GetFactory();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
@@ -66,6 +70,11 @@ namespace Parrot.Tests
             }
 
             return sb.ToString().Trim();
+        }
+
+        private string Render(string parrot, object model)
+        {
+            return Render(parrot, model, GetFactory());
         }
 
         private string Render(string parrot)
@@ -79,6 +88,41 @@ namespace Parrot.Tests
         {
             object model = new[] {1, 2};
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div(this) }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div(this) }", model));
+
+            Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
+        }
+
+        [Test]
+        public void LayoutRendererTests()
+        {
+            //TODO: Figure this out later...
+            //var view = new Mock<IView>();
+            //view.Setup(c => c.Render(It.IsAny<ViewContext>(), It.IsAny<TextWriter>()))
+            //    .Callback<ViewContext, TextWriter>((v, t) =>
+            //    {
+            //        t.Write("html { body { content } }");
+            //    });
+
+            //var viewEngine = new Mock<IViewEngine>();
+            //viewEngine.Setup(c => c.FindView(It.IsAny<ControllerContext>(), "", "", false))
+            //          .Returns(new ViewEngineResult(new ParrotView(null), viewEngine.Object));
+            //viewEngine.Setup(c => c.FindPartialView(It.IsAny<ControllerContext>(), It.IsAny<string>(), It.IsAny<bool>()))
+            //          .Returns(new ViewEngineResult(new ParrotView(null), viewEngine.Object));
+
+            //RendererFactory factory = new RendererFactory();
+
+            //factory.RegisterFactory("layout", new LayoutRenderer(viewEngine.Object));
+            //factory.RegisterFactory("content", new ContentRenderer());
+
+            //Assert.AreEqual("blah blah blah", Render("layout { \"blahblahblah\" }", null, factory));
+        }
+
+        [Test]
+        public void DoctypeRendererTests()
+        {
+            Assert.AreEqual("<!DOCTYPE html>", Render("doctype"));
+            Assert.AreEqual("<!DOCTYPE xhtml>", Render("doctype(\"xhtml\")"));
         }
 
         [Test]
@@ -124,7 +168,8 @@ namespace Parrot.Tests
             Assert.AreEqual("<div style=\"color= white\"></div>", Render("div[style=\"color= white\"]"));
             Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color:white\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
-            Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class= \"foo\"]"));
+            Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
+            Assert.AreEqual("<p class=\"foo baz bar\"></p>", Render("p.bar.baz[class=\"foo\"]"));
 
             Assert.AreEqual("<p data-lang=\"en\"></p>", Render("p[data-lang = \"en\"]"));
             Assert.AreEqual("<p data-dynamic=\"true\"></p>", Render("p[data-dynamic= \"true\"]"));
@@ -144,7 +189,7 @@ namespace Parrot.Tests
 
             Assert.AreEqual("<rss xmlns:atom=\"atom\"></rss>", Render("rss[xmlns:atom=\"atom\"]"));
             //Assert.AreEqual("<p></p>", Render("p[id=name]", new { name = "" }));
-            //Assert.AreEqual("<p id=\"tj\"></p>", Render("p[id= name]", new { name = "tj" }));
+            Assert.AreEqual("<p id=\"tj\"></p>", Render("p[id= name]", new { name = "tj" }));
             Assert.AreEqual("<p id=\"something\"></p>", Render("p[id='something']", new { name = "" }));
         }
     

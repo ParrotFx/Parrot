@@ -26,7 +26,7 @@ namespace Parrot.Mvc.Renderers
             var localModel = model;
 
             TagBuilder tag = new TagBuilder("input");
-            foreach (var attribute in blockNode.Attributes.Cast<Attribute>())
+            foreach (var attribute in blockNode.Attributes)
             {
                 attribute.SetModel(localModel);
 

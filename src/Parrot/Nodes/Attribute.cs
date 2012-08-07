@@ -35,11 +35,7 @@ namespace Parrot.Nodes
                 }
                 else if (key != "class")
                 {
-                    if (key == "id")
-                    {
-                        ValueType = ValueType.StringLiteral;
-                    }
-                    else if (value == "this")
+                    if (value == "this")
                     {
                         ValueType = ValueType.Local;
                     }
