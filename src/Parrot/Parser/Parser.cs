@@ -53,32 +53,32 @@ namespace Parrot.Parser
 
         private enum ProductionIndex
         {
-            @Parameter_Stringliteral = 0,              // <Parameter> ::= StringLiteral
-            @Parameter_Identifier = 1,                 // <Parameter> ::= Identifier
-            @Parameterlist = 2,                        // <Parameter List> ::= <Parameter>
-            @Parameterlist_Comma = 3,                  // <Parameter List> ::= <Parameter List> ',' <Parameter>
-            @Parameters_Lparan_Rparan = 4,             // <Parameters> ::= '(' <Parameter List> ')'
-            @Parameters = 5,                           // <Parameters> ::= 
-            @Attribute_Identifier_Eq_Stringliteral = 6,  // <Attribute> ::= Identifier '=' StringLiteral
-            @Attribute_Identifier_Eq_Identifier = 7,   // <Attribute> ::= Identifier '=' Identifier
-            @Attribute_Identifier = 8,                 // <Attribute> ::= Identifier
-            @Attributelist = 9,                        // <Attribute List> ::= <Attribute>
-            @Attributelist2 = 10,                      // <Attribute List> ::= <Attribute List> <Attribute>
-            @Attributes_Lbracket_Rbracket = 11,        // <Attributes> ::= '[' <Attribute List> ']'
-            @Attributes = 12,                          // <Attributes> ::= 
-            @Statements = 13,                          // <Statements> ::= <Statement>
-            @Statements2 = 14,                         // <Statements> ::= <Statements> <Statement>
-            @Statementtail_Lbrace_Rbrace = 15,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
-            @Statementtail_Lbrace_Rbrace2 = 16,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-            @Statementtail_Semi = 17,                  // <Statement Tail> ::= <Attributes> <Parameters> ';' <Statement>
-            @Statementtail = 18,                       // <Statement Tail> ::= <Attributes> <Parameters>
-            @Statement_Identifier = 19,                // <Statement> ::= Identifier <Statement Tail>
-            @Statement = 20,                           // <Statement> ::= <OutputStatement>
-            @Statement_Multilinestringliteral = 21,    // <Statement> ::= MultiLineStringLiteral
-            @Statement_Stringliteral = 22,             // <Statement> ::= StringLiteral
-            @Statement_Stringliteralpipe = 23,         // <Statement> ::= StringLiteralPipe
-            @Outputstatement_Colon_Identifier = 24,    // <OutputStatement> ::= ':' Identifier
-            @Outputstatement_Eq_Identifier = 25        // <OutputStatement> ::= '=' Identifier
+            Parameter_Stringliteral = 0,              // <Parameter> ::= StringLiteral
+            Parameter_Identifier = 1,                 // <Parameter> ::= Identifier
+            Parameterlist = 2,                        // <Parameter List> ::= <Parameter>
+            Parameterlist_Comma = 3,                  // <Parameter List> ::= <Parameter List> ',' <Parameter>
+            Parameters_Lparan_Rparan = 4,             // <Parameters> ::= '(' <Parameter List> ')'
+            Parameters = 5,                           // <Parameters> ::= 
+            Attribute_Identifier_Eq_Stringliteral = 6,  // <Attribute> ::= Identifier '=' StringLiteral
+            Attribute_Identifier_Eq_Identifier = 7,   // <Attribute> ::= Identifier '=' Identifier
+            Attribute_Identifier = 8,                 // <Attribute> ::= Identifier
+            Attributelist = 9,                        // <Attribute List> ::= <Attribute>
+            Attributelist2 = 10,                      // <Attribute List> ::= <Attribute List> <Attribute>
+            Attributes_Lbracket_Rbracket = 11,        // <Attributes> ::= '[' <Attribute List> ']'
+            Attributes = 12,                          // <Attributes> ::= 
+            Statements = 13,                          // <Statements> ::= <Statement>
+            Statements2 = 14,                         // <Statements> ::= <Statements> <Statement>
+            Statementtail_Lbrace_Rbrace = 15,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
+            Statementtail_Lbrace_Rbrace2 = 16,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
+            Statementtail_Gt = 17,                  // <Statement Tail> ::= <Attributes> <Parameters> ';' <Statement>
+            Statementtail = 18,                       // <Statement Tail> ::= <Attributes> <Parameters>
+            Statement_Identifier = 19,                // <Statement> ::= Identifier <Statement Tail>
+            Statement = 20,                           // <Statement> ::= <OutputStatement>
+            Statement_Multilinestringliteral = 21,    // <Statement> ::= MultiLineStringLiteral
+            Statement_Stringliteral = 22,             // <Statement> ::= StringLiteral
+            Statement_Stringliteralpipe = 23,         // <Statement> ::= StringLiteralPipe
+            Outputstatement_Colon_Identifier = 24,    // <OutputStatement> ::= ':' Identifier
+            Outputstatement_Eq_Identifier = 25        // <OutputStatement> ::= '=' Identifier
         }
 
         private static BinaryReader GetResourceReader(string resourceName)
@@ -267,9 +267,14 @@ namespace Parrot.Parser
                         Children = (r[3].Data as Document).Children
                     };
 
-                case ProductionIndex.Statementtail_Semi:
-                    // <Statement Tail> ::= <Attributes> <Parameters> ';' <Statement>
-                    break;
+                case ProductionIndex.Statementtail_Gt:
+                    // <Statement Tail> ::= <Attributes> <Parameters> '>' <Statement>
+                    return new StatementTail
+                    {
+                        Attributes = r[0].Data as AttributeList,
+                        Parameters = r[1].Data as ParameterList,
+                        Children = new StatementList(r[3].Data as Statement)
+                    };
 
                 case ProductionIndex.Statement:
                     // <Statement> ::= <OutputStatement>

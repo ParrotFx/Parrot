@@ -157,6 +157,19 @@ namespace Parrot.Tests
                 Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]"));
             }
 
+            [Test]
+            public void StatementWithGTChildCreatesBlockWithOneChild()
+            {
+                var document = Parse("div > span");
+                Assert.AreEqual("div", document.Children[0].Name);
+                Assert.AreEqual("span", document.Children[0].Children[0].Name);
+
+                document = Parse("div > span > span");
+                Assert.AreEqual("div", document.Children[0].Name);
+                Assert.AreEqual("span", document.Children[0].Children[0].Name);
+                Assert.AreEqual("span", document.Children[0].Children[0].Children[0].Name);
+
+            }
         }
     }
 
