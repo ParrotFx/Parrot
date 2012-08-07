@@ -188,7 +188,7 @@ namespace Parrot.Tests
             Assert.AreEqual("<div style=\"background = url(/images/test.png)\"></div>", Render("div[style= \"background = url(/images/test.png)\"]"));
 
             Assert.AreEqual("<rss xmlns:atom=\"atom\"></rss>", Render("rss[xmlns:atom=\"atom\"]"));
-            //Assert.AreEqual("<p></p>", Render("p[id=name]", new { name = "" }));
+            Assert.AreEqual("<p></p>", Render("p[id=name]", new { name = "" }));
             Assert.AreEqual("<p id=\"tj\"></p>", Render("p[id= name]", new { name = "tj" }));
             Assert.AreEqual("<p id=\"something\"></p>", Render("p[id='something']", new { name = "" }));
         }

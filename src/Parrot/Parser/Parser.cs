@@ -1,7 +1,10 @@
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using GOLD;
 using Parrot.Nodes;
+using Attribute = Parrot.Nodes.Attribute;
 
 namespace Parrot.Parser
 {
@@ -9,6 +12,7 @@ namespace Parrot.Parser
 
     public class Parser
     {
+
         private GOLD.Parser _parser = new GOLD.Parser();
 
         private enum SymbolIndex
@@ -88,6 +92,20 @@ namespace Parrot.Parser
         {
             //This procedure can be called to load the parse tables. The class can
             //read tables using a BinaryReader.
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+
+                Debug.WriteLine(args.Name);
+
+                string name = args.Name.Substring(0, args.Name.IndexOf(','));
+
+                Stream stream = assembly.GetManifestResourceStream(string.Format("Parrot.{0}.dll", name));
+                byte[] block = new byte[stream.Length];
+                stream.Read(block, 0, block.Length);
+                Assembly a2 = Assembly.Load(block);
+                return a2;
+            };
 
             ParserFactory.InitializeFactoryFromResource("Parrot.parrot.egt");
         }
