@@ -51,8 +51,8 @@ namespace Parrot.Mvc.Renderers
                 layout = blockNode.Parameters[0].Value;
             }
 
-            //ok...we need to load the layoutpage
-            //then pass the node's children into the layout page
+            //ok...we need to load the view
+            //then pass the model to it and
             //then return the result
             var result = _engine.FindView(null, layout, null, false);
             if (result != null)
