@@ -9,10 +9,8 @@ using System.Web.Mvc;
 namespace Parrot.Mvc.Renderers
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using Nodes;
 
     /// <summary>
@@ -20,11 +18,11 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public class LayoutRenderer : IRenderer
     {
-        private readonly ParrotViewEngine _engine;
+        private readonly IViewEngine _engine;
 
         public LayoutRenderer(IViewEngine engine)
         {
-            _engine = new ParrotViewEngine();
+            _engine = engine;
         }
 
         public LayoutRenderer() : this(new ParrotViewEngine()) { }

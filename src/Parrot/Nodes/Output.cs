@@ -1,8 +1,5 @@
 namespace Parrot.Nodes
 {
-    using System.Reflection;
-    using Parrot.Nodes;
-
     public class Output : Statement
     {
         public string VariableName { get; private set; }

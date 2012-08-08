@@ -1,55 +1,14 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using GOLD;
-using Parrot.Nodes;
-using Attribute = Parrot.Nodes.Attribute;
-
 namespace Parrot.Parser
 {
     using System.Reflection;
+    using System.IO;
+    using GOLD;
+    using Nodes;
 
     public class Parser
     {
 
         private GOLD.Parser _parser = new GOLD.Parser();
-
-        private enum SymbolIndex
-        {
-            @Eof = 0,                                  // (EOF)
-            @Error = 1,                                // (Error)
-            @Comment = 2,                              // Comment
-            @Newline = 3,                              // NewLine
-            @Whitespace = 4,                           // Whitespace
-            @Timesdiv = 5,                             // '*/'
-            @Divtimes = 6,                             // '/*'
-            @Divdiv = 7,                               // '//'
-            @Lparan = 8,                               // '('
-            @Rparan = 9,                               // ')'
-            @Comma = 10,                               // ','
-            @Colon = 11,                               // ':'
-            @Semi = 12,                                // ';'
-            @Lbracket = 13,                            // '['
-            @Rbracket = 14,                            // ']'
-            @Lbrace = 15,                              // '{'
-            @Rbrace = 16,                              // '}'
-            @Eq = 17,                                  // '='
-            @Identifier = 18,                          // Identifier
-            @Multilinestringliteral = 19,              // MultiLineStringLiteral
-            @Stringliteral = 20,                       // StringLiteral
-            @Stringliteralpipe = 21,                   // StringLiteralPipe
-            @Attribute = 22,                           // <Attribute>
-            @Attributelist = 23,                       // <Attribute List>
-            @Attributes = 24,                          // <Attributes>
-            @Outputstatement = 25,                     // <OutputStatement>
-            @Parameter = 26,                           // <Parameter>
-            @Parameterlist = 27,                       // <Parameter List>
-            @Parameters = 28,                          // <Parameters>
-            @Statement = 29,                           // <Statement>
-            @Statementtail = 30,                       // <Statement Tail>
-            @Statements = 31                           // <Statements>
-        }
 
         private enum ProductionIndex
         {
@@ -70,7 +29,7 @@ namespace Parrot.Parser
             Statements2 = 14,                         // <Statements> ::= <Statements> <Statement>
             Statementtail_Lbrace_Rbrace = 15,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
             Statementtail_Lbrace_Rbrace2 = 16,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-            Statementtail_Gt = 17,                  // <Statement Tail> ::= <Attributes> <Parameters> ';' <Statement>
+            Statementtail_Gt = 17,                  // <Statement Tail> ::= <Attributes> <Parameters> '>' <Statement>
             Statementtail = 18,                       // <Statement Tail> ::= <Attributes> <Parameters>
             Statement_Identifier = 19,                // <Statement> ::= Identifier <Statement Tail>
             Statement = 20,                           // <Statement> ::= <OutputStatement>
@@ -81,22 +40,13 @@ namespace Parrot.Parser
             Outputstatement_Eq_Identifier = 25        // <OutputStatement> ::= '=' Identifier
         }
 
-        private static BinaryReader GetResourceReader(string resourceName)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream stream = assembly.GetManifestResourceStream(resourceName);
-            return new BinaryReader(stream);
-        }
-
         static Parser()
         {
             //This procedure can be called to load the parse tables. The class can
             //read tables using a BinaryReader.
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            System.AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-
-                Debug.WriteLine(args.Name);
 
                 string name = args.Name.Substring(0, args.Name.IndexOf(','));
 
@@ -140,11 +90,11 @@ namespace Parrot.Parser
                 {
                     case ParseMessage.LexicalError:
                         //Cannot recognize token
-                        throw new ParserException("find the message somehow");
+                        throw new Parrot.ParserException("find the message somehow");
 
                     case ParseMessage.SyntaxError:
                         //Expecting a different token
-                        throw new ParserException("find the message somehow");
+                        throw new Parrot.ParserException("find the message somehow");
 
                     case ParseMessage.Reduction:
                         //Create a customized object to store the reduction
@@ -356,18 +306,4 @@ namespace Parrot.Parser
             return new Statement(reduction[0].Data as string, reduction[1].Data as StatementTail);
         }
     } //MyParser
-
-    public class StatementTail : AbstractNode
-    {
-
-
-        public override bool IsTerminal
-        {
-            get { return false; }
-        }
-
-        public ParameterList Parameters { get; set; }
-        public AttributeList Attributes { get; set; }
-        public StatementList Children { get; set; }
-    }
 }

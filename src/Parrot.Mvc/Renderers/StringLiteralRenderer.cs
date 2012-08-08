@@ -1,7 +1,7 @@
 using System;
 using Parrot.Nodes;
 
-namespace Parrot.Tests
+namespace Parrot.Mvc.Renderers
 {
     public class StringLiteralRenderer : IRenderer {
         public string Render(AbstractNode node, object model)

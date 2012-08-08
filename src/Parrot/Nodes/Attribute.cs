@@ -1,15 +1,5 @@
 namespace Parrot.Nodes
 {
-    using Parrot.Nodes;
-
-    public enum ValueType
-    {
-        StringLiteral,
-        Property,
-        Local,
-        Keyword
-    }
-
     public class Attribute : AbstractNode
     {
         public string Key { get; internal set; }

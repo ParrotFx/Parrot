@@ -1,13 +1,9 @@
 namespace Parrot.Nodes
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using Parrot;
-    using Parrot.Nodes;
-    using Parser;
 
     public class Statement : AbstractNode
     {
@@ -135,7 +131,7 @@ namespace Parrot.Nodes
         {
             char[] splitBy = new[] { '.', '#' };
             int start = 0;
-            int index = 0;
+            int index;
 
             string previousCharacter = "";
 

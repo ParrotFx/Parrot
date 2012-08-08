@@ -1,15 +1,12 @@
-﻿using System.Diagnostics;
-using Parrot.Mvc.Renderers;
-
-namespace Parrot.Mvc
+﻿namespace Parrot.Mvc
 {
     using System;
     using System.IO;
-    using System.Text;
     using System.Web.Hosting;
     using System.Web.Mvc;
-    using Parrot.Nodes;
-    using Tests;
+    using Nodes;
+    using System.Diagnostics;
+    using Renderers;
 
     public class ParrotViewEngine : IViewEngine
     {

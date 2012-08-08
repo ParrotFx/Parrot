@@ -8,8 +8,6 @@ namespace Parrot.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     public interface IDependencyResolver {
         void Register(Type type, Func<object> activator);

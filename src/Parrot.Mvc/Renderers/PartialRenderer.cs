@@ -8,16 +8,16 @@ namespace Parrot.Mvc.Renderers
 
     public class PartialRenderer : HtmlRenderer
     {
-        private readonly ParrotViewEngine _engine;
+        private readonly IViewEngine _engine;
 
         public PartialRenderer(IViewEngine engine)
         {
-            _engine = new ParrotViewEngine();
+            _engine = engine;
         }
 
         public PartialRenderer() : this(new ParrotViewEngine()) { }
 
-        public string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object model)
         {
             if (node == null)
             {

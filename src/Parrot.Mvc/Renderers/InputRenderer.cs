@@ -4,8 +4,6 @@ using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
-    using Attribute = Nodes.Attribute;
-
     public class InputRenderer : IRenderer
     {
         public string Render(AbstractNode node, object model)

@@ -6,12 +6,12 @@ namespace Parrot.Nodes
     public class StatementList : AbstractNodeList<Statement>
     {
 
-        public StatementList(params Statement[] nodes) : base()
+        public StatementList(params Statement[] nodes)
         {
             _list.AddRange(nodes);
         }
 
-        public StatementList(StatementList list, params Statement[] nodes) : base()
+        public StatementList(StatementList list, params Statement[] nodes)
         {
             if (list != null)
             {
@@ -29,7 +29,7 @@ namespace Parrot.Nodes
             StringBuilder sb = new StringBuilder();
             foreach (var element in this.Select(e => e.SetModel(Model)))
             {
-                sb.Append(element.ToString());
+                sb.Append(element);
             }
 
             return sb.ToString();

@@ -1,10 +1,9 @@
-using System;
-using System.IO;
-using System.Reflection;
-using GOLD;
-
 namespace Parrot.Parser
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
+
     public static class ParserFactory
     {
         private static readonly object Locker = new object();

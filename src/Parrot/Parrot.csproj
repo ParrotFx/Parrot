@@ -62,15 +62,15 @@
     <Compile Include="Nodes\StringLiteral.cs" />
     <Compile Include="Nodes\ParameterList.cs" />
     <Compile Include="Nodes\StringLiteralPipe.cs" />
+    <Compile Include="Nodes\ValueType.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserFactory.cs" />
+    <Compile Include="Nodes\StatementTail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\RawOutput.cs" />
     <Compile Include="RendererFactory.cs" />
-    <Compile Include="Parser\RuleConstants.cs" />
     <Compile Include="Parser\RuleException.cs" />
-    <Compile Include="Parser\SymbolConstants.cs" />
     <Compile Include="Parser\SymbolException.cs" />
   </ItemGroup>
   <ItemGroup>

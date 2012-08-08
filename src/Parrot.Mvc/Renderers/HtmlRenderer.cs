@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Parrot.Nodes;
@@ -11,6 +10,8 @@ namespace Parrot.Mvc.Renderers
 
     public class HtmlRenderer : IRenderer
     {
+        protected Lazy<IRendererFactory> Factory = new Lazy<IRendererFactory>(() => Infrastructure.Host.DependencyResolver.Get<IRendererFactory>()); 
+        
         public virtual string DefaultChildTag
         {
             get { return "div"; }
@@ -23,7 +24,7 @@ namespace Parrot.Mvc.Renderers
                 defaultTag = DefaultChildTag;
             }
 
-            Func<string, string> tagName = (s) => string.IsNullOrEmpty(s) ? defaultTag : s;
+            Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
 
             var sb = new StringBuilder();
             if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
@@ -35,7 +36,7 @@ namespace Parrot.Mvc.Renderers
                     foreach (var child in statement.Children)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+                        var renderer = Factory.Value.GetRenderer(child.Name);
 
                         sb.AppendLine(renderer.Render(child, localItem));
                     }
@@ -48,7 +49,7 @@ namespace Parrot.Mvc.Renderers
                     if (child != null)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+                        var renderer = Factory.Value.GetRenderer(child.Name);
 
                         sb.Append(renderer.Render(child, localModel));
                     }
@@ -103,13 +104,13 @@ namespace Parrot.Mvc.Renderers
             {
                 statement.Parameters.First().SetModel(model);
 
-                localModel = (statement.Parameters.First() as Parameter).GetPropertyValue();
+                localModel = statement.Parameters.First().GetPropertyValue();
             }
 
             statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
 
             TagBuilder builder = new TagBuilder(statement.Name);
-            foreach (var attribute in statement.Attributes.Cast<Attribute>())
+            foreach (var attribute in statement.Attributes)
             {
                 attribute.SetModel(model);
 

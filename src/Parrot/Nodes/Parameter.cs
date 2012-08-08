@@ -1,8 +1,5 @@
 namespace Parrot.Nodes
 {
-    using Parrot;
-    using Parrot.Nodes;
-
     public class Parameter : AbstractNode
     {
         public string Value { get; private set; }
@@ -22,7 +19,7 @@ namespace Parrot.Nodes
             {
                 if (value == "this")
                 {
-                    ValueType = Nodes.ValueType.Local;
+                    ValueType = ValueType.Local;
                 }
                 else
                 {

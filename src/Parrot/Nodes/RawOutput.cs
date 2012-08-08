@@ -1,7 +1,5 @@
 namespace Parrot.Nodes
 {
-    using Parrot.Nodes;
-
     public class RawOutput : Statement
     {
         public string VariableName { get; set; }

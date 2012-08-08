@@ -6,9 +6,6 @@
 
 namespace Parrot.Nodes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
 
     /// <summary>
@@ -25,8 +22,8 @@ namespace Parrot.Nodes
 
         public Document(Document document, Statement statement)
         {
-            this.Children = document.Children;
-            this.Children.Add(statement);
+            Children = document.Children;
+            Children.Add(statement);
         }
 
         public string Render(object model)

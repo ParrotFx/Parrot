@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Parrot.Nodes;
-
-namespace Parrot
+﻿namespace Parrot
 {
+
+    using System;
+    using System.Collections.Generic;
+    using Nodes;
+
     public interface IRendererFactory
     {
         void RegisterFactory(string blockName, Func<AbstractNode, object, string> renderer);

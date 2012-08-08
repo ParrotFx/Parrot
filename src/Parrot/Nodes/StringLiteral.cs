@@ -6,11 +6,6 @@
 
 namespace Parrot.Nodes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     public class StringLiteral : Statement
     {
         public string Value { get; private set; }
