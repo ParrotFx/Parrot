@@ -106,11 +106,21 @@ namespace Parrot.Tests
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div(this) }", model));
 
             var stack = new LocalsStack();
+            int index = 0;
             stack.Push(new Dictionary<string, Func<string, object>>
             {
-                {"first", s => "True"}
+                {"first", s =>
+                {
+                    if (index == 0)
+                    {
+                        index++;
+                        return "True";
+                    }
+                    return "False";
+                }}
             });
-            Assert.AreEqual("<div>True</div><div>True</div>", Render("foreach(this) { div(first) }", model, stack));
+
+            Assert.AreEqual("<div>True</div><div>False</div>", Render("foreach(this) { div(first) }", model, stack));
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
         }
