@@ -95,7 +95,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                         var renderer =
                         Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(
                         element.Name);
-                        sb.AppendLine(renderer.Render(element, modelObject));
+                        sb.AppendLine(renderer.Render(element, modelObject, null));
                     }
                 }
 

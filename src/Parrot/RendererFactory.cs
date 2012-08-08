@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot
 {
     public interface IRendererFactory
     {
-        void RegisterFactory(string blockName, Func<AbstractNode, object, string> renderer);
-        void RegisterFactory(string[] blocks, Func<AbstractNode, object, string> renderer);
+        void RegisterFactory(string blockName, Func<AbstractNode, object, LocalsStack, string> renderer);
+        void RegisterFactory(string[] blocks, Func<AbstractNode, object, LocalsStack, string> renderer);
         void RegisterFactory(string blockName, IRenderer renderer);
         void RegisterFactory(string[] blocks, IRenderer renderer);
         IRenderer GetRenderer(string blockName);
@@ -24,7 +25,7 @@ namespace Parrot
             _renderers = new Dictionary<string, IRenderer>();
         }
 
-        public void RegisterFactory(string[] blocks, Func<AbstractNode, object, string> renderer)
+        public void RegisterFactory(string[] blocks, Func<AbstractNode, object, LocalsStack, string> renderer)
         {
             foreach (var block in blocks)
             {
@@ -32,7 +33,7 @@ namespace Parrot
             }
         }
 
-        public void RegisterFactory(string blockName, Func<AbstractNode, object, string> renderer)
+        public void RegisterFactory(string blockName, Func<AbstractNode, object, LocalsStack, string> renderer)
         {
             _renderers.Add(blockName, new FuncRenderer(renderer));
         }
@@ -67,28 +68,28 @@ namespace Parrot
 
     public class FuncRenderer : IRenderer
     {
-        readonly Func<AbstractNode, object, string> _renderer;
+        readonly Func<AbstractNode, object, LocalsStack, string> _renderer;
 
-        public FuncRenderer(Func<AbstractNode, object, string> renderer)
+        public FuncRenderer(Func<AbstractNode, object, LocalsStack, string> renderer)
         {
             _renderer = renderer;
         }
-
-        public string Render(AbstractNode node, object model)
+        
+        public string Render(AbstractNode node, object model, LocalsStack stack)
         {
-            return _renderer(null, model);
+            return _renderer(null, model, stack);
         }
 
-        public string Render(AbstractNode node)
+        public string Render(AbstractNode node, LocalsStack stack)
         {
-            return Render(node, null);
+            return Render(node, null, stack);
         }
     }
 
     public interface IRenderer
     {
-        string Render(AbstractNode node, object model);
-        string Render(AbstractNode node);
+        string Render(AbstractNode node, LocalsStack stack);
+        string Render(AbstractNode node, object model, LocalsStack stack);
     }
 
 }

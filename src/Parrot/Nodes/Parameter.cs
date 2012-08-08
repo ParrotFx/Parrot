@@ -35,19 +35,19 @@ namespace Parrot.Nodes
 
         public object GetPropertyValue()
         {
+            return GetModelValue(Value);
+            //if (ValueType == ValueType.Property)
+            //{
+            //    var value = GetModelValue(Value);
+            //    return value;
+            //}
 
-            if (ValueType == ValueType.Property)
-            {
-                var value = GetModelValue(Value);
-                return value;
-            }
+            //if (ValueType == ValueType.Local)
+            //{
+            //    return Model;
+            //}
 
-            if (ValueType == ValueType.Local)
-            {
-                return Model;
-            }
-
-            return Value;
+            //return Value;
         }
 
         private bool IsWrappedInQuotes(string value)

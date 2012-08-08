@@ -1,11 +1,17 @@
 ﻿using System;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
     public class OutputRenderer : IRenderer
     {
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, LocalsStack stack)
+        {
+            return Render(node, null, stack);
+        }
+
+        public string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -20,11 +26,6 @@ namespace Parrot.Mvc.Renderers
 
             node.SetModel(model);
             return node.ToString();
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

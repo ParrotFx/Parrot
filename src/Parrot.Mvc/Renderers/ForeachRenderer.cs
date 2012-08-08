@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -18,7 +20,7 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public class ForeachRenderer : HtmlRenderer
     {
-        public override string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object model, LocalsStack stack)
         {
             object localModel = model;
             
@@ -38,6 +40,7 @@ namespace Parrot.Mvc.Renderers
             if (blockNode.Parameters.Any())
             {
                 blockNode.Parameters[0].SetModel(model);
+                blockNode.Parameters[0].SetStack(stack);
                 localModel = blockNode.Parameters[0].GetPropertyValue();
             }
 
@@ -51,15 +54,10 @@ namespace Parrot.Mvc.Renderers
             StringBuilder sb = new StringBuilder();
             foreach (var item in loop)
             {
-                sb.Append(blockNode.Children.Render(item));
+                sb.Append(blockNode.Children.Render(item, stack));
             }
 
             return sb.ToString();
-        }
-
-        public override string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

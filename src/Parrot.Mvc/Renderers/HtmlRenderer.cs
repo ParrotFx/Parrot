@@ -3,20 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
-    using Attribute = Nodes.Attribute;
-
     public class HtmlRenderer : IRenderer
     {
+        protected Lazy<IRendererFactory> Factory = new Lazy<IRendererFactory>(() => Host.DependencyResolver.Get<IRendererFactory>());
+
+        public HtmlRenderer()
+        {
+        }
+
         public virtual string DefaultChildTag
         {
             get { return "div"; }
         }
 
-        public virtual string RenderChildren(Statement statement, object localModel, string defaultTag = null)
+        public virtual string RenderChildren(Statement statement, object localModel, LocalsStack stack, string defaultTag = null)
         {
             if (string.IsNullOrEmpty(defaultTag))
             {
@@ -35,9 +40,9 @@ namespace Parrot.Mvc.Renderers
                     foreach (var child in statement.Children)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+                        var renderer = Factory.Value.GetRenderer(child.Name);
 
-                        sb.AppendLine(renderer.Render(child, localItem));
+                        sb.AppendLine(renderer.Render(child, localItem, stack));
                     }
                 }
             }
@@ -48,9 +53,9 @@ namespace Parrot.Mvc.Renderers
                     if (child != null)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(child.Name);
+                        var renderer = Factory.Value.GetRenderer(child.Name);
 
-                        sb.Append(renderer.Render(child, localModel));
+                        sb.Append(renderer.Render(child, localModel, stack));
                     }
                 }
             }
@@ -58,60 +63,37 @@ namespace Parrot.Mvc.Renderers
             return sb.ToString();
         }
 
-        public virtual string Render(AbstractNode node)
-        {
-            return Render(node, null);
-        }
-
-        public virtual string Render(AbstractNode node, object model)
-        {
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-
-            var blockNode = node as Statement;
-            if (blockNode == null)
-            {
-                throw new ArgumentException("node");
-            }
-
-            var tag = CreateTag(model, blockNode);
-
-            return tag.ToString();
-        }
-
-        public string Render(Document document, object model)
+        public string Render(Document document, object model, LocalsStack stack)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
             {
-                var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
-
-                var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
+                var renderer = Factory.Value.GetRenderer(element.Name);
+                sb.AppendLine(renderer.Render(element, model, stack));
             }
 
             return sb.ToString();
         }
 
-        protected TagBuilder CreateTag(object model, Statement statement)
+        protected TagBuilder CreateTag(object model, Statement statement, LocalsStack stack)
         {
             object localModel = model;
 
             if (statement.Parameters != null && statement.Parameters.Any())
             {
                 statement.Parameters.First().SetModel(model);
+                statement.Parameters[0].SetStack(stack);
 
-                localModel = (statement.Parameters.First() as Parameter).GetPropertyValue();
+                localModel = statement.Parameters.First().GetPropertyValue();
             }
 
             statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
 
             TagBuilder builder = new TagBuilder(statement.Name);
-            foreach (var attribute in statement.Attributes.Cast<Attribute>())
+            foreach (var attribute in statement.Attributes)
             {
                 attribute.SetModel(model);
+                attribute.SetStack(stack);
 
                 if (attribute.Key == "class")
                 {
@@ -125,7 +107,7 @@ namespace Parrot.Mvc.Renderers
 
             if (statement.Children.Any())
             {
-                builder.InnerHtml = RenderChildren(statement, localModel);
+                builder.InnerHtml = RenderChildren(statement, localModel, stack);
             }
             else
             {
@@ -135,6 +117,29 @@ namespace Parrot.Mvc.Renderers
                 }
             }
             return builder;
+        }
+
+        public virtual string Render(AbstractNode node, LocalsStack stack)
+        {
+            return Render(node, null, stack);
+        }
+
+        public virtual string Render(AbstractNode node, object model, LocalsStack stack)
+        {
+            if (node == null)
+            {
+                throw new ArgumentNullException("node");
+            }
+
+            var blockNode = node as Statement;
+            if (blockNode == null)
+            {
+                throw new ArgumentException("node");
+            }
+
+            var tag = CreateTag(model, blockNode, stack);
+
+            return tag.ToString();
         }
     }
 }

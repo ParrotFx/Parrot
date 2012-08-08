@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="Infrastructure\DependencyResolver.cs" />
     <Compile Include="Infrastructure\Host.cs" />
+    <Compile Include="Infrastructure\LocalsStack.cs" />
+    <Compile Include="Infrastructure\Stack.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\AbstractNodeList.cs" />
     <Compile Include="Nodes\Attribute.cs" />

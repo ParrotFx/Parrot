@@ -1,9 +1,12 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     using System.Linq;
 
     public abstract class AbstractNode
     {
+        private LocalsStack _stack;
         public object Model { get; set; }
 
         public abstract bool IsTerminal
@@ -18,6 +21,12 @@ namespace Parrot.Nodes
             return this;
         }
 
+        public AbstractNode SetStack(LocalsStack stack)
+        {
+            _stack = stack;
+
+            return this;
+        }
         protected object GetModelValue(string parameterName)
         {
             return GetModelValue(Model, parameterName);
@@ -33,6 +42,17 @@ namespace Parrot.Nodes
             {
                 return localModel;
             }
+
+            //check the local stack
+            if (_stack != null)
+            {
+                object result;
+                if (_stack.Get(parameterName, out result))
+                {
+                    return result;
+                }
+            }
+
 
             if (localModel != null)
             {

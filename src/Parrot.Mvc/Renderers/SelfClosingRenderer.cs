@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
     public class SelfClosingRenderer : HtmlRenderer
     {
-        public override string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -19,7 +20,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentException("node");
             }
 
-            var tag = CreateTag(model, blockNode);
+            var tag = CreateTag(model, blockNode, stack);
 
             return tag.ToString(TagRenderMode.SelfClosing);
         }

@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -17,13 +19,13 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public static class RendererHelpers
     {
-        public static string Render(this IList<Statement> nodes, object model )
+        public static string Render(this IList<Statement> nodes, object model, LocalsStack stack)
         {
             var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
             StringBuilder sb = new StringBuilder();
             foreach (var child in nodes)
             {
-                sb.Append(factory.GetRenderer(child.Name).Render(child, model));
+                sb.Append(factory.GetRenderer(child.Name).Render(child, model, stack));
             }
 
             return sb.ToString();

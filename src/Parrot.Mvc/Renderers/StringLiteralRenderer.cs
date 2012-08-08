@@ -1,10 +1,17 @@
 using System;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
-namespace Parrot.Tests
+namespace Parrot.Mvc.Renderers
 {
-    public class StringLiteralRenderer : IRenderer {
-        public string Render(AbstractNode node, object model)
+    public class StringLiteralRenderer : IRenderer
+    {
+        public string Render(AbstractNode node, LocalsStack stack)
+        {
+            return Render(node, null, stack);
+        }
+
+        public string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -18,11 +25,6 @@ namespace Parrot.Tests
             }
 
             return stringNode.GetValue() as string;
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

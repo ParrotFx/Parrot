@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     using System;
@@ -29,7 +31,7 @@ namespace Parrot.Nodes
             this.Children.Add(statement);
         }
 
-        public string Render(object model)
+        public string Render(object model, LocalsStack stack)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var element in Children)
@@ -37,7 +39,7 @@ namespace Parrot.Nodes
                 var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
 
                 var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
+                sb.AppendLine(renderer.Render(element, model, stack));
             }
 
             return sb.ToString();

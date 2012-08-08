@@ -50,7 +50,7 @@ namespace Parrot.Tests
             return factory;
         }
 
-        private string Render(string parrot, object model, IRendererFactory factory)
+        private string Render(string parrot, object model, LocalsStack stack, IRendererFactory factory)
         {
             var resolver = new Mock<IDependencyResolver>();
             resolver.Setup(f => f.Get<IRendererFactory>()).Returns(GetFactory());
@@ -66,10 +66,25 @@ namespace Parrot.Tests
             foreach (var element in document.Children)
             {
                 var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
+                sb.AppendLine(renderer.Render(element, model, stack));
             }
 
             return sb.ToString().Trim();
+        }
+
+        private string Render(string parrot, object model, LocalsStack stack)
+        {
+            return Render(parrot, model, stack, GetFactory());
+        }
+
+        private string Render(string parrot, LocalsStack stack)
+        {
+            return Render(parrot, null, stack, GetFactory());
+        }
+
+        private string Render(string parrot, object model, IRendererFactory factory)
+        {
+            return Render(parrot, model, null, factory);
         }
 
         private string Render(string parrot, object model)
@@ -90,7 +105,25 @@ namespace Parrot.Tests
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div(this) }", model));
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div(this) }", model));
 
+            var stack = new LocalsStack();
+            stack.Push(new Dictionary<string, Func<string, object>>
+            {
+                {"first", s => "True"}
+            });
+            Assert.AreEqual("<div>True</div><div>True</div>", Render("foreach(this) { div(first) }", model, stack));
+
             Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
+        }
+
+        [Test]
+        public void StackTests()
+        {
+            var stack = new LocalsStack();
+            stack.Push(new Dictionary<string, Func<string, object>>
+            {
+                {"first", s => "first"}
+            });
+            Assert.AreEqual("first", Render(":first", stack));
         }
 
         [Test]

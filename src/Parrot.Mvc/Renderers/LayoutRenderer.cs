@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.Web.Mvc;
+using Parrot.Infrastructure;
 
 namespace Parrot.Mvc.Renderers
 {
@@ -29,7 +30,12 @@ namespace Parrot.Mvc.Renderers
 
         public LayoutRenderer() : this(new ParrotViewEngine()) { }
 
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, LocalsStack stack)
+        {
+            return Render(node, null, stack);
+        }
+
+        public string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -68,16 +74,11 @@ namespace Parrot.Mvc.Renderers
                     {
                         Children = new StatementList(blockNode.Children.ToArray()),
                         Model = model
-                    });
+                    }, stack);
                 }
             }
 
             throw new InvalidOperationException();
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

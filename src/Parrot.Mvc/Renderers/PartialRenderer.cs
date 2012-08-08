@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -17,7 +19,7 @@ namespace Parrot.Mvc.Renderers
 
         public PartialRenderer() : this(new ParrotViewEngine()) { }
 
-        public string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -61,7 +63,7 @@ namespace Parrot.Mvc.Renderers
 
                     var document = ParrotView.LoadDocument(contents);
 
-                    return document.Render(localModel);
+                    return document.Render(localModel, stack);
                 }
             }
 

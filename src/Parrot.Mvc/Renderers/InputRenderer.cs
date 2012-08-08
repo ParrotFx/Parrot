@@ -1,14 +1,18 @@
 using System;
 using System.Linq;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
-    using Attribute = Nodes.Attribute;
-
     public class InputRenderer : IRenderer
     {
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, LocalsStack stack)
+        {
+            return Render(node, null, stack);
+        }
+
+        public string Render(AbstractNode node, object model, LocalsStack stack)
         {
             if (node == null)
             {
@@ -39,7 +43,7 @@ namespace Parrot.Mvc.Renderers
                     tag.MergeAttribute(attribute.Key, attribute.GetValue(), true);
                 }
             }
-            
+
             //check and see if there's a parameter and assign it to value
             if (blockNode.Parameters != null && blockNode.Parameters.Count == 1)
             {
@@ -50,11 +54,6 @@ namespace Parrot.Mvc.Renderers
             }
 
             return tag.ToString(TagRenderMode.SelfClosing);
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }
