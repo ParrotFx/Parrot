@@ -147,7 +147,7 @@ namespace Parrot.Nodes
                             word.Append(source[i]);
                         }
 
-                        parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.RawKeyword : StringLiteralPartType.Keyword, word.ToString(), i - tempCounter));
+                        parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
                         tempCounter = 0;
                         //
 

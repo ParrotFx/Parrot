@@ -246,11 +246,11 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Outputstatement_Colon_Identifier:
                     // <OutputStatement> ::= ':' Identifier
-                    return new RawOutput(r[1].Data as string);
+                    return new Output(r[1].Data as string);
 
                 case ProductionIndex.Outputstatement_Eq_Identifier:
                     // <OutputStatement> ::= '=' Identifier
-                    return new Output(r[1].Data as string);
+                    return new RawOutput(r[1].Data as string);
 
             }  //switch
 
