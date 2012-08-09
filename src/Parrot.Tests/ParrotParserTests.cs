@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using Parrot.Mvc.Renderers;
 
 namespace Parrot.Tests
@@ -168,6 +169,83 @@ namespace Parrot.Tests
                 Assert.AreEqual("div", document.Children[0].Name);
                 Assert.AreEqual("span", document.Children[0].Children[0].Name);
                 Assert.AreEqual("span", document.Children[0].Children[0].Children[0].Name);
+
+            }
+
+            [Test]
+            public void StringLiteralParserTests()
+            {
+                var parts = new StringLiteral("\"this :is awesome :right\"").Value;
+
+                Assert.AreEqual(4, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
+                Assert.AreEqual(StringLiteralPartType.RawKeyword, parts[1].Type);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[2].Type);
+                Assert.AreEqual(StringLiteralPartType.RawKeyword, parts[1].Type);
+
+                Assert.AreEqual("this ", parts[0].Data);
+                Assert.AreEqual("is", parts[1].Data);
+                Assert.AreEqual(" awesome ", parts[2].Data);
+                Assert.AreEqual("right", parts[3].Data);
+
+                parts = new StringLiteral("\"this contains a : but not a keyword\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
+
+                parts = new StringLiteral("\":keyword_only\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.RawKeyword, parts[0].Type);
+                Assert.AreEqual("keyword_only", parts[0].Data);
+
+                parts = new StringLiteral("\":keyword_first followed by more words\"").Value;
+                Assert.AreEqual(2, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.RawKeyword, parts[0].Type);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
+
+                parts = new StringLiteral("\":keyword.with.dot\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.RawKeyword, parts[0].Type);
+                Assert.AreEqual("keyword.with.dot", parts[0].Data);
+
+                parts = new StringLiteral("\"this is an :: escaped colon\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual("this is an : escaped colon", parts[0].Data);
+
+                parts = new StringLiteral("\"this =is awesome =right\"").Value;
+
+                Assert.AreEqual(4, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
+                Assert.AreEqual(StringLiteralPartType.Keyword, parts[1].Type);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[2].Type);
+                Assert.AreEqual(StringLiteralPartType.Keyword, parts[1].Type);
+
+                Assert.AreEqual("this ", parts[0].Data);
+                Assert.AreEqual("is", parts[1].Data);
+                Assert.AreEqual(" awesome ", parts[2].Data);
+                Assert.AreEqual("right", parts[3].Data);
+
+                parts = new StringLiteral("\"this contains a = but not a keyword\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
+
+                parts = new StringLiteral("\"=keyword_only\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Keyword, parts[0].Type);
+                Assert.AreEqual("keyword_only", parts[0].Data);
+
+                parts = new StringLiteral("\"=keyword_first followed by more words\"").Value;
+                Assert.AreEqual(2, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Keyword, parts[0].Type);
+                Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
+
+                parts = new StringLiteral("\"=keyword.with.dot\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual(StringLiteralPartType.Keyword, parts[0].Type);
+                Assert.AreEqual("keyword.with.dot", parts[0].Data);
+
+                parts = new StringLiteral("\"this is an == escaped equals\"").Value;
+                Assert.AreEqual(1, parts.Count);
+                Assert.AreEqual("this is an = escaped equals", parts[0].Data);
 
             }
         }
