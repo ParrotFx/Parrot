@@ -144,11 +144,22 @@ namespace Parrot.Nodes
                             {
                                 break;
                             }
+
                             word.Append(source[i]);
                         }
 
-                        parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
-                        tempCounter = 0;
+                        if (word[word.Length - 1] == '.')
+                        {
+                            word.Length -= 1;
+                            parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
+                            tempCounter = 0;
+                            c[tempCounter++] = '.';
+                        }
+                        else
+                        {
+                            parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
+                            tempCounter = 0;
+                        }
                         //
 
                         if (i < source.Length)

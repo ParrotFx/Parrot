@@ -1,10 +1,10 @@
 namespace Parrot.Nodes
 {
-    public class Output : Statement
+    public class EncodedOutput : Statement
     {
         public string VariableName { get; private set; }
 
-        public Output(string variableName) : base("output")
+        public EncodedOutput(string variableName) : base("output")
         {
             VariableName = variableName;
         }

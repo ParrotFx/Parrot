@@ -58,7 +58,7 @@
     <Compile Include="Nodes\StatementList.cs" />
     <Compile Include="Nodes\Document.cs" />
     <Compile Include="Nodes\Parameter.cs" />
-    <Compile Include="Nodes\Output.cs" />
+    <Compile Include="Nodes\EncodedOutput.cs" />
     <Compile Include="Nodes\StringLiteral.cs" />
     <Compile Include="Nodes\ParameterList.cs" />
     <Compile Include="Nodes\StringLiteralPart.cs" />
