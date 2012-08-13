@@ -6,16 +6,19 @@
 
 namespace Parrot.Mvc.Renderers
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using Nodes;
+    using ValueType = Nodes.ValueType;
 
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
     public static class RendererHelpers
     {
-        public static string Render(this IList<Statement> nodes, object model )
+        public static string Render(this IList<Statement> nodes, object model)
         {
             var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
             StringBuilder sb = new StringBuilder();
@@ -26,5 +29,62 @@ namespace Parrot.Mvc.Renderers
 
             return sb.ToString();
         }
+
+        internal static object GetModelValue(object model, Parrot.Nodes.ValueType valueType, string property)
+        {
+            switch (valueType)
+            {
+                case ValueType.Property:
+                    //check to see if the property is any one of several keywords
+                    if (property == "true")
+                    {
+                        return true;
+                    }
+
+                    if (model == null)
+                    {
+                        throw new NullReferenceException("model");
+                    }
+
+                    string[] parameters = property.Split(".".ToCharArray());
+
+                    object modelToCheck = model;
+
+                    if (property == "this")
+                    {
+                        return model;
+                    }
+
+                    if (model != null)
+                    {
+                        var pi = model.GetType().GetProperty(parameters[0]);
+                        if (pi != null)
+                        {
+                            var tempObject = pi.GetValue(model, null);
+
+                            if (parameters.Length == 1)
+                            {
+                                return tempObject;
+                            }
+
+                            return GetModelValue(tempObject, ValueType.Property, string.Join(".", parameters.Skip(1)));
+                        }
+                    }
+
+
+                    break;
+                case ValueType.StringLiteral:
+                    return property;
+
+                case ValueType.Keyword:
+                    return property;
+
+                case ValueType.Local:
+                    return model;
+            }
+
+            return null;
+        }
+
     }
 }

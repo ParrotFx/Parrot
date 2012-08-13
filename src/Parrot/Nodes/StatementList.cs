@@ -23,17 +23,6 @@ namespace Parrot.Nodes
                 _list.AddRange(nodes);
             }
         }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var element in this.Select(e => e.SetModel(Model)))
-            {
-                sb.Append(element);
-            }
-
-            return sb.ToString();
-        }
     }
 
 }

@@ -30,22 +30,22 @@ namespace Parrot.Nodes
             Value = value;
         }
 
-        public object GetPropertyValue()
-        {
+        //public object GetPropertyValue()
+        //{
 
-            if (ValueType == ValueType.Property)
-            {
-                var value = GetModelValue(Value);
-                return value;
-            }
+        //    if (ValueType == ValueType.Property)
+        //    {
+        //        var value = GetModelValue(Value);
+        //        return value;
+        //    }
 
-            if (ValueType == ValueType.Local)
-            {
-                return Model;
-            }
+        //    if (ValueType == ValueType.Local)
+        //    {
+        //        return Model;
+        //    }
 
-            return Value;
-        }
+        //    return Value;
+        //}
 
         private bool IsWrappedInQuotes(string value)
         {

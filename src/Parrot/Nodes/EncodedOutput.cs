@@ -14,22 +14,5 @@ namespace Parrot.Nodes
             get { return true; }
         }
 
-        public override string ToString()
-        {
-            //check for variable name on the model
-
-            if (VariableName == "this")
-            {
-                return Model.ToString();
-            }
-
-            var pi = Model.GetType().GetProperty(VariableName);
-            if (pi != null)
-            {
-                return pi.GetValue(Model, null).ToString();
-            }
-
-            return "";
-        }
     }
 }

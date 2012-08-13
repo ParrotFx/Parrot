@@ -26,18 +26,27 @@ namespace Parrot.Mvc.Renderers
             TagBuilder tag = new TagBuilder("input");
             foreach (var attribute in blockNode.Attributes)
             {
-                attribute.SetModel(localModel);
+                //attribute.SetModel(localModel);
+                var attributeValue = RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 
                 if (attribute.Key == "class")
                 {
-                    tag.AddCssClass(attribute.GetValue());
+                    tag.AddCssClass((string)attributeValue);
                 }
                 else
                 {
-                    tag.MergeAttribute(attribute.Key, attribute.GetValue(), true);
+
+                    if (attributeValue is bool && (bool)attributeValue)
+                    {
+                        tag.MergeAttribute(attribute.Key, attribute.Key, true);
+                    }
+                    else
+                    {
+                        tag.MergeAttribute(attribute.Key, (string)attributeValue, true);
+                    }
                 }
             }
-            
+
             //check and see if there's a parameter and assign it to value
             if (blockNode.Parameters != null && blockNode.Parameters.Count == 1)
             {

@@ -102,9 +102,9 @@ namespace Parrot.Mvc.Renderers
 
             if (statement.Parameters != null && statement.Parameters.Any())
             {
-                statement.Parameters.First().SetModel(model);
+                //statement.Parameters.First().SetModel(model);
 
-                localModel = statement.Parameters.First().GetPropertyValue();
+                localModel = RendererHelpers.GetModelValue(model, statement.Parameters.First().ValueType, statement.Parameters.First().Value);
             }
 
             statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
@@ -112,15 +112,15 @@ namespace Parrot.Mvc.Renderers
             TagBuilder builder = new TagBuilder(statement.Name);
             foreach (var attribute in statement.Attributes)
             {
-                attribute.SetModel(model);
+                var attributeValue = RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 
                 if (attribute.Key == "class")
                 {
-                    builder.AddCssClass(attribute.GetValue());
+                    builder.AddCssClass((string) attributeValue);
                 }
                 else
                 {
-                    builder.MergeAttribute(attribute.Key, attribute.GetValue(), true);
+                    builder.MergeAttribute(attribute.Key, (string) attributeValue, true);
                 }
             }
 

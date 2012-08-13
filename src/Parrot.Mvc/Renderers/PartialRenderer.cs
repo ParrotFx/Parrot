@@ -34,9 +34,8 @@ namespace Parrot.Mvc.Renderers
 
             if (blockNode.Parameters != null && blockNode.Parameters.Any())
             {
-                blockNode.Parameters.First().SetModel(model);
-
-                localModel = (blockNode.Parameters.First() as Parameter).GetPropertyValue();
+                localModel = RendererHelpers.GetModelValue(model, blockNode.Parameters.First().ValueType,
+                                                           blockNode.Parameters.First().Value);
             }
 
             //get the parameter

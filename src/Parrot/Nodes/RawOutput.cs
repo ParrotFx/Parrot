@@ -14,15 +14,5 @@ namespace Parrot.Nodes
             get { return true; }
         }
 
-        public override string ToString()
-        {
-            var value = GetModelValue(VariableName);
-            if (value != null)
-            {
-                return System.Net.WebUtility.HtmlEncode(GetModelValue(VariableName).ToString());
-            }
-
-            return null;
-        }
     }
 }

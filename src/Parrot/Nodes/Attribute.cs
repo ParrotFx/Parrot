@@ -43,22 +43,22 @@ namespace Parrot.Nodes
             Value = value;
         }
 
-        public string GetValue()
-        {
-            if (Value == null)
-            {
-                return null;
-            }
+        //public string GetValue()
+        //{
+        //    if (Value == null)
+        //    {
+        //        return null;
+        //    }
 
 
-            if (ValueType == ValueType.Property)
-            {
-                var value = GetModelValue(Value);
-                return value != null ? value.ToString() : null;
-            }
+        //    if (ValueType == ValueType.Property)
+        //    {
+        //        var value = GetModelValue(Value);
+        //        return value != null ? value.ToString() : null;
+        //    }
 
-            return Value;
-        }
+        //    return Value;
+        //}
 
         private bool IsWrappedInQuotes(string value)
         {
@@ -81,7 +81,7 @@ namespace Parrot.Nodes
 
             if (ValueType == ValueType.Property)
             {
-                return string.Format("{0}=\"{1}\"", Key, GetModelValue(Value));
+                return string.Format("{0}=\"{1}\"", Key, Value);
             }
 
             return string.Format("{0}={1}", Key, Value);

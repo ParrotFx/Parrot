@@ -16,7 +16,7 @@ namespace Parrot.Nodes
         private static List<char> _idHeader = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_' };
         private static List<char> _idFooter = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
 
-        public List<StringLiteralPart> Value { get; private set; }
+        public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
         public StringLiteral(string value) : base("string")
@@ -42,46 +42,10 @@ namespace Parrot.Nodes
 
             if (ValueType == ValueType.StringLiteral)
             {
-                Value = Parse(value);
+                Values = Parse(value);
                 //what to do with this
             }
 
-        }
-
-        public object GetValue()
-        {
-            if (ValueType == ValueType.Property)
-            {
-                var value = GetModelValue(Value[0].Data);
-                return value;
-            }
-
-            if (ValueType == ValueType.Keyword)
-            {
-                switch (Value[0].Data)
-                {
-                    case "null":
-                        return null;
-                    case "false":
-                        return false;
-                    case "true":
-                        return true;
-                }
-            }
-
-            //loop through parts and process
-            StringBuilder sb = new StringBuilder();
-            foreach (var part in Value)
-            {
-                switch(part.Type)
-                {
-                    case StringLiteralPartType.Literal:
-                        sb.Append(part.Data);
-                        break;
-                }
-            }
-
-            return sb.ToString();
         }
 
         private bool IsWrappedInQuotes(string value)
@@ -96,7 +60,7 @@ namespace Parrot.Nodes
 
         public override string ToString()
         {
-            return string.Join("", Value.Select(f => f.Data));
+            return string.Join("", Values.Select(f => f.Data));
         }
 
         private List<StringLiteralPart> Parse(string source)

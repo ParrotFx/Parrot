@@ -176,7 +176,7 @@ namespace Parrot.Tests
             [TestCase("=", StringLiteralPartType.Raw)]
             public void StringLiteralParserTests(string delimiter, StringLiteralPartType encoding)
             {
-                var parts = new StringLiteral(string.Format("\"this {0}is awesome {0}right\"", delimiter)).Value;
+                var parts = new StringLiteral(string.Format("\"this {0}is awesome {0}right\"", delimiter)).Values;
 
                 Assert.AreEqual(4, parts.Count);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
@@ -189,34 +189,34 @@ namespace Parrot.Tests
                 Assert.AreEqual(" awesome ", parts[2].Data);
                 Assert.AreEqual("right", parts[3].Data);
 
-                parts = new StringLiteral(string.Format("\"this contains a {0} but not a keyword\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"this contains a {0} but not a keyword\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
 
-                parts = new StringLiteral(string.Format("\"{0}keyword_only\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"{0}keyword_only\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual("keyword_only", parts[0].Data);
 
-                parts = new StringLiteral(string.Format("\"{0}keyword_first followed by more words\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"{0}keyword_first followed by more words\"", delimiter)).Values;
                 Assert.AreEqual(2, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
 
-                parts = new StringLiteral(string.Format("\"{0}keyword.with.dot\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"{0}keyword.with.dot\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual("keyword.with.dot", parts[0].Data);
 
-                parts = new StringLiteral(string.Format("\"this is an {0}{0} escaped colon\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"this is an {0}{0} escaped colon\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(string.Format("this is an {0} escaped colon", delimiter), parts[0].Data);
 
-                parts = new StringLiteral(string.Format("\"{0}keyword_only_endsin. a dot\"", delimiter)).Value;
+                parts = new StringLiteral(string.Format("\"{0}keyword_only_endsin. a dot\"", delimiter)).Values;
                 Assert.AreEqual(2, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
-                Assert.AreEqual("keyword_only_endsin", parts[0].Data);
+                Assert.AreEqual("keyword_only_endsin", parts[0].Data); 
                 Assert.AreEqual(". a dot", parts[1].Data);
 
 

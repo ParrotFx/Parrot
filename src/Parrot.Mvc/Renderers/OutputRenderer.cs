@@ -18,7 +18,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            node.SetModel(model);
+            //node.SetModel(model);
             return node.ToString();
         }
 
