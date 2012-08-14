@@ -36,8 +36,6 @@ namespace Parrot.Mvc.Renderers
             //use the passed in parameter property or use the page model
             if (blockNode.Parameters.Any())
             {
-                //blockNode.Parameters[0].SetModel(model);
-                //localModel = blockNode.Parameters[0].GetPropertyValue();
                 localModel = RendererHelpers.GetModelValue(model, blockNode.Parameters[0].ValueType, blockNode.Parameters[0].Value);
             }
 
