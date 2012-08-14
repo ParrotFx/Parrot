@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -16,8 +18,6 @@ namespace Parrot.Mvc.Renderers
 
             return document.Render(localModel.Model);
         }
-
-
 
         [Obsolete]
         public string Render(AbstractNode node)

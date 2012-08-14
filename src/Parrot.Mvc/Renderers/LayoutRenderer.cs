@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.Web.Mvc;
+using Parrot.Infrastructure;
 
 namespace Parrot.Mvc.Renderers
 {

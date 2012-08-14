@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     using System.Text;

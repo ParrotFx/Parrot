@@ -1,4 +1,6 @@
-﻿namespace Parrot.Mvc
+﻿using Parrot.Infrastructure;
+
+namespace Parrot.Mvc
 {
     using System;
     using System.IO;
