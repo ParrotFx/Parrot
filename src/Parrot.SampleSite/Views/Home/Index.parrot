@@ -9,6 +9,8 @@ html {
 		link[rel="stylesheet" type="text/css" href="http://thisisparrot.com/stylesheets/pygment_trac.css" media="screen"]
 		link[rel="stylesheet" type="text/css" href="http://thisisparrot.com/stylesheets/print.css" media="print"]
 
+		style[type='text/css'] > |label { margin-right: .5em; font-weight: bold; }
+
 		title > |Parrot Test Drive
 	}
 	
