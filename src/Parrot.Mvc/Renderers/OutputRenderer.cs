@@ -1,6 +1,7 @@
 ﻿using System;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
+using ValueType = Parrot.Nodes.ValueType;
 
 namespace Parrot.Mvc.Renderers
 {
@@ -19,8 +20,10 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            //node.SetModel(model);
-            return node.ToString();
+            var value = RendererHelpers.GetModelValue(model, ValueType.Property, outputNode.VariableName);
+
+            //html encode this!
+            return System.Net.WebUtility.HtmlEncode(value.ToString());
         }
 
         public string Render(AbstractNode node)

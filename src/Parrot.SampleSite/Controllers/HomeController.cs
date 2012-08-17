@@ -70,7 +70,8 @@ ul#phoneNumbers.phone(PhoneNumber) {
         {
             return View(new { Title = "BLAH BLAH BLAH" });
         }
-
+        
+        [ValidateInput(false)]
         public ActionResult Index(string template, string model)
         {
             if (string.IsNullOrWhiteSpace(template) || string.IsNullOrWhiteSpace(model))
