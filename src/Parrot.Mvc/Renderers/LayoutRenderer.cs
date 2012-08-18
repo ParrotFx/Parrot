@@ -26,7 +26,7 @@ namespace Parrot.Mvc.Renderers
             _engine = engine;
         }
 
-        public LayoutRenderer() : this(new ParrotViewEngine()) { }
+        public LayoutRenderer() : this(new ParrotViewEngine(Parrot.Infrastructure.Host.DependencyResolver.Get<IPathResolver>())) { }
 
         public string Render(AbstractNode node, object model)
         {

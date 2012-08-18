@@ -15,7 +15,7 @@ namespace Parrot.Mvc.Renderers
             _engine = engine;
         }
 
-        public PartialRenderer() : this(new ParrotViewEngine()) { }
+        public PartialRenderer() : this(new ParrotViewEngine(Parrot.Infrastructure.Host.DependencyResolver.Get<IPathResolver>())) { }
 
         public override string Render(AbstractNode node, object model)
         {

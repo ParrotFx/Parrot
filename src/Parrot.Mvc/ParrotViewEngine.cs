@@ -4,7 +4,6 @@ namespace Parrot.Mvc
 {
     using System;
     using System.IO;
-    using System.Web.Hosting;
     using System.Web.Mvc;
     using Nodes;
     using System.Diagnostics;
@@ -15,6 +14,7 @@ namespace Parrot.Mvc
         #region IViewEngine Members
 
         public static IRendererFactory Factory;
+        private IPathResolver _pathResolver;
 
         static ParrotViewEngine()
         {
@@ -35,6 +35,16 @@ namespace Parrot.Mvc
             Infrastructure.Host.DependencyResolver.Register(typeof(IRendererFactory), () => factory);
 
             Factory = factory;
+
+            //i don't really like this
+            Infrastructure.Host.DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
+
+
+        }
+
+        public ParrotViewEngine(IPathResolver pathResolver)
+        {
+            _pathResolver = pathResolver;
         }
 
         public readonly string[] SearchLocations = new[]
@@ -86,7 +96,7 @@ namespace Parrot.Mvc
 
         internal ParrotView GetView(string viewPath)
         {
-            return new ParrotView(viewPath);
+            return new ParrotView(_pathResolver, viewPath);
         }
 
         public string FindPath(string viewName, string controllerName, out string[] searchedLocations)
@@ -100,10 +110,10 @@ namespace Parrot.Mvc
                 searchedLocations[i] = virtualPath;
 
                 //check the active VirtualPathProvider if the file exists
-                if (HostingEnvironment.VirtualPathProvider.FileExists(virtualPath))
+                if (_pathResolver.FileExists(virtualPath))
                 {
                     //add it to cache - not currently implemented
-                    return HostingEnvironment.VirtualPathProvider.GetFile(virtualPath).VirtualPath;
+                    return _pathResolver.VirtualFilePath(virtualPath);
                 }
             }
 
@@ -123,17 +133,19 @@ namespace Parrot.Mvc
     public class ParrotView : IView
     {
         readonly string _viewPath;
+        private IPathResolver _pathResolver;
 
-        public ParrotView(string viewPath)
+        public ParrotView(IPathResolver pathResolver, string viewPath)
         {
             this._viewPath = viewPath;
+            _pathResolver = pathResolver;
         }
 
         #region IView Members
 
         internal Stream LoadStream()
         {
-            return VirtualPathProvider.OpenFile(_viewPath);
+            return _pathResolver.OpenFile(_viewPath);
         }
 
         public void Render(ViewContext viewContext, TextWriter writer)
@@ -174,7 +186,13 @@ namespace Parrot.Mvc
             {
                 Document document = LoadDocument(template);
 
-                result = document.Render(viewContext.ViewData.Model);
+                object model = null;
+                if (viewContext != null)
+                {
+                    model = viewContext.ViewData.Model;
+                }
+
+                result = document.Render(model);
             }
             catch (Exception e)
             {

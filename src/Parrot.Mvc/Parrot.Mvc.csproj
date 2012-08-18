@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PathResolver.cs" />
     <Compile Include="Renderers\ContentRenderer.cs" />
     <Compile Include="Renderers\DocTypeRenderer.cs" />
     <Compile Include="Renderers\ForeachRenderer.cs" />

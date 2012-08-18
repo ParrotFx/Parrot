@@ -96,26 +96,18 @@ namespace Parrot.Tests
         [Test]
         public void LayoutRendererTests()
         {
+            var testFile = "div > \"testing\"";
+
+            var pathResolver = new Mock<IPathResolver>();
+            pathResolver.Setup(p => p.OpenFile(It.IsAny<string>())).Returns(
+            new MemoryStream(System.Text.Encoding.Default.GetBytes(testFile)));
+            //new FileStream(@"M:\Dev\Parrot\src\Parrot.SampleSite\Views\Home\index.parrot", FileMode.Open));
+
             //TODO: Figure this out later...
-            //var view = new Mock<IView>();
-            //view.Setup(c => c.Render(It.IsAny<ViewContext>(), It.IsAny<TextWriter>()))
-            //    .Callback<ViewContext, TextWriter>((v, t) =>
-            //    {
-            //        t.Write("html { body { content } }");
-            //    });
-
-            //var viewEngine = new Mock<IViewEngine>();
-            //viewEngine.Setup(c => c.FindView(It.IsAny<ControllerContext>(), "", "", false))
-            //          .Returns(new ViewEngineResult(new ParrotView(null), viewEngine.Object));
-            //viewEngine.Setup(c => c.FindPartialView(It.IsAny<ControllerContext>(), It.IsAny<string>(), It.IsAny<bool>()))
-            //          .Returns(new ViewEngineResult(new ParrotView(null), viewEngine.Object));
-
-            //RendererFactory factory = new RendererFactory();
-
-            //factory.RegisterFactory("layout", new LayoutRenderer(viewEngine.Object));
-            //factory.RegisterFactory("content", new ContentRenderer());
-
-            //Assert.AreEqual("blah blah blah", Render("layout { \"blahblahblah\" }", null, factory));
+            var view = new ParrotView(pathResolver.Object, "index.parrot");
+            StringBuilder sb = new StringBuilder();
+            view.Render(null, new StringWriter(sb));
+            Assert.AreEqual("<div>testing</div>", sb.ToString());
         }
 
         [Test]
@@ -206,6 +198,17 @@ namespace Parrot.Tests
             Assert.AreEqual("<div>this is a string literal test\r</div>", Render("div { |this is a string literal test\r\n}"));
             Assert.AreEqual("<div>1\r2\r</div>", Render("div { |1\r\n|2\r\n}"));
             Assert.AreEqual("this is a string literal test", Render("|this is a string literal test\r"));
+        }
+
+        [Test]
+        public void TestingOutput()
+        {
+            var resolver = new Mock<IDependencyResolver>();
+            resolver.Setup(f => f.Get<IRendererFactory>()).Returns(GetFactory());
+
+            //Parrot parrot = new Parrot(resolver.Object);
+            //parrot.Parse()
+
         }
     }
 }
