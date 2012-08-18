@@ -60,4 +60,4 @@ nuget*/
 
 
 # Parrot specific
-!/src/Parrot/Gold Engine.dll
+!/src/Parrot/GOLD Engine.dll
