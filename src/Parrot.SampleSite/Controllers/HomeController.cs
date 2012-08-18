@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Parrot.Infrastructure;
+using Parrot.Mvc;
 
 namespace Parrot.SampleSite.Controllers
 {
@@ -15,6 +16,12 @@ namespace Parrot.SampleSite.Controllers
     {
         //
         // GET: /Home/
+        private readonly IHost _host;
+
+        public HomeController(AspNetHost host)
+        {
+            _host = host;
+        }
 
         public const string DefaultHtmlTemplate = @"div#firstname.nameInfo {
     label { 'First name' }
@@ -94,9 +101,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                 {
                     if (element != null)
                     {
-                        var renderer =
-                        Parrot.Infrastructure.Host.DependencyResolver.Get<IRendererFactory>().GetRenderer(
-                        element.Name);
+                        var renderer = _host.DependencyResolver.Get<IRendererFactory>().GetRenderer(element.Name);
                         sb.AppendLine(renderer.Render(element, modelObject));
                     }
                 }

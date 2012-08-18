@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -10,12 +12,10 @@ namespace Parrot.Mvc.Renderers
     {
         private readonly IViewEngine _engine;
 
-        public PartialRenderer(IViewEngine engine)
+        public PartialRenderer(IHost host, IViewEngine engine) : base(host)
         {
             _engine = engine;
         }
-
-        public PartialRenderer() : this(new ParrotViewEngine(Parrot.Infrastructure.Host.DependencyResolver.Get<IPathResolver>())) { }
 
         public override string Render(AbstractNode node, object model)
         {
@@ -60,7 +60,8 @@ namespace Parrot.Mvc.Renderers
 
                     var document = ParrotView.LoadDocument(contents);
 
-                    return document.Render(localModel);
+                    return Host.DependencyResolver.Get<DocumentRenderer>().Render(document, localModel);
+
                 }
             }
 

@@ -11,7 +11,12 @@ namespace Parrot.Mvc.Renderers
 
     public class HtmlRenderer : IRenderer
     {
-        protected Lazy<IRendererFactory> Factory = new Lazy<IRendererFactory>(() => Infrastructure.Host.DependencyResolver.Get<IRendererFactory>()); 
+        protected IHost Host;
+
+        public HtmlRenderer(IHost host)
+        {
+            Host = host;
+        }
         
         public virtual string DefaultChildTag
         {
@@ -20,6 +25,8 @@ namespace Parrot.Mvc.Renderers
 
         public virtual string RenderChildren(Statement statement, object localModel, string defaultTag = null)
         {
+            var factory = Host.DependencyResolver.Get<IRendererFactory>();
+
             if (string.IsNullOrEmpty(defaultTag))
             {
                 defaultTag = DefaultChildTag;
@@ -37,7 +44,7 @@ namespace Parrot.Mvc.Renderers
                     foreach (var child in statement.Children)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Factory.Value.GetRenderer(child.Name);
+                        var renderer = factory.GetRenderer(child.Name);
 
                         sb.AppendLine(renderer.Render(child, localItem));
                     }
@@ -50,7 +57,7 @@ namespace Parrot.Mvc.Renderers
                     if (child != null)
                     {
                         child.Name = tagName(child.Name);
-                        var renderer = Factory.Value.GetRenderer(child.Name);
+                        var renderer = factory.GetRenderer(child.Name);
 
                         sb.Append(renderer.Render(child, localModel));
                     }
@@ -85,11 +92,11 @@ namespace Parrot.Mvc.Renderers
 
         public string Render(Document document, object model)
         {
+            var factory = Host.DependencyResolver.Get<IRendererFactory>();
+
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
             {
-                var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
-
                 var renderer = factory.GetRenderer(element.Name);
                 sb.AppendLine(renderer.Render(element, model));
             }

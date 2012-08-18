@@ -19,15 +19,13 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public class LayoutRenderer : IRenderer
     {
-        private readonly IViewEngine _engine;
+        private readonly IHost _host;
 
-        public LayoutRenderer(IViewEngine engine)
+        public LayoutRenderer(IHost host)
         {
-            _engine = engine;
+            _host = host;
         }
-
-        public LayoutRenderer() : this(new ParrotViewEngine(Parrot.Infrastructure.Host.DependencyResolver.Get<IPathResolver>())) { }
-
+        
         public string Render(AbstractNode node, object model)
         {
             if (node == null)
@@ -53,7 +51,8 @@ namespace Parrot.Mvc.Renderers
             //ok...we need to load the view
             //then pass the model to it and
             //then return the result
-            var result = _engine.FindView(null, layout, null, false);
+            var engine = _host.DependencyResolver.Get<IViewEngine>();
+            var result = engine.FindView(null, layout, null, false);
             if (result != null)
             {
                 var parrotView = (result.View as ParrotView);
@@ -63,7 +62,7 @@ namespace Parrot.Mvc.Renderers
 
                     var document = ParrotView.LoadDocument(contents);
 
-                    return document.Render(new
+                    return _host.DependencyResolver.Get<DocumentRenderer>().Render(document, new
                     {
                         Children = new StatementList(blockNode.Children.ToArray()),
                         Model = model

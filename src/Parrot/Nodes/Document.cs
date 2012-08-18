@@ -27,19 +27,5 @@ namespace Parrot.Nodes
             Children = document.Children;
             Children.Add(statement);
         }
-
-        public string Render(object model)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var element in Children)
-            {
-                var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
-
-                var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
-            }
-
-            return sb.ToString();
-        }
     }
 }

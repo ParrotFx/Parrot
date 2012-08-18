@@ -39,7 +39,7 @@ namespace Parrot.SampleSite
             RegisterRoutes(RouteTable.Routes);
 
             ViewEngines.Engines.Clear();
-            ViewEngines.Engines.Add(new ParrotViewEngine(Parrot.Infrastructure.Host.DependencyResolver.Get<IPathResolver>()));
+            ViewEngines.Engines.Add(new ParrotViewEngine(new AspNetHost()));
         }
     }
 }

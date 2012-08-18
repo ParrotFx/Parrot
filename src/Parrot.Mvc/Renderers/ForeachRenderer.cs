@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Parrot.Infrastructure;
+
 namespace Parrot.Mvc.Renderers
 {
     using System;
@@ -17,6 +19,8 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public class ForeachRenderer : HtmlRenderer
     {
+        public ForeachRenderer(IHost host) : base(host) {}
+
         public override string Render(AbstractNode node, object model)
         {
             object localModel = model;
@@ -47,9 +51,11 @@ namespace Parrot.Mvc.Renderers
             }
 
             StringBuilder sb = new StringBuilder();
+            var documentRenderer = Host.DependencyResolver.Get<DocumentRenderer>();
             foreach (var item in loop)
             {
-                sb.Append(blockNode.Children.Render(item));
+                sb.Append(documentRenderer.Render(blockNode.Children, item));
+                //sb.Append(blockNode.Children.Render(item));
             }
 
             return sb.ToString();

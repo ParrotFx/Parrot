@@ -7,6 +7,13 @@ namespace Parrot.Mvc.Renderers
 
     public class ContentRenderer : IRenderer
     {
+        private readonly IHost _host;
+
+        public ContentRenderer(IHost host)
+        {
+            _host = host;
+        }
+
         public string Render(AbstractNode node, object model)
         {
             dynamic localModel = model;
@@ -16,7 +23,7 @@ namespace Parrot.Mvc.Renderers
                 Children = localModel.Children
             };
 
-            return document.Render(localModel.Model);
+            return _host.DependencyResolver.Get<DocumentRenderer>().Render(document, localModel.Model);
         }
 
         [Obsolete]

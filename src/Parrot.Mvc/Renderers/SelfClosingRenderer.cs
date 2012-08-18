@@ -1,10 +1,13 @@
 using System;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Mvc.Renderers
 {
     public class SelfClosingRenderer : HtmlRenderer
     {
+        public SelfClosingRenderer(IHost host) : base(host) {}
+
         public override string Render(AbstractNode node, object model)
         {
             if (node == null)

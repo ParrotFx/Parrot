@@ -1,4 +1,5 @@
-﻿using Parrot.Infrastructure;
+﻿using System.Text;
+using Parrot.Infrastructure;
 
 namespace Parrot.Mvc
 {
@@ -14,37 +15,11 @@ namespace Parrot.Mvc
         #region IViewEngine Members
 
         public static IRendererFactory Factory;
-        private IPathResolver _pathResolver;
+        private IHost _host;
 
-        static ParrotViewEngine()
+        public ParrotViewEngine(IHost host)
         {
-            RendererFactory factory = new RendererFactory();
-
-            factory.RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new SelfClosingRenderer());
-            factory.RegisterFactory("doctype", new DocTypeRenderer());
-            factory.RegisterFactory("rawoutput", new RawOutputRenderer());
-            factory.RegisterFactory("output", new OutputRenderer());
-            factory.RegisterFactory("input", new InputRenderer());
-            factory.RegisterFactory("string", new StringLiteralRenderer());
-            factory.RegisterFactory("layout", new LayoutRenderer());
-            factory.RegisterFactory("content", new ContentRenderer());
-
-            //default renderer
-            factory.RegisterFactory("*", new HtmlRenderer());
-
-            Infrastructure.Host.DependencyResolver.Register(typeof(IRendererFactory), () => factory);
-
-            Factory = factory;
-
-            //i don't really like this
-            Infrastructure.Host.DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
-
-
-        }
-
-        public ParrotViewEngine(IPathResolver pathResolver)
-        {
-            _pathResolver = pathResolver;
+            _host = host;
         }
 
         public readonly string[] SearchLocations = new[]
@@ -96,11 +71,13 @@ namespace Parrot.Mvc
 
         internal ParrotView GetView(string viewPath)
         {
-            return new ParrotView(_pathResolver, viewPath);
+            return new ParrotView(_host, viewPath);
         }
 
         public string FindPath(string viewName, string controllerName, out string[] searchedLocations)
         {
+            var pathResolver = _host.DependencyResolver.Get<IPathResolver>();
+
             searchedLocations = new string[SearchLocations.Length];
 
             for (int i = 0; i < SearchLocations.Length; i++)
@@ -110,10 +87,10 @@ namespace Parrot.Mvc
                 searchedLocations[i] = virtualPath;
 
                 //check the active VirtualPathProvider if the file exists
-                if (_pathResolver.FileExists(virtualPath))
+                if (pathResolver.FileExists(virtualPath))
                 {
                     //add it to cache - not currently implemented
-                    return _pathResolver.VirtualFilePath(virtualPath);
+                    return pathResolver.VirtualFilePath(virtualPath);
                 }
             }
 
@@ -133,19 +110,20 @@ namespace Parrot.Mvc
     public class ParrotView : IView
     {
         readonly string _viewPath;
-        private IPathResolver _pathResolver;
+        private readonly IHost _host;
 
-        public ParrotView(IPathResolver pathResolver, string viewPath)
+        public ParrotView(IHost host,string viewPath)
         {
             this._viewPath = viewPath;
-            _pathResolver = pathResolver;
+            _host = host;
         }
 
         #region IView Members
 
         internal Stream LoadStream()
         {
-            return _pathResolver.OpenFile(_viewPath);
+            var pathResolver = _host.DependencyResolver.Get<IPathResolver>();
+            return pathResolver.OpenFile(_viewPath);
         }
 
         public void Render(ViewContext viewContext, TextWriter writer)
@@ -174,7 +152,6 @@ namespace Parrot.Mvc
             }
 
             throw new Exception("Unable to parse: ");
-            //throw new Exception("Unable to parse: " + parser.ErrorString);
         }
         
         string Parse(ViewContext viewContext, string template)
@@ -192,7 +169,7 @@ namespace Parrot.Mvc
                     model = viewContext.ViewData.Model;
                 }
 
-                result = document.Render(model);
+                result = _host.DependencyResolver.Get<DocumentRenderer>().Render(document, model);
             }
             catch (Exception e)
             {
@@ -201,9 +178,9 @@ namespace Parrot.Mvc
 
             watch.Stop();
 
-            return result
-                + "\r\n\r\n<!--\r\n" + template + "\r\n-->"
-                + "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
+            return result;
+                //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
+                //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
         }
 
         #endregion

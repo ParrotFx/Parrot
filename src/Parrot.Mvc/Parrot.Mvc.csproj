@@ -44,9 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AspNetHost.cs" />
     <Compile Include="PathResolver.cs" />
     <Compile Include="Renderers\ContentRenderer.cs" />
     <Compile Include="Renderers\DocTypeRenderer.cs" />
+    <Compile Include="Renderers\DocumentRenderer.cs" />
     <Compile Include="Renderers\ForeachRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="Renderers\OutputRenderer.cs" />

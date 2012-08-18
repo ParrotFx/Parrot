@@ -11,21 +11,31 @@ namespace Parrot.Infrastructure
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public static class Host
+    public class Host : IHost
     {
-        private static readonly Lazy<IDependencyResolver> DefaultResolver = new Lazy<IDependencyResolver>(() => new DependencyResolver());
-        
-        private static IDependencyResolver _resolver;
-        public static IDependencyResolver DependencyResolver
+        private readonly Lazy<IDependencyResolver> _defaultResolver = new Lazy<IDependencyResolver>(() => new DependencyResolver());
+        private IDependencyResolver _resolver;
+
+        public Host(IDependencyResolver resolver)
+        {
+            _resolver = resolver;
+        }
+
+        public IDependencyResolver DependencyResolver
         {
             get
             {
-                return _resolver ?? DefaultResolver.Value;
+                return _resolver ?? _defaultResolver.Value;
             }
             set
             {
                 _resolver = value;
             }
         }
+    }
+
+    public interface IHost
+    {
+        IDependencyResolver DependencyResolver { get; set; }
     }
 }

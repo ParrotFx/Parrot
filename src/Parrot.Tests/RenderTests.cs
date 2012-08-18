@@ -28,60 +28,24 @@ namespace Parrot.Tests
     public class RenderTests
     {
         //https://github.com/visionmedia/jade/blob/master/test/jade.test.js
-        public IRendererFactory GetFactory()
+
+        private string Render(string parrot, object model)
         {
-            RendererFactory factory = new RendererFactory();
-
-            factory.RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new SelfClosingRenderer());
-            factory.RegisterFactory("doctype", new DocTypeRenderer());
-            factory.RegisterFactory("rawoutput", new RawOutputRenderer());
-            factory.RegisterFactory("output", new OutputRenderer());
-            factory.RegisterFactory("input", new InputRenderer());
-            factory.RegisterFactory("string", new StringLiteralRenderer());
-            factory.RegisterFactory("foreach", new ForeachRenderer());
-            factory.RegisterFactory("ul", new UlRenderer());
-            factory.RegisterFactory("layout", new LayoutRenderer());
-            factory.RegisterFactory("content", new ContentRenderer());
-
-
-            //default renderer
-            factory.RegisterFactory("*", new HtmlRenderer());
-
-            return factory;
-        }
-
-        private string Render(string parrot, object model, IRendererFactory factory)
-        {
-            var resolver = new Mock<IDependencyResolver>();
-            resolver.Setup(f => f.Get<IRendererFactory>()).Returns(GetFactory());
-
-            Host.DependencyResolver = resolver.Object;
-
             Parser.Parser parser = new Parser.Parser();
             Document document;
 
             parser.Parse(new StringReader(parrot), out document);
 
+            DocumentRenderer renderer = new DocumentRenderer(new MemoryHost());
+
             StringBuilder sb = new StringBuilder();
-            foreach (var element in document.Children)
-            {
-                var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
-            }
-
-            return sb.ToString().Trim();
-        }
-
-        private string Render(string parrot, object model)
-        {
-            return Render(parrot, model, GetFactory());
+            return renderer.Render(document, model);
         }
 
         private string Render(string parrot)
         {
             return Render(parrot, null);
         }
-
         
         [Test]
         public void ForeachRendererTests()
@@ -94,20 +58,56 @@ namespace Parrot.Tests
         }
 
         [Test]
-        public void LayoutRendererTests()
+        public void StandardSingleFileSimpleRenderingLayout()
         {
+            var host = new MemoryHost();
+
+            //create a view engine and register it
+            var viewEngine = new ParrotViewEngine(host);
+            host.DependencyResolver.Register(typeof(IViewEngine), () => viewEngine);
+
             var testFile = "div > \"testing\"";
 
             var pathResolver = new Mock<IPathResolver>();
-            pathResolver.Setup(p => p.OpenFile(It.IsAny<string>())).Returns(
-            new MemoryStream(System.Text.Encoding.Default.GetBytes(testFile)));
-            //new FileStream(@"M:\Dev\Parrot\src\Parrot.SampleSite\Views\Home\index.parrot", FileMode.Open));
+            pathResolver.Setup(p => p.OpenFile("index.parrot")).Returns(new MemoryStream(Encoding.Default.GetBytes(testFile)));
 
-            //TODO: Figure this out later...
-            var view = new ParrotView(pathResolver.Object, "index.parrot");
+            //register the path resolver with the dependency resolver
+            host.DependencyResolver.Register(typeof(IPathResolver), () => pathResolver.Object);
+
+            ////TODO: Figure this out later...
+            var view = new ParrotView(host, "index.parrot");
             StringBuilder sb = new StringBuilder();
             view.Render(null, new StringWriter(sb));
             Assert.AreEqual("<div>testing</div>", sb.ToString());
+        }
+
+        [Test]
+        public void LayoutRendererTests()
+        {
+            var host = new MemoryHost();
+
+            //create a view engine
+            var viewEngine = new ParrotViewEngine(host);
+
+            host.DependencyResolver.Register(typeof(IViewEngine), () => viewEngine);
+
+            var layout = "html > body > content";
+            var testFile = "layout(\"layout\") { div > \"testing\" }";
+
+            var pathResolver = new Mock<IPathResolver>();
+            pathResolver.Setup(p => p.OpenFile("index.parrot")).Returns(new MemoryStream(Encoding.Default.GetBytes(testFile)));
+            pathResolver.Setup(p => p.OpenFile("~/Views/Shared/layout.parrot")).Returns(new MemoryStream(Encoding.Default.GetBytes(layout)));
+            pathResolver.Setup(p => p.FileExists(It.IsAny<string>())).Returns(false);
+            pathResolver.Setup(p => p.FileExists("~/Views/Shared/layout.parrot")).Returns(true);
+            pathResolver.Setup(p => p.VirtualFilePath("~/Views/Shared/layout.parrot")).Returns("~/Views/Shared/layout.parrot");
+
+            host.DependencyResolver.Register(typeof(IPathResolver), () => pathResolver.Object);
+
+            ////TODO: Figure this out later...
+            var view = new ParrotView(host, "index.parrot");
+            StringBuilder sb = new StringBuilder();
+            view.Render(null, new StringWriter(sb));
+            Assert.AreEqual("<html><body><div>testing</div></body></html>", sb.ToString());
         }
 
         [Test]
@@ -198,17 +198,6 @@ namespace Parrot.Tests
             Assert.AreEqual("<div>this is a string literal test\r</div>", Render("div { |this is a string literal test\r\n}"));
             Assert.AreEqual("<div>1\r2\r</div>", Render("div { |1\r\n|2\r\n}"));
             Assert.AreEqual("this is a string literal test", Render("|this is a string literal test\r"));
-        }
-
-        [Test]
-        public void TestingOutput()
-        {
-            var resolver = new Mock<IDependencyResolver>();
-            resolver.Setup(f => f.Get<IRendererFactory>()).Returns(GetFactory());
-
-            //Parrot parrot = new Parrot(resolver.Object);
-            //parrot.Parse()
-
         }
     }
 }
