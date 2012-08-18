@@ -57,3 +57,7 @@ Misc*
 NugetServerPublish*
 Nuget.Server*
 nuget*/
+
+
+# Parrot specific
+!/src/Parrot/Gold Engine.dll
