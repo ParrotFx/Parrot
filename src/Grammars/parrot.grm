@@ -59,12 +59,20 @@ Comment End = '*/'
 <Attributes> ::= '[' <Attribute List> ']'
                |
 
+<Sibling> ::= <Statement> '+' <Statement>
+            | <Sibling> '+' <Statement>
+            
+<Child> ::= <Statement> '>' <Statement>
+          | <Statement> '>' <Sibling>
+          | <Statement> '>' <Child>
+
 <Statements> ::= <Statement>
                | <Statements> <Statement>
+               | <Sibling>
+               | <Child>
                
 <Statement Tail> ::= <Attributes><Parameters> '{' <Statements> '}'
                    | <Attributes><Parameters> '{' '}'
-                   | <Attributes><Parameters> '>' <Statement>
                    | <Attributes><Parameters>
 
 <Statement> ::= Identifier<Statement Tail>

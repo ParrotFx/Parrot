@@ -12,32 +12,40 @@ namespace Parrot.Parser
 
         private enum ProductionIndex
         {
-            Parameter_Stringliteral = 0,              // <Parameter> ::= StringLiteral
-            Parameter_Identifier = 1,                 // <Parameter> ::= Identifier
-            Parameterlist = 2,                        // <Parameter List> ::= <Parameter>
-            Parameterlist_Comma = 3,                  // <Parameter List> ::= <Parameter List> ',' <Parameter>
-            Parameters_Lparan_Rparan = 4,             // <Parameters> ::= '(' <Parameter List> ')'
-            Parameters = 5,                           // <Parameters> ::= 
-            Attribute_Identifier_Eq_Stringliteral = 6,  // <Attribute> ::= Identifier '=' StringLiteral
-            Attribute_Identifier_Eq_Identifier = 7,   // <Attribute> ::= Identifier '=' Identifier
-            Attribute_Identifier = 8,                 // <Attribute> ::= Identifier
-            Attributelist = 9,                        // <Attribute List> ::= <Attribute>
-            Attributelist2 = 10,                      // <Attribute List> ::= <Attribute List> <Attribute>
-            Attributes_Lbracket_Rbracket = 11,        // <Attributes> ::= '[' <Attribute List> ']'
-            Attributes = 12,                          // <Attributes> ::= 
-            Statements = 13,                          // <Statements> ::= <Statement>
-            Statements2 = 14,                         // <Statements> ::= <Statements> <Statement>
-            Statementtail_Lbrace_Rbrace = 15,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
-            Statementtail_Lbrace_Rbrace2 = 16,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-            Statementtail_Gt = 17,                  // <Statement Tail> ::= <Attributes> <Parameters> '>' <Statement>
-            Statementtail = 18,                       // <Statement Tail> ::= <Attributes> <Parameters>
-            Statement_Identifier = 19,                // <Statement> ::= Identifier <Statement Tail>
-            Statement = 20,                           // <Statement> ::= <OutputStatement>
-            Statement_Multilinestringliteral = 21,    // <Statement> ::= MultiLineStringLiteral
-            Statement_Stringliteral = 22,             // <Statement> ::= StringLiteral
-            Statement_Stringliteralpipe = 23,         // <Statement> ::= StringLiteralPipe
-            Outputstatement_Colon_Identifier = 24,    // <OutputStatement> ::= ':' Identifier
-            Outputstatement_Eq_Identifier = 25        // <OutputStatement> ::= '=' Identifier
+            // ReSharper disable InconsistentNaming
+            @Parameter_Stringliteral = 0,              // <Parameter> ::= StringLiteral
+            @Parameter_Identifier = 1,                 // <Parameter> ::= Identifier
+            @Parameterlist = 2,                        // <Parameter List> ::= <Parameter>
+            @Parameterlist_Comma = 3,                  // <Parameter List> ::= <Parameter List> ',' <Parameter>
+            @Parameters_Lparan_Rparan = 4,             // <Parameters> ::= '(' <Parameter List> ')'
+            @Parameters = 5,                           // <Parameters> ::= 
+            @Attribute_Identifier_Eq_Stringliteral = 6,  // <Attribute> ::= Identifier '=' StringLiteral
+            @Attribute_Identifier_Eq_Identifier = 7,   // <Attribute> ::= Identifier '=' Identifier
+            @Attribute_Identifier = 8,                 // <Attribute> ::= Identifier
+            @Attributelist = 9,                        // <Attribute List> ::= <Attribute>
+            @Attributelist2 = 10,                      // <Attribute List> ::= <Attribute List> <Attribute>
+            @Attributes_Lbracket_Rbracket = 11,        // <Attributes> ::= '[' <Attribute List> ']'
+            @Attributes = 12,                          // <Attributes> ::= 
+            @Sibling_Plus = 13,                        // <Sibling> ::= <Statement> '+' <Statement>
+            @Sibling_Plus2 = 14,                       // <Sibling> ::= <Sibling> '+' <Statement>
+            @Child_Gt = 15,                            // <Child> ::= <Statement> '>' <Statement>
+            @Child_Gt2 = 16,                           // <Child> ::= <Statement> '>' <Sibling>
+            @Child_Gt3 = 17,                           // <Child> ::= <Statement> '>' <Child>
+            @Statements = 18,                          // <Statements> ::= <Statement>
+            @Statements2 = 19,                         // <Statements> ::= <Statements> <Statement>
+            @Statements3 = 20,                         // <Statements> ::= <Sibling>
+            @Statements4 = 21,                         // <Statements> ::= <Child>
+            @Statementtail_Lbrace_Rbrace = 22,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
+            @Statementtail_Lbrace_Rbrace2 = 23,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
+            @Statementtail = 24,                       // <Statement Tail> ::= <Attributes> <Parameters>
+            @Statement_Identifier = 25,                // <Statement> ::= Identifier <Statement Tail>
+            @Statement = 26,                           // <Statement> ::= <OutputStatement>
+            @Statement_Multilinestringliteral = 27,    // <Statement> ::= MultiLineStringLiteral
+            @Statement_Stringliteral = 28,             // <Statement> ::= StringLiteral
+            @Statement_Stringliteralpipe = 29,         // <Statement> ::= StringLiteralPipe
+            @Outputstatement_Colon_Identifier = 30,    // <OutputStatement> ::= ':' Identifier
+            @Outputstatement_Eq_Identifier = 31        // <OutputStatement> ::= '=' Identifier
+            // ReSharper restore InconsistentNaming
         }
 
         static Parser()
@@ -196,6 +204,19 @@ namespace Parrot.Parser
                     // <Statements> ::= <Statements> <Statement>
                     return CreateBlockNodeList(r);
 
+                case ProductionIndex.Statements3:
+                    return CreateDocumentNode(r);
+
+                case ProductionIndex.Statements4:
+                    return CreateDocumentNode(r);
+
+                case ProductionIndex.Sibling_Plus:
+
+                    return new StatementList(r[0].Data as Statement, r[2].Data as Statement);
+
+                case ProductionIndex.Sibling_Plus2:
+                    return new StatementList(r[0].Data as StatementList, r[2].Data as Statement);
+
                 case ProductionIndex.Statementtail:
                     // <Statement Tail> ::= <Attributes> <Parameters>
                     return CreateStatementTailWithAttributesParameters(r);
@@ -217,14 +238,32 @@ namespace Parrot.Parser
                         Children = (r[3].Data as Document).Children
                     };
 
-                case ProductionIndex.Statementtail_Gt:
-                    // <Statement Tail> ::= <Attributes> <Parameters> '>' <Statement>
-                    return new StatementTail
+                case ProductionIndex.Child_Gt:
+                    // <Child> ::= <Statement> '>' <Statement>
+
+                    var parent = r[0].Data as Statement;
+                    var child = r[2].Data as Statement;
+                    parent.Children.Add(child);
+
+                    return parent;
+                case ProductionIndex.Child_Gt2:
+                    //parent then statementlist
+                    var parent2 = r[0].Data as Statement;
+                    var children = r[2].Data as StatementList;
+
+                    foreach (var c in children)
                     {
-                        Attributes = r[0].Data as AttributeList,
-                        Parameters = r[1].Data as ParameterList,
-                        Children = new StatementList(r[3].Data as Statement)
-                    };
+                        parent2.Children.Add(c);
+                    }
+
+                    return parent2;
+
+                case ProductionIndex.Child_Gt3:
+                    var parent3 = r[0].Data as Statement;
+                    var child1 = r[2].Data as Statement;
+                    parent3.Children.Add(child1);
+
+                    return parent3;
 
                 case ProductionIndex.Statement:
                     // <Statement> ::= <OutputStatement>

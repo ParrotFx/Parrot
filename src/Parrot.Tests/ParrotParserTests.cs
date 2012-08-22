@@ -57,6 +57,68 @@ namespace Parrot.Tests
             Assert.AreEqual(2, document.Children.Count);
         }
 
+        [Test]
+        public void StatementWithOneSibling()
+        {
+            var document = Parse("div1 + div2");
+            Assert.AreEqual(2, document.Children.Count);
+            Assert.AreEqual("div1", document.Children[0].Name);
+            Assert.AreEqual("div2", document.Children[1].Name);
+        }
+
+        [Test]
+        public void StatementWithTwoSiblings()
+        {
+            var document = Parse("div1 + div2 + div3");
+            Assert.AreEqual(3, document.Children.Count);
+            Assert.AreEqual("div1", document.Children[0].Name);
+            Assert.AreEqual("div2", document.Children[1].Name);
+            Assert.AreEqual("div3", document.Children[2].Name);
+        }
+
+        [Test]
+        public void StatementWithChildrenIdentifiedAsSiblings()
+        {
+            var document = Parse("div1 > child1 + child2");
+            Assert.AreEqual(1, document.Children.Count);
+            var parent = document.Children[0];
+            Assert.AreEqual(2, parent.Children.Count);
+            Assert.AreEqual("child1", parent.Children[0].Name);
+            Assert.AreEqual("child2", parent.Children[1].Name);
+        }
+
+        [Test]
+        public void StatementWithChildrenIdentifiedAsSiblings2()
+        {
+            var document = Parse("div1 > div2 > child1 + child2");
+            Assert.AreEqual(1, document.Children.Count);
+            var parent = document.Children[0];
+            Assert.AreEqual(1, parent.Children.Count);
+            Assert.AreEqual(2, parent.Children[0].Children.Count);
+            Assert.AreEqual("child1", parent.Children[0].Children[0].Name);
+            Assert.AreEqual("child2", parent.Children[0].Children[1].Name);
+        }
+
+        [Test]
+        public void StatementWithOneChild()
+        {
+            var document = Parse("div > span");
+            Assert.AreEqual(1, document.Children.Count);
+            Assert.AreEqual(1, document.Children[0].Children.Count);
+            Assert.AreEqual("div", document.Children[0].Name);
+            Assert.AreEqual("span", document.Children[0].Children[0].Name);
+        }
+
+        [Test]
+        public void StatementWithNestedChildren()
+        {
+            var document = Parse("div > span > a");
+            Assert.AreEqual(1, document.Children.Count);
+            Assert.AreEqual(1, document.Children[0].Children.Count);
+            Assert.AreEqual("div", document.Children[0].Name);
+            Assert.AreEqual("span", document.Children[0].Children[0].Name);
+            Assert.AreEqual("a", document.Children[0].Children[0].Children[0].Name);
+        }
 
         public class IdTests
         {
