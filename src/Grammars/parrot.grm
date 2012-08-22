@@ -61,15 +61,19 @@ Comment End = '*/'
 
 <Sibling> ::= <Statement> '+' <Statement>
             | <Sibling> '+' <Statement>
-            
-<Child> ::= <Statement> '>' <Statement>
+
+<ParentChild> ::= <Statement> '>' <Statement>            
+
+<Child> ::= <ParentChild>
           | <Statement> '>' <Sibling>
           | <Statement> '>' <Child>
+
 
 <Statements> ::= <Statement>
                | <Statements> <Statement>
                | <Sibling>
                | <Child>
+               | <Statements> <Child>
                
 <Statement Tail> ::= <Attributes><Parameters> '{' <Statements> '}'
                    | <Attributes><Parameters> '{' '}'

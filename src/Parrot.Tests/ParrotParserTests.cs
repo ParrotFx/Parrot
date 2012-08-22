@@ -67,6 +67,26 @@ namespace Parrot.Tests
         }
 
         [Test]
+        public void StatementWithChildFollowedByStatement()
+        {
+            var document = Parse("parent > child statement");
+            Assert.AreEqual(2, document.Children.Count);
+            Assert.AreEqual("parent", document.Children[0].Name);
+            Assert.AreEqual("statement", document.Children[1].Name);
+            Assert.AreEqual("child", document.Children[0].Children[0].Name);
+        }
+
+        [Test]
+        public void StatementWithChildFollowedByStatementWithChild()
+        {
+            var document = Parse("parent > child statement > child2");
+            Assert.AreEqual(2, document.Children.Count);
+            Assert.AreEqual("parent", document.Children[0].Name);
+            Assert.AreEqual("statement", document.Children[1].Name);
+            Assert.AreEqual("child", document.Children[0].Children[0].Name);
+        }
+
+        [Test]
         public void StatementWithTwoSiblings()
         {
             var document = Parse("div1 + div2 + div3");
