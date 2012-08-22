@@ -87,6 +87,30 @@ namespace Parrot.Tests
         }
 
         [Test]
+        public void StatementWithLiteralChildFollowedByStatementWithChild()
+        {
+            var document = Parse("parent > |child\r\nstatement > child2");
+            Assert.AreEqual(2, document.Children.Count);
+            Assert.AreEqual("parent", document.Children[0].Name);
+            Assert.AreEqual("statement", document.Children[1].Name);
+            Assert.AreEqual("string", document.Children[0].Children[0].Name);
+        }
+
+        [Test]
+        public void StatementWithLiteralChildFollowedByStatementWithLiteralChild()
+        {
+            //TODO: Remove \r\n
+            //This appears to be a bug in the gold engine
+            //when converted to new lexer/parser remove
+            //the \r\n
+            var document = Parse("parent > |child\r\nstatement > |child2\r\n");
+            Assert.AreEqual(2, document.Children.Count);
+            Assert.AreEqual("parent", document.Children[0].Name);
+            Assert.AreEqual("statement", document.Children[1].Name);
+            Assert.AreEqual("string", document.Children[0].Children[0].Name);
+        }
+
+        [Test]
         public void StatementWithTwoSiblings()
         {
             var document = Parse("div1 + div2 + div3");
@@ -302,6 +326,21 @@ namespace Parrot.Tests
                 Assert.AreEqual(". a dot", parts[1].Data);
 
 
+            }
+        }
+
+        public class StringLiteralTests
+        {
+            [Test]
+            public void StringLiteralPipeAsLastElementOfFile()
+            {
+                //TODO: Remove \r\n
+                //This appears to be a bug in the gold engine
+                //when converted to new lexer/parser remove
+                //the \r\n
+                var document = Parse("|string literal\r\n");
+                Assert.AreEqual(1, document.Children.Count);
+                Assert.AreEqual("string", document.Children[0].Name);
             }
         }
     }
