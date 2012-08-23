@@ -20,32 +20,6 @@ namespace Parrot.Mvc.Renderers
     /// </summary>
     public static class RendererHelpers
     {
-        //public static string Render(this Document document, object model)
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    foreach (var element in document.Children)
-        //    {
-        //        var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
-
-        //        var renderer = factory.GetRenderer(element.Name);
-        //        sb.AppendLine(renderer.Render(element, model));
-        //    }
-
-        //    return sb.ToString();
-        //}
-
-        //public static string Render(this IList<Statement> nodes, object model)
-        //{
-        //    var factory = Infrastructure.Host.DependencyResolver.Get<IRendererFactory>();
-        //    StringBuilder sb = new StringBuilder();
-        //    foreach (var child in nodes)
-        //    {
-        //        sb.Append(factory.GetRenderer(child.Name).Render(child, model));
-        //    }
-
-        //    return sb.ToString();
-        //}
-
         internal static object GetModelValue(object model, ValueType valueType, object property)
         {
             switch (valueType)
@@ -84,7 +58,6 @@ namespace Parrot.Mvc.Renderers
                             return GetModelValue(tempObject, ValueType.Property, string.Join(".", parameters.Skip(1)));
                         }
                     }
-
 
                     break;
                 case ValueType.StringLiteral:
