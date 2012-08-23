@@ -1,7 +1,6 @@
 using System;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Renderers
 {
@@ -20,7 +19,7 @@ namespace Parrot.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var value = RendererHelpers.GetModelValue(model, ValueType.Property, outputNode.VariableName);
+            var value = RendererHelpers.GetModelValue(model, Parrot.Infrastructure.ValueType.Property, outputNode.VariableName);
 
             return value.ToString();
         }

@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 
 namespace Parrot.Renderers
 {
@@ -13,7 +13,6 @@ namespace Parrot.Renderers
     using System.Linq;
     using System.Text;
     using Nodes;
-    using ValueType = ValueType;
 
     /// <summary>
     /// TODO: Update summary.
@@ -46,11 +45,11 @@ namespace Parrot.Renderers
         //    return sb.ToString();
         //}
 
-        public static object GetModelValue(object model, ValueType valueType, object property)
+        public static object GetModelValue(object model, Parrot.Infrastructure.ValueType valueType, object property)
         {
             switch (valueType)
             {
-                case ValueType.Property:
+                case Parrot.Infrastructure.ValueType.Property:
                     //check to see if the property is any one of several keywords
 
                     if (model == null)
@@ -81,19 +80,19 @@ namespace Parrot.Renderers
                                 return tempObject;
                             }
 
-                            return GetModelValue(tempObject, ValueType.Property, string.Join(".", parameters.Skip(1)));
+                            return GetModelValue(tempObject, Parrot.Infrastructure.ValueType.Property, string.Join(".", parameters.Skip(1)));
                         }
                     }
 
 
                     break;
-                case ValueType.StringLiteral:
+                case Parrot.Infrastructure.ValueType.StringLiteral:
                     return property;
 
-                case ValueType.Keyword:
+                case Parrot.Infrastructure.ValueType.Keyword:
                     return property;
 
-                case ValueType.Local:
+                case Parrot.Infrastructure.ValueType.Local:
                     return model;
             }
 

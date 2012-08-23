@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Renderers

@@ -4,6 +4,7 @@ namespace Parrot.Mvc.Renderers
     using System;
     using Parrot.Nodes;
     using Parrot.Renderers;
+    using Parrot.Renderers.Infrastructure;
 
     public class ContentRenderer : IRenderer
     {

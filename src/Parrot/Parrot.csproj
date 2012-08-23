@@ -47,10 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\DependencyResolver.cs" />
-    <Compile Include="Infrastructure\FuncRenderer.cs" />
     <Compile Include="Infrastructure\Host.cs" />
-    <Compile Include="Infrastructure\IRenderer.cs" />
-    <Compile Include="Infrastructure\IRendererFactory.cs" />
     <Compile Include="Infrastructure\ValueTypeProvider.cs" />
     <Compile Include="Infrastructure\ValueTypeResult.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
@@ -76,7 +73,6 @@
     <Compile Include="Nodes\StatementTail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\RawOutput.cs" />
-    <Compile Include="Infrastructure\RendererFactory.cs" />
     <Compile Include="Parser\RuleException.cs" />
     <Compile Include="Parser\SymbolException.cs" />
   </ItemGroup>

@@ -1,12 +1,10 @@
 using System;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Renderers
 {
     using System.Web;
-    using ValueType = ValueType;
 
     public class StringLiteralRenderer : IRenderer
     {
@@ -29,7 +27,7 @@ namespace Parrot.Renderers
                 result += GetModelValue(model, value.Type, value.Data);
             }
 
-            //return RendererHelpers.GetModelValue(model, stringNode.ValueType, stringNode)
+            //return RendererHelpers.GetModelValue(model, stringNode.Parrot.Infrastructure.ValueType, stringNode)
 
             return result;
             //return stringNode.GetValue() as string;
@@ -45,9 +43,9 @@ namespace Parrot.Renderers
             switch (type)
             {
                 case StringLiteralPartType.Encoded:
-                    return System.Net.WebUtility.HtmlEncode((string)RendererHelpers.GetModelValue(model, ValueType.Property, data));
+                    return System.Net.WebUtility.HtmlEncode((string)RendererHelpers.GetModelValue(model, Parrot.Infrastructure.ValueType.Property, data));
                 case StringLiteralPartType.Raw:
-                    return (string)RendererHelpers.GetModelValue(model, ValueType.Property, data);
+                    return (string)RendererHelpers.GetModelValue(model, Parrot.Infrastructure.ValueType.Property, data);
             }
 
             //default type is string literal

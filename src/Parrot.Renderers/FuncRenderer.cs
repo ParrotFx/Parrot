@@ -1,7 +1,7 @@
 using System;
 using Parrot.Nodes;
 
-namespace Parrot.Infrastructure
+namespace Parrot.Renderers.Infrastructure
 {
     public class FuncRenderer : IRenderer
     {

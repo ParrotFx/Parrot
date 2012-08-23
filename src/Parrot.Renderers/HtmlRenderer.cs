@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Linq;
 using System.Text;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Renderers
 {
+    using Parrot.Infrastructure;
     using Parrot.Renderers;
     using Attribute = Nodes.Attribute;
 
@@ -122,7 +122,7 @@ namespace Parrot.Renderers
             TagBuilder builder = new TagBuilder(statement.Name);
             foreach (var attribute in statement.Attributes)
             {
-                var attributeValue = model == null && attribute.ValueType == ValueType.Property
+                var attributeValue = model == null && attribute.ValueType == Parrot.Infrastructure.ValueType.Property
                     ? null
                     : RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 

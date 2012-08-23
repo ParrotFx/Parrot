@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Renderers
 {
@@ -31,7 +30,7 @@ namespace Parrot.Renderers
             foreach (var attribute in blockNode.Attributes)
             {
                 //attribute.SetModel(localModel);
-                var attributeValue = model == null && attribute.ValueType == ValueType.Property 
+                var attributeValue = model == null && attribute.ValueType == Parrot.Infrastructure.ValueType.Property 
                     ? null 
                     : RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 
@@ -42,14 +41,14 @@ namespace Parrot.Renderers
                 else
                 {
 
-                    Func<object, ValueType, bool> noOutput = (a, v) =>
+                    Func<object, Parrot.Infrastructure.ValueType, bool> noOutput = (a, v) =>
                     {
                         if (a is bool && !(bool) attributeValue)
                         {
                             return true;
                         }
 
-                        if (attributeValue == null && v == ValueType.Keyword)
+                        if (attributeValue == null && v == Parrot.Infrastructure.ValueType.Keyword)
                         {
                             return true;
                         }

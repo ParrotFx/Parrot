@@ -43,11 +43,15 @@
     <Compile Include="DocTypeRenderer.cs" />
     <Compile Include="DocumentRenderer.cs" />
     <Compile Include="ForeachRenderer.cs" />
+    <Compile Include="FuncRenderer.cs" />
     <Compile Include="HtmlRenderer.cs" />
     <Compile Include="InputRenderer.cs" />
+    <Compile Include="Infrastructure\IRenderer.cs" />
+    <Compile Include="Infrastructure\IRendererFactory.cs" />
     <Compile Include="OutputRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawOutputRenderer.cs" />
+    <Compile Include="Infrastructure\RendererFactory.cs" />
     <Compile Include="RendererHelpers.cs" />
     <Compile Include="SelfClosingRenderer.cs" />
     <Compile Include="StringLiteralRenderer.cs" />

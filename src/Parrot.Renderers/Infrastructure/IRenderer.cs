@@ -1,6 +1,6 @@
 using Parrot.Nodes;
 
-namespace Parrot.Infrastructure
+namespace Parrot.Renderers.Infrastructure
 {
     public interface IRenderer
     {

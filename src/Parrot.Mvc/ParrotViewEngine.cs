@@ -9,6 +9,7 @@ namespace Parrot.Mvc
     using Nodes;
     using System.Diagnostics;
     using Parrot.Renderers;
+    using Parrot.Renderers.Infrastructure;
     using Renderers;
 
     public class ParrotViewEngine : IViewEngine

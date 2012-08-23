@@ -12,6 +12,7 @@ namespace Parrot.Tests
 {
     using System.IO;
     using Renderers;
+    using Renderers.Infrastructure;
 
     [TestFixture]
     public class InputRendererTests : TestRenderingBase
@@ -29,10 +30,12 @@ namespace Parrot.Tests
         [Test]
         public void InputWithoutAnythingSpecialReturnsBasicInputElement()
         {
-            string block = "input";
-            var nodes = Parse(block, new MemoryHost());
+            var host = new MemoryHost();
 
-            IRendererFactory factory = new RendererFactory();
+            string block = "input";
+            var nodes = Parse(block, host);
+
+            IRendererFactory factory = new RendererFactory(host);
 
             factory.RegisterFactory("input", new InputRenderer());
             var renderer = factory.GetRenderer(nodes.Children.First().Name);
@@ -57,11 +60,12 @@ namespace Parrot.Tests
         [Test]
         public void InputWithAttributsReturnsElementWithAttributes()
         {
+            var host = new MemoryHost();
             string block = "input[attr=\"value\"]";
 
-            var nodes = Parse(block, new MemoryHost());
+            var nodes = Parse(block, host);
 
-            IRendererFactory factory = new RendererFactory();
+            IRendererFactory factory = new RendererFactory(host);
 
             factory.RegisterFactory("input", new InputRenderer());
             var renderer = factory.GetRenderer(nodes.Children.First().Name);

@@ -118,6 +118,10 @@
       <Project>{90502FC0-81A5-46E3-B8C4-DFACC0F2D4EE}</Project>
       <Name>Parrot.Mvc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Parrot.Renderers\Parrot.Renderers.csproj">
+      <Project>{A7348907-BE1E-464D-907B-796A347B8034}</Project>
+      <Name>Parrot.Renderers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Parrot\Parrot.csproj">
       <Project>{5101087D-966B-403B-911C-4F657AEBF623}</Project>
       <Name>Parrot</Name>

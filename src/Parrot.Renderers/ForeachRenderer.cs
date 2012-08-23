@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 
 namespace Parrot.Renderers
 {
@@ -13,6 +13,7 @@ namespace Parrot.Renderers
     using System.Linq;
     using System.Text;
     using Nodes;
+    using Parrot.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.

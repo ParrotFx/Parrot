@@ -7,6 +7,7 @@
 namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
+    using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
