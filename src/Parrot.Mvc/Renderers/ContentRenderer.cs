@@ -1,9 +1,9 @@
-using Parrot.Infrastructure;
-
 namespace Parrot.Mvc.Renderers
 {
+    using Parrot.Infrastructure;
     using System;
-    using Nodes;
+    using Parrot.Nodes;
+    using Parrot.Renderers;
 
     public class ContentRenderer : IRenderer
     {

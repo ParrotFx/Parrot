@@ -7,6 +7,7 @@ namespace Parrot.Mvc.Renderers
     using System.Linq;
     using System.Web.Mvc;
     using Nodes;
+    using Parrot.Renderers;
 
     public class PartialRenderer : HtmlRenderer
     {

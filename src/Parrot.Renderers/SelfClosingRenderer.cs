@@ -2,8 +2,10 @@ using System;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
+    using Parrot.Renderers;
+
     public class SelfClosingRenderer : HtmlRenderer
     {
         public SelfClosingRenderer(IHost host) : base(host) {}

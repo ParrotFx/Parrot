@@ -6,8 +6,9 @@ using Parrot.Infrastructure;
 using Parrot.Nodes;
 using ValueType = Parrot.Infrastructure.ValueType;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
+    using Parrot.Renderers;
     using Attribute = Nodes.Attribute;
 
     public class HtmlRenderer : IRenderer

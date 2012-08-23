@@ -3,7 +3,7 @@ using System.Linq;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
     public class DocTypeRenderer : IRenderer
     {

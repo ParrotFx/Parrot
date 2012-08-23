@@ -8,6 +8,7 @@ namespace Parrot.Mvc
     using System.Web.Mvc;
     using Nodes;
     using System.Diagnostics;
+    using Parrot.Renderers;
     using Renderers;
 
     public class ParrotViewEngine : IViewEngine

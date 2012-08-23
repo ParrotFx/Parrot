@@ -13,6 +13,10 @@ namespace Parrot.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Web.Mvc;
+    using Mvc;
+    using Renderers;
+    using DependencyResolver = Infrastructure.DependencyResolver;
 
     /// <summary>
     /// TODO: Update summary.
@@ -23,6 +27,7 @@ namespace Parrot.Tests
         {
             InitializeRendererFactory();
             DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
+            DependencyResolver.Register(typeof (IViewEngine), () => new ParrotViewEngine(this));
         }
 
         private void InitializeRendererFactory()

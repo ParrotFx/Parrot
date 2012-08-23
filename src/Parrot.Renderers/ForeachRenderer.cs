@@ -6,7 +6,7 @@
 
 using Parrot.Infrastructure;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
     using System;
     using System.Collections;

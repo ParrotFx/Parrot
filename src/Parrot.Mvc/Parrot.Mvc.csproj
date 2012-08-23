@@ -47,24 +47,17 @@
     <Compile Include="AspNetHost.cs" />
     <Compile Include="PathResolver.cs" />
     <Compile Include="Renderers\ContentRenderer.cs" />
-    <Compile Include="Renderers\DocTypeRenderer.cs" />
-    <Compile Include="Renderers\DocumentRenderer.cs" />
-    <Compile Include="Renderers\ForeachRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
-    <Compile Include="Renderers\OutputRenderer.cs" />
-    <Compile Include="Renderers\HtmlRenderer.cs" />
     <Compile Include="ParrotViewEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderers\InputRenderer.cs" />
     <Compile Include="Renderers\PartialRenderer.cs" />
-    <Compile Include="Renderers\RawOutputRenderer.cs" />
-    <Compile Include="Renderers\RendererHelpers.cs" />
-    <Compile Include="Renderers\SelfClosingRenderer.cs" />
-    <Compile Include="Renderers\StringLiteralRenderer.cs" />
-    <Compile Include="Renderers\UlRenderer.cs" />
     <Compile Include="TagBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Parrot.Renderers\Parrot.Renderers.csproj">
+      <Project>{A7348907-BE1E-464D-907B-796A347B8034}</Project>
+      <Name>Parrot.Renderers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Parrot\Parrot.csproj">
       <Project>{5101087D-966B-403B-911C-4F657AEBF623}</Project>
       <Name>Parrot</Name>

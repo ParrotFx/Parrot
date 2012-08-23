@@ -13,6 +13,7 @@ namespace Parrot.Mvc.Renderers
     using System.IO;
     using System.Linq;
     using Nodes;
+    using Parrot.Renderers;
 
     /// <summary>
     /// TODO: Update summary.
@@ -61,8 +62,9 @@ namespace Parrot.Mvc.Renderers
                     string contents = new StreamReader(stream).ReadToEnd();
 
                     var document = parrotView.LoadDocument(contents);
+                    var renderer = _host.DependencyResolver.Get<DocumentRenderer>();
 
-                    return _host.DependencyResolver.Get<DocumentRenderer>().Render(document, new
+                    return renderer.Render(document, new
                     {
                         Children = new StatementList(_host, blockNode.Children.ToArray()),
                         Model = model

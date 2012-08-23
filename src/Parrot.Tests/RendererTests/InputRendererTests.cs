@@ -11,6 +11,7 @@ using Parrot.Nodes;
 namespace Parrot.Tests
 {
     using System.IO;
+    using Renderers;
 
     [TestFixture]
     public class InputRendererTests : TestRenderingBase
