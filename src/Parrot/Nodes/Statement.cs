@@ -38,7 +38,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id added more than once");
                             }
 
-                            AddAttribute(new Attribute(Host, "id", part.Name));
+                            AddAttribute(new Attribute(Host, "id", "\"" + part.Name + "\""));
                             break;
                         case IdentifierType.Class:
                             if (part.Name.Length == 1)

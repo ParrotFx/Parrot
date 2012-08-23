@@ -38,7 +38,7 @@ namespace Parrot.Tests
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
         }
-
+        
         [Test]
         public void StandardSingleFileSimpleRenderingLayout()
         {

@@ -7,6 +7,8 @@ namespace Parrot.Mvc.Renderers
     using System.Linq;
     using System.Web.Mvc;
     using Nodes;
+    using Parrot.Renderers;
+    using Parrot.Renderers.Infrastructure;
 
     public class PartialRenderer : HtmlRenderer
     {
@@ -19,6 +21,8 @@ namespace Parrot.Mvc.Renderers
 
         public override string Render(AbstractNode node, object model)
         {
+            var modelValueProviderFactory = Host.DependencyResolver.Get<IModelValueProviderFactory>();
+
             if (node == null)
             {
                 throw new ArgumentNullException("node");
@@ -34,7 +38,7 @@ namespace Parrot.Mvc.Renderers
 
             if (blockNode.Parameters != null && blockNode.Parameters.Any())
             {
-                localModel = RendererHelpers.GetModelValue(model, blockNode.Parameters.First().ValueType,
+                localModel = modelValueProviderFactory.Get(model.GetType()).GetValue(model, blockNode.Parameters.First().ValueType,
                                                            blockNode.Parameters.First().Value);
             }
 

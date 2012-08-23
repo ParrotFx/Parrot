@@ -1,14 +1,24 @@
 using System;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
+    using Parrot.Infrastructure;
+
     public class RawOutputRenderer : IRenderer
     {
+        private IHost _host;
+
+        public RawOutputRenderer(IHost host)
+        {
+            _host = host;
+        }
+
         public string Render(AbstractNode node, object model)
         {
+            var modelValueProviderFactory = _host.DependencyResolver.Get<IModelValueProviderFactory>();
+
             if (node == null)
             {
                 throw new ArgumentNullException("node");
@@ -20,7 +30,7 @@ namespace Parrot.Mvc.Renderers
                 throw new ArgumentNullException("node");
             }
 
-            var value = RendererHelpers.GetModelValue(model, ValueType.Property, outputNode.VariableName);
+            var value = modelValueProviderFactory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, outputNode.VariableName);
 
             return value.ToString();
         }

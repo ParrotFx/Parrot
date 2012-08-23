@@ -1,17 +1,25 @@
 using System;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
     using System.Web;
-    using ValueType = ValueType;
+    using Parrot.Infrastructure;
 
     public class StringLiteralRenderer : IRenderer
     {
+        private IHost _host;
+
+        public StringLiteralRenderer(IHost host)
+        {
+            _host = host;
+        }
+
         public string Render(AbstractNode node, object model)
         {
+            var modelValueProviderFactory = _host.DependencyResolver.Get<IModelValueProviderFactory>();
+
             if (node == null)
             {
                 throw new ArgumentNullException("node");
@@ -26,10 +34,10 @@ namespace Parrot.Mvc.Renderers
             string result = "";
             foreach (var value in stringNode.Values)
             {
-                result += GetModelValue(model, value.Type, value.Data);
+                result += GetModelValue(modelValueProviderFactory, model, value.Type, value.Data);
             }
 
-            //return RendererHelpers.GetModelValue(model, stringNode.ValueType, stringNode)
+            //return RendererHelpers.GetModelValue(model, stringNode.Parrot.Infrastructure.ValueType, stringNode)
 
             return result;
             //return stringNode.GetValue() as string;
@@ -40,14 +48,14 @@ namespace Parrot.Mvc.Renderers
             return Render(node, null);
         }
 
-        private string GetModelValue(object model, StringLiteralPartType type, string data)
+        private string GetModelValue(IModelValueProviderFactory factory, object model, StringLiteralPartType type, string data)
         {
             switch (type)
             {
                 case StringLiteralPartType.Encoded:
-                    return System.Net.WebUtility.HtmlEncode((string)RendererHelpers.GetModelValue(model, ValueType.Property, data));
+                    return System.Net.WebUtility.HtmlEncode((string)factory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, data));
                 case StringLiteralPartType.Raw:
-                    return (string)RendererHelpers.GetModelValue(model, ValueType.Property, data);
+                    return (string)factory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, data);
             }
 
             //default type is string literal

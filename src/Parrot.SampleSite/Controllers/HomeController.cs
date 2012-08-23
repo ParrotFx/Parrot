@@ -11,6 +11,7 @@ namespace Parrot.SampleSite.Controllers
     using System.Web.Mvc;
     using Parrot;
     using Parrot.Nodes;
+    using Renderers.Infrastructure;
 
     public class HomeController : Controller
     {

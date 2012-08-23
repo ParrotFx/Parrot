@@ -4,15 +4,16 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Parrot.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.

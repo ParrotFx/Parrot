@@ -1,15 +1,26 @@
 using System;
 using System.Linq;
-using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Infrastructure.ValueType;
 
-namespace Parrot.Mvc.Renderers
+namespace Parrot.Renderers
 {
+    using Parrot.Infrastructure;
+    using Parrot.Renderers;
+
     public class InputRenderer : IRenderer
     {
+        private readonly IHost _host;
+
+        public InputRenderer(IHost host)
+        {
+            _host = host;
+        }
+
         public string Render(AbstractNode node, object model)
         {
+            var modelValueProviderFactory = _host.DependencyResolver.Get<IModelValueProviderFactory>();
+            
             if (node == null)
             {
                 throw new ArgumentNullException("node");
@@ -28,10 +39,15 @@ namespace Parrot.Mvc.Renderers
             TagBuilder tag = new TagBuilder("input");
             foreach (var attribute in blockNode.Attributes)
             {
-                //attribute.SetModel(localModel);
-                var attributeValue = model == null && attribute.ValueType == ValueType.Property 
-                    ? null 
-                    : RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
+                object attributeValue = model;
+                if (attributeValue != null)
+                {
+                    attributeValue = modelValueProviderFactory.Get(model.GetType()).GetValue(model, attribute.ValueType, attribute.Value);
+                }
+                else
+                {
+                    attributeValue = modelValueProviderFactory.Get(typeof(object)).GetValue(model, attribute.ValueType, attribute.Value);
+                }
 
                 if (attribute.Key == "class")
                 {
@@ -40,14 +56,14 @@ namespace Parrot.Mvc.Renderers
                 else
                 {
 
-                    Func<object, ValueType, bool> noOutput = (a, v) =>
+                    Func<object, Parrot.Infrastructure.ValueType, bool> noOutput = (a, v) =>
                     {
                         if (a is bool && !(bool) attributeValue)
                         {
                             return true;
                         }
 
-                        if (attributeValue == null && v == ValueType.Keyword)
+                        if (attributeValue == null && v == Parrot.Infrastructure.ValueType.Keyword)
                         {
                             return true;
                         }
