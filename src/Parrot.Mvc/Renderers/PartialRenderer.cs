@@ -58,7 +58,7 @@ namespace Parrot.Mvc.Renderers
                 {
                     string contents = new StreamReader(stream).ReadToEnd();
 
-                    var document = ParrotView.LoadDocument(contents);
+                    var document = parrotView.LoadDocument(contents);
 
                     return Host.DependencyResolver.Get<DocumentRenderer>().Render(document, localModel);
 

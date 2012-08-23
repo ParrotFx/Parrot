@@ -1,4 +1,4 @@
-namespace Parrot.Nodes
+namespace Parrot.Infrastructure
 {
     public enum ValueType
     {

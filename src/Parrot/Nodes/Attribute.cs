@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     public class Attribute : AbstractNode
@@ -7,70 +9,17 @@ namespace Parrot.Nodes
 
         public ValueType ValueType { get; internal set; }
 
-        public Attribute(string key, string value)
+        public Attribute(IHost host, string key, string value) : base(host)
         {
             Key = key;
 
-            if (value != null)
-            {
-                if (IsWrappedInInvalidQuotes(value))
-                {
-                    throw new ParserException("Unterminated string literal");
-                } else 
-                if (IsWrappedInQuotes(value))
-                {
-                    ValueType = ValueType.StringLiteral;
-                    //strip quotes
-                    value = value.Substring(1, value.Length - 2);
-                }
-                else if (key != "class")
-                {
-                    if (value == "this")
-                    {
-                        ValueType = ValueType.Local;
-                    }
-                    else
-                    {
-                        ValueType = ValueType.Property;
-                    }
-                }
-                //else if (key == "id")
-                //{
-                //    ValueType = ValueType.Property;
-                //}
-            }
+            var valueTypeProvider = host.DependencyResolver.Get<IValueTypeProvider>();
+            var result = valueTypeProvider.GetValue(value);
 
-            Value = value;
+            ValueType = result.Type;
+            Value = result.Value as string;
         }
-
-        //public string GetValue()
-        //{
-        //    if (Value == null)
-        //    {
-        //        return null;
-        //    }
-
-
-        //    if (ValueType == ValueType.Property)
-        //    {
-        //        var value = GetModelValue(Value);
-        //        return value != null ? value.ToString() : null;
-        //    }
-
-        //    return Value;
-        //}
-
-        private bool IsWrappedInQuotes(string value)
-        {
-            return value != null && ((value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") && value.EndsWith("'")));
-        }
-
-        private bool IsWrappedInInvalidQuotes(string value)
-        {
-            return value != null && (((value.StartsWith("\"") && !value.EndsWith("\"")) || (value.StartsWith("'") && !value.EndsWith("'")))
-                                 || ((!value.StartsWith("\"") && value.EndsWith("\"")) || (!value.StartsWith("'") && value.EndsWith("'"))));
-        }
-
+        
         public override bool IsTerminal
         {
             get { return false; }

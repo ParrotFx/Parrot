@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Parser
 {
     using System.Reflection;
@@ -70,7 +72,7 @@ namespace Parrot.Parser
             ParserFactory.InitializeFactoryFromResource("Parrot.parrot.egt");
         }
 
-        public bool Parse(TextReader reader, out Document document)
+        public bool Parse(TextReader reader, IHost host, out Document document)
         {
             document = null;
 
@@ -109,7 +111,7 @@ namespace Parrot.Parser
                     case ParseMessage.Reduction:
                         //Create a customized object to store the reduction
 
-                        _parser.CurrentReduction = CreateNewObject((Reduction)_parser.CurrentReduction);
+                        _parser.CurrentReduction = CreateNewObject(host, (Reduction)_parser.CurrentReduction);
                         break;
 
                     case ParseMessage.Accept:
@@ -144,7 +146,7 @@ namespace Parrot.Parser
             return accepted;
         }
 
-        private object CreateNewObject(Reduction r)
+        private object CreateNewObject(IHost host, Reduction r)
         {
             object result = null;
 
@@ -152,15 +154,15 @@ namespace Parrot.Parser
             {
                 case ProductionIndex.Parameter_Stringliteral:
                     // <Parameter> ::= StringLiteral
-                    return new Parameter(r[0].Data as string);
+                    return new Parameter(host, r[0].Data as string);
 
                 case ProductionIndex.Parameter_Identifier:
                     // <Parameter> ::= Identifier
-                    return new Parameter(r[0].Data as string);
+                    return new Parameter(host, r[0].Data as string);
 
                 case ProductionIndex.Parameterlist:
                     // <Parameter List> ::= <Parameter>
-                    return CreateParameterListFromParameter(r);
+                    return CreateParameterListFromParameter(host, r);
 
                 case ProductionIndex.Parameters_Lparan_Rparan:
                     // <Parameters> ::= '(' <Parameter List> ')'
@@ -172,23 +174,23 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Attribute_Identifier_Eq_Stringliteral:
                     // <Attribute> ::= Identifier '=' StringLiteral
-                    return CreateAttributeNodeFromIdentifierStringLiteral(r);
+                    return CreateAttributeNodeFromIdentifierStringLiteral(host, r);
 
                 case ProductionIndex.Attribute_Identifier_Eq_Identifier:
                     // <Attribute> ::= Identifier '=' Identifier
-                    return CreateAttributeNodeFromIdentifierIdentifier(r);
+                    return CreateAttributeNodeFromIdentifierIdentifier(host, r);
 
                 case ProductionIndex.Attribute_Identifier:
                     // <Attribute> ::= Identifier
-                    return new Attribute(r[0].Data as string, null);
+                    return new Attribute(host, r[0].Data as string, null);
 
                 case ProductionIndex.Attributelist:
                     // <Attribute List> ::= <Attribute>
-                    return CreateAttributeListFromAttribute(r);
+                    return CreateAttributeListFromAttribute(host, r);
 
                 case ProductionIndex.Attributelist2:
                     // <Attribute List> ::= <Attribute List> <Attribute>
-                    return new AttributeList(r[0].Data as AttributeList, r[1].Data as Attribute);
+                    return new AttributeList(host, r[0].Data as AttributeList, r[1].Data as Attribute);
 
                 case ProductionIndex.Attributes_Lbracket_Rbracket:
                     // <Attributes> ::= '[' <Attribute List> ']'
@@ -200,17 +202,17 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Statements:
                     // <Statements> ::= <Statement>
-                    return CreateDocumentNode(r);
+                    return CreateDocumentNode(host, r);
 
                 case ProductionIndex.Statements2:
                     // <Statements> ::= <Statements> <Statement>
-                    return CreateBlockNodeList(r);
+                    return CreateBlockNodeList(host, r);
 
                 case ProductionIndex.Statements3:
-                    return CreateDocumentNode(r);
+                    return CreateDocumentNode(host, r);
 
                 case ProductionIndex.Statements4:
-                    return CreateDocumentNode(r);
+                    return CreateDocumentNode(host, r);
                 case ProductionIndex.@Statements5:
                     // <Statements> ::= <Statements> <Child>
                     var tempdoc = r[0].Data as Document;
@@ -221,18 +223,18 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Sibling_Plus:
 
-                    return new StatementList(r[0].Data as Statement, r[2].Data as Statement);
+                    return new StatementList(host, r[0].Data as Statement, r[2].Data as Statement);
 
                 case ProductionIndex.Sibling_Plus2:
-                    return new StatementList(r[0].Data as StatementList, r[2].Data as Statement);
+                    return new StatementList(host, r[0].Data as StatementList, r[2].Data as Statement);
 
                 case ProductionIndex.Statementtail:
                     // <Statement Tail> ::= <Attributes> <Parameters>
-                    return CreateStatementTailWithAttributesParameters(r);
+                    return CreateStatementTailWithAttributesParameters(host, r);
 
                 case ProductionIndex.Statementtail_Lbrace_Rbrace2:
                     // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-                    return new StatementTail
+                    return new StatementTail(host)
                     {
                         Attributes = r[0].Data as AttributeList,
                         Parameters = r[1].Data as ParameterList
@@ -240,7 +242,7 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Statementtail_Lbrace_Rbrace:
                     // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
-                    return new StatementTail
+                    return new StatementTail(host)
                     {
                         Attributes = r[0].Data as AttributeList,
                         Parameters = r[1].Data as ParameterList,
@@ -287,78 +289,78 @@ namespace Parrot.Parser
 
                 case ProductionIndex.Statement_Identifier:
                     // <Statement> ::= Identifier <Statement Tail>
-                    return CreateStatementIdentifier(r);
+                    return CreateStatementIdentifier(host, r);
 
                 case ProductionIndex.Statement_Stringliteralpipe:
                     // <Statement> ::= StringLiteralPipe
-                    return new StringLiteralPipe((r[0].Data as string).Substring(1));
+                    return new StringLiteralPipe(host, (r[0].Data as string).Substring(1));
 
                 case ProductionIndex.Statement_Multilinestringliteral:
                 case ProductionIndex.Statement_Stringliteral:
                     // <Statement> ::= MultiLineStringLiteral
                     // <Statement> ::= StringLiteral
-                    return new StringLiteral(r[0].Data as string);
+                    return new StringLiteral(host, r[0].Data as string);
 
                 case ProductionIndex.Outputstatement_Colon_Identifier:
                     // <OutputStatement> ::= ':' Identifier
-                    return new EncodedOutput(r[1].Data as string);
+                    return new EncodedOutput(host, r[1].Data as string);
 
                 case ProductionIndex.Outputstatement_Eq_Identifier:
                     // <OutputStatement> ::= '=' Identifier
-                    return new RawOutput(r[1].Data as string);
+                    return new RawOutput(host, r[1].Data as string);
 
             }  //switch
 
             return result;
         }
 
-        private Attribute CreateAttributeNodeFromIdentifierIdentifier(Reduction reduction)
+        private Attribute CreateAttributeNodeFromIdentifierIdentifier(IHost host, Reduction reduction)
         {
-            return new Attribute(reduction[0].Data as string, reduction[2].Data as string);
+            return new Attribute(host, reduction[0].Data as string, reduction[2].Data as string);
         }
 
-        private Document CreateBlockNodeList(Reduction reduction)
+        private Document CreateBlockNodeList(IHost host, Reduction reduction)
         {
             // <Statements> ::= <Statements> <Statement>
-            return new Document(reduction[0].Data as Document, reduction[1].Data as Statement);
+            return new Document(host, reduction[0].Data as Document, reduction[1].Data as Statement);
         }
 
-        private StatementTail CreateStatementTailWithAttributesParameters(Reduction reduction)
+        private StatementTail CreateStatementTailWithAttributesParameters(IHost host, Reduction reduction)
         {
-            return new StatementTail
+            return new StatementTail(host)
             {
                 Attributes = reduction[0].Data as AttributeList,
                 Parameters = reduction[1].Data as ParameterList
             };
         }
 
-        private Attribute CreateAttributeNodeFromIdentifierStringLiteral(Reduction reduction)
+        private Attribute CreateAttributeNodeFromIdentifierStringLiteral(IHost host, Reduction reduction)
         {
-            return new Attribute(reduction[0].Data as string, reduction[2].Data as string);
+            return new Attribute(host, reduction[0].Data as string, reduction[2].Data as string);
         }
 
-        private ParameterList CreateParameterListFromParameter(Reduction reduction)
+        private ParameterList CreateParameterListFromParameter(IHost host, Reduction reduction)
         {
-            return new ParameterList(reduction[0].Data as Parameter);
+            return new ParameterList(host, reduction[0].Data as Parameter);
         }
 
-        private AttributeList CreateAttributeListFromAttribute(Reduction reduction)
+        private AttributeList CreateAttributeListFromAttribute(IHost host, Reduction reduction)
         {
-            return new AttributeList(reduction[0].Data as Attribute);
+            return new AttributeList(host, reduction[0].Data as Attribute);
         }
 
-        private Document CreateDocumentNode(Reduction reduction)
+        private Document CreateDocumentNode(IHost host, Reduction reduction)
         {
-            return new Document()
+            return new Document(host)
             {
-                Children = reduction[0].Data as StatementList ?? new StatementList(reduction[0].Data as Statement)
+                Children = reduction[0].Data as StatementList ?? new StatementList(host, reduction[0].Data as Statement)
             };
         }
 
-        private Statement CreateStatementIdentifier(Reduction reduction)
+        private Statement CreateStatementIdentifier(IHost host, Reduction reduction)
         {
             // <Statement> ::= Identifier <Statement Tail>
-            return new Statement(reduction[0].Data as string, reduction[1].Data as StatementTail);
+            return new Statement(host, reduction[0].Data as string, reduction[1].Data as StatementTail);
         }
     } //MyParser
 }

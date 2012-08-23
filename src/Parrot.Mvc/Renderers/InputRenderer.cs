@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
+using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Mvc.Renderers
 {
@@ -28,7 +29,9 @@ namespace Parrot.Mvc.Renderers
             foreach (var attribute in blockNode.Attributes)
             {
                 //attribute.SetModel(localModel);
-                var attributeValue = RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
+                var attributeValue = model == null && attribute.ValueType == ValueType.Property 
+                    ? null 
+                    : RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 
                 if (attribute.Key == "class")
                 {
@@ -40,6 +43,10 @@ namespace Parrot.Mvc.Renderers
                     if (attributeValue is bool && (bool)attributeValue)
                     {
                         tag.MergeAttribute(attribute.Key, attribute.Key, true);
+                    }
+                    else if (attributeValue is bool && !(bool)attributeValue)
+                    {
+                        tag.MergeAttribute(attribute.Key, attribute.Key, false);
                     }
                     else
                     {

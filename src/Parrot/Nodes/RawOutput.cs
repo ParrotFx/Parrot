@@ -1,10 +1,12 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     public class RawOutput : Statement
     {
         public string VariableName { get; set; }
 
-        public RawOutput(string variableName) : base("rawoutput")
+        public RawOutput(IHost host, string variableName) : base(host, "rawoutput")
         {
             VariableName = variableName;
         }

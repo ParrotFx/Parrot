@@ -36,6 +36,16 @@ namespace Parrot.Infrastructure
 
         public void RegisterFactory(string blockName, IRenderer renderer)
         {
+            if (string.IsNullOrEmpty(blockName))
+            {
+                throw new ArgumentNullException("blockName");
+            }
+
+            if (renderer == null)
+            {
+                throw new ArgumentNullException("renderer");
+            }
+
             if (!_renderers.ContainsKey(blockName))
             {
                 _renderers.Add(blockName, renderer);
@@ -44,9 +54,12 @@ namespace Parrot.Infrastructure
 
         public IRenderer GetRenderer(string blockName)
         {
-            if (_renderers.ContainsKey(blockName))
+            if (blockName != null)
             {
-                return _renderers[blockName];
+                if (_renderers.ContainsKey(blockName))
+                {
+                    return _renderers[blockName];
+                }
             }
 
             return _renderers["*"];

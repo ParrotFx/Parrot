@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
+using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Mvc.Renderers
 {
@@ -120,7 +121,9 @@ namespace Parrot.Mvc.Renderers
             TagBuilder builder = new TagBuilder(statement.Name);
             foreach (var attribute in statement.Attributes)
             {
-                var attributeValue = RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
+                var attributeValue = model == null && attribute.ValueType == ValueType.Property
+                    ? null
+                    : RendererHelpers.GetModelValue(model, attribute.ValueType, attribute.Value);
 
                 if (attribute.Key == "class")
                 {

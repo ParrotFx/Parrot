@@ -17,12 +17,12 @@ namespace Parrot.Nodes
     {
         public StatementList Children;
 
-        public Document()
+        public Document(IHost host)
         {
-            Children = new StatementList();
+            Children = new StatementList(host);
         }
 
-        public Document(Document document, Statement statement)
+        public Document(IHost host, Document document, Statement statement) : this(host)
         {
             Children = document.Children;
             Children.Add(statement);

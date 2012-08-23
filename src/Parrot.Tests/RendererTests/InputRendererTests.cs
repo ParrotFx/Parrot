@@ -13,14 +13,14 @@ namespace Parrot.Tests
     using System.IO;
 
     [TestFixture]
-    public class InputRendererTests
+    public class InputRendererTests : TestRenderingBase
     {
-        private Document Parse(string text)
+        private Document Parse(string text, IHost host)
         {
             Parser.Parser parsr = new Parser.Parser();
             Document document;
 
-            parsr.Parse(new StringReader(text), out document);
+            parsr.Parse(new StringReader(text), host, out document);
 
             return document;
         }
@@ -29,7 +29,7 @@ namespace Parrot.Tests
         public void InputWithoutAnythingSpecialReturnsBasicInputElement()
         {
             string block = "input";
-            var nodes = Parse(block);
+            var nodes = Parse(block, new MemoryHost());
 
             IRendererFactory factory = new RendererFactory();
 
@@ -42,11 +42,24 @@ namespace Parrot.Tests
         }
 
         [Test]
+        public void InputAttributes()
+        {
+            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]"));
+
+            //input stuff needs special overrides for checked
+
+            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]"));
+            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]"));
+            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]"));
+            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[checked type=\"checkbox\"]"));
+        }
+
+        [Test]
         public void InputWithAttributsReturnsElementWithAttributes()
         {
             string block = "input[attr=\"value\"]";
 
-            var nodes = Parse(block);
+            var nodes = Parse(block, new MemoryHost());
 
             IRendererFactory factory = new RendererFactory();
 

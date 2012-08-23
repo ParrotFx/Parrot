@@ -60,11 +60,11 @@ namespace Parrot.Mvc.Renderers
                 {
                     string contents = new StreamReader(stream).ReadToEnd();
 
-                    var document = ParrotView.LoadDocument(contents);
+                    var document = parrotView.LoadDocument(contents);
 
                     return _host.DependencyResolver.Get<DocumentRenderer>().Render(document, new
                     {
-                        Children = new StatementList(blockNode.Children.ToArray()),
+                        Children = new StatementList(_host, blockNode.Children.ToArray()),
                         Model = model
                     });
                 }

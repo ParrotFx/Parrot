@@ -13,7 +13,7 @@ namespace Parrot.Mvc.Renderers
     using System.Linq;
     using System.Text;
     using Nodes;
-    using ValueType = Nodes.ValueType;
+    using ValueType = ValueType;
 
     /// <summary>
     /// TODO: Update summary.
@@ -46,7 +46,7 @@ namespace Parrot.Mvc.Renderers
         //    return sb.ToString();
         //}
 
-        internal static object GetModelValue(object model, Parrot.Nodes.ValueType valueType, string property)
+        internal static object GetModelValue(object model, ValueType valueType, string property)
         {
             switch (valueType)
             {

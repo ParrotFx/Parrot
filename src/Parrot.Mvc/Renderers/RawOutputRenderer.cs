@@ -1,7 +1,7 @@
 using System;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
-using ValueType = Parrot.Nodes.ValueType;
+using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Mvc.Renderers
 {

@@ -1,10 +1,12 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     public class EncodedOutput : Statement
     {
         public string VariableName { get; private set; }
 
-        public EncodedOutput(string variableName) : base("output")
+        public EncodedOutput(IHost host, string variableName) : base(host, "output")
         {
             VariableName = variableName;
         }

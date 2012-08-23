@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     using System.Collections;
@@ -75,7 +77,7 @@ namespace Parrot.Nodes
         }
         #endregion
 
-        public AbstractNodeList()
+        public AbstractNodeList(IHost host) : base(host)
         {
             _list = new List<AbstractNode>();
         }
@@ -159,7 +161,7 @@ namespace Parrot.Nodes
         }
         #endregion
 
-        public AbstractNodeList()
+        public AbstractNodeList(IHost host) : base(host)
         {
             _list = new List<T>();
         }

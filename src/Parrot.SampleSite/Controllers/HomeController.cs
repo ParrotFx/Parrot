@@ -94,7 +94,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
 
             Document document;
             string result = null;
-            if (parser.Parse(new StringReader(template), out document))
+            if (parser.Parse(new StringReader(template), _host, out document))
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (var element in document.Children)

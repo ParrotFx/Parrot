@@ -51,6 +51,8 @@
     <Compile Include="Infrastructure\Host.cs" />
     <Compile Include="Infrastructure\IRenderer.cs" />
     <Compile Include="Infrastructure\IRendererFactory.cs" />
+    <Compile Include="Infrastructure\ValueTypeProvider.cs" />
+    <Compile Include="Infrastructure\ValueTypeResult.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\AbstractNodeList.cs" />
     <Compile Include="Nodes\Attribute.cs" />
@@ -67,7 +69,7 @@
     <Compile Include="Nodes\StringLiteralPart.cs" />
     <Compile Include="Nodes\StringLiteralPartType.cs" />
     <Compile Include="Nodes\StringLiteralPipe.cs" />
-    <Compile Include="Nodes\ValueType.cs" />
+    <Compile Include="Infrastructure\ValueType.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserFactory.cs" />

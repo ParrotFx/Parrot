@@ -25,27 +25,9 @@ namespace Parrot.Tests
     /// TODO: Update summary.
     /// </summary>
     [TestFixture]
-    public class RenderTests
+    public class RenderTests : TestRenderingBase
     {
         //https://github.com/visionmedia/jade/blob/master/test/jade.test.js
-
-        private string Render(string parrot, object model)
-        {
-            Parser.Parser parser = new Parser.Parser();
-            Document document;
-
-            parser.Parse(new StringReader(parrot), out document);
-
-            DocumentRenderer renderer = new DocumentRenderer(new MemoryHost());
-
-            StringBuilder sb = new StringBuilder();
-            return renderer.Render(document, model);
-        }
-
-        private string Render(string parrot)
-        {
-            return Render(parrot, null);
-        }
         
         [Test]
         public void ForeachRendererTests()
@@ -137,13 +119,6 @@ namespace Parrot.Tests
             Assert.AreEqual("<a href=\"#\" title=\"foo,bar\"></a>", Render("a[title=\"foo,bar\" href=\"#\"]"));
 
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class='foo']"));
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]"));
-
-            //input stuff needs special overrides for checked
-
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]"));
-            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]"));
-            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]"));
 
             Assert.AreEqual("<img src=\"/foo.png\" />", Render("img[src=\"/foo.png\"]"));
             Assert.AreEqual("<img src=\"/foo.png\" />", Render("img[src = \"/foo.png\"]"));
@@ -169,8 +144,6 @@ namespace Parrot.Tests
             Assert.AreEqual("<p data-dynamic=\"true\"></p>", Render("p[data-dynamic= \"true\"]"));
             Assert.AreEqual("<p class=\"name\" data-dynamic=\"true\"></p>", Render("p[class= \"name\" data-dynamic= \"true\"]"));
             Assert.AreEqual("<p class=\"name\" data-dynamic=\"true\" yay=\"yay\"></p>", Render("p[class= \"name\" data-dynamic= \"true\" yay]"));
-
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[checked type=\"checkbox\"]"));
 
             Assert.AreEqual("<a data-foo=\"{ foo: &#39;bar&#39;, bar= &#39;baz&#39; }\"></a>", Render("a[data-foo = \"{ foo: 'bar', bar= 'baz' }\"]"));
 
@@ -198,6 +171,12 @@ namespace Parrot.Tests
             Assert.AreEqual("<div>this is a string literal test\r</div>", Render("div { |this is a string literal test\r\n}"));
             Assert.AreEqual("<div>1\r2\r</div>", Render("div { |1\r\n|2\r\n}"));
             Assert.AreEqual("this is a string literal test", Render("|this is a string literal test\r"));
+        }
+
+        [Test]
+        public void CssIdentifier()
+        {
+            Assert.AreEqual("<div class=\"sample-class\"></div>", Render(".sample-class"));
         }
     }
 }

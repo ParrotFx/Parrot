@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     using System.Collections.Generic;
@@ -12,11 +14,11 @@ namespace Parrot.Nodes
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 
-        protected Statement(string name)
+        protected Statement(IHost host, string name) : base(host)
         {
-            Attributes = new AttributeList();
-            Children = new StatementList();
-            Parameters = new ParameterList();
+            Attributes = new AttributeList(host);
+            Children = new StatementList(host);
+            Parameters = new ParameterList(host);
 
             //required bullshit
             if (name.Contains(".") || name.Contains("#"))
@@ -36,7 +38,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id added more than once");
                             }
 
-                            AddAttribute(new Attribute("id", part.Name));
+                            AddAttribute(new Attribute(Host, "id", part.Name));
                             break;
                         case IdentifierType.Class:
                             if (part.Name.Length == 1)
@@ -44,7 +46,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id must have a length");
                             }
 
-                            AddAttribute(new Attribute("class", part.Name));
+                            AddAttribute(new Attribute(Host, "class", "\"" + part.Name + "\""));
                             break;
                         case IdentifierType.Literal:
                             Name = part.Name;
@@ -59,8 +61,7 @@ namespace Parrot.Nodes
 
         }
 
-        public Statement(string name, StatementTail statementTail)
-            : this(name)
+        public Statement(IHost host, string name, StatementTail statementTail) : this(host, name)
         {
             if (statementTail != null)
             {
@@ -102,6 +103,7 @@ namespace Parrot.Nodes
                 }
             }
         }
+
         private void AddAttribute(Attribute node)
         {
             if (node.Key == "id")
@@ -111,10 +113,10 @@ namespace Parrot.Nodes
                     var values = node.Value.Split(".".ToCharArray());
                     foreach (var value in values.Skip(1))
                     {
-                        Attributes.Add(new Attribute("class", value));
+                        Attributes.Add(new Attribute(Host, "class", value));
                     }
 
-                    Attributes.Add(new Attribute(node.Key, values[0]));
+                    Attributes.Add(new Attribute(Host, node.Key, values[0]));
                     return;
                 }
             }
@@ -134,6 +136,14 @@ namespace Parrot.Nodes
             int index;
 
             string previousCharacter = "";
+
+            //check for a starting character
+            index = source.IndexOfAny(splitBy, start);
+            if (index == 0)
+            {
+                previousCharacter = source.Substring(0, 1);
+                source = source.Substring(1);
+            }
 
             while ((index = source.IndexOfAny(splitBy, start)) != -1)
             {

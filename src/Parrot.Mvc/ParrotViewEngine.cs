@@ -141,12 +141,12 @@ namespace Parrot.Mvc
             }
         }
 
-        internal static Document LoadDocument(string template)
+        internal Document LoadDocument(string template)
         {
             Parser.Parser parser = new Parser.Parser();
             Document document;
 
-            if (parser.Parse(new StringReader(template), out document))
+            if (parser.Parse(new StringReader(template), _host, out document))
             {
                 return document;
             }

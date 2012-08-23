@@ -33,8 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GoldParser">
-      <HintPath>..\packages\GoldParser\GoldParser.dll</HintPath>
+    <Reference Include="ApprovalTests">
+      <HintPath>..\packages\ApprovalTests.2.0\lib\ApprovalTests.dll</HintPath>
+    </Reference>
+    <Reference Include="ApprovalUtilities">
+      <HintPath>..\packages\ApprovalTests.2.0\lib\ApprovalUtilities.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
@@ -53,7 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InputRendererTests.cs" />
+    <Compile Include="RendererTests\InputRendererTests.cs" />
     <Compile Include="MemoryHost.cs" />
     <Compile Include="ParrotParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,7 +65,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RenderTests.cs" />
+    <Compile Include="RendererTests\RenderTests.cs" />
+    <Compile Include="RendererTests\TestRenderingBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

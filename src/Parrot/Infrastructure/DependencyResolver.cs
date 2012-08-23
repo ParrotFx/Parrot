@@ -32,6 +32,7 @@ namespace Parrot.Infrastructure
             //register the default renderer
             //register the default file location view engine
             Register(typeof(IRendererFactory), () => new RendererFactory());
+            Register(typeof(IValueTypeProvider), () => new ValueTypeProvider());
         }
 
         public virtual void Register(Type type, Func<object> activator)

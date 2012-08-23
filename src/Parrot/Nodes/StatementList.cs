@@ -1,17 +1,18 @@
 using System.Linq;
 using System.Text;
+using Parrot.Infrastructure;
 
 namespace Parrot.Nodes
 {
     public class StatementList : AbstractNodeList<Statement>
     {
 
-        public StatementList(params Statement[] nodes)
+        public StatementList(IHost host, params Statement[] nodes) : base(host)
         {
             _list.AddRange(nodes);
         }
 
-        public StatementList(StatementList list, params Statement[] nodes)
+        public StatementList(IHost host, StatementList list, params Statement[] nodes) : base(host)
         {
             if (list != null)
             {

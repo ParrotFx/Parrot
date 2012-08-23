@@ -1,11 +1,12 @@
 using System;
 using Parrot.Infrastructure;
 using Parrot.Nodes;
+using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Mvc.Renderers
 {
     using System.Web;
-    using ValueType = Nodes.ValueType;
+    using ValueType = ValueType;
 
     public class StringLiteralRenderer : IRenderer
     {

@@ -18,7 +18,7 @@ namespace Parrot.Mvc.Renderers
         {
             dynamic localModel = model;
 
-            Document document = new Document
+            Document document = new Document(_host)
             {
                 Children = localModel.Children
             };

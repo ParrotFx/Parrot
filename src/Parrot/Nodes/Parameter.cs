@@ -1,3 +1,5 @@
+using Parrot.Infrastructure;
+
 namespace Parrot.Nodes
 {
     public class Parameter : AbstractNode
@@ -6,50 +8,13 @@ namespace Parrot.Nodes
 
         public ValueType ValueType { get; private set; }
 
-        public Parameter(string value)
+        public Parameter(IHost host, string value) : base(host)
         {
+            var valueTypeProvider = host.DependencyResolver.Get<IValueTypeProvider>();
+            var result = valueTypeProvider.GetValue(value);
 
-            if (IsWrappedInQuotes(value))
-            {
-                ValueType = ValueType.StringLiteral;
-                //strip quotes
-                value = value.Substring(1, value.Length - 2);
-            }
-            else
-            {
-                if (value == "this")
-                {
-                    ValueType = ValueType.Local;
-                }
-                else
-                {
-                    ValueType = ValueType.Property;
-                }
-            }
-
-            Value = value;
-        }
-
-        //public object GetPropertyValue()
-        //{
-
-        //    if (ValueType == ValueType.Property)
-        //    {
-        //        var value = GetModelValue(Value);
-        //        return value;
-        //    }
-
-        //    if (ValueType == ValueType.Local)
-        //    {
-        //        return Model;
-        //    }
-
-        //    return Value;
-        //}
-
-        private bool IsWrappedInQuotes(string value)
-        {
-            return (value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") || value.EndsWith("'"));
+            ValueType = result.Type;
+            Value = result.Value as string;
         }
 
         public override bool IsTerminal

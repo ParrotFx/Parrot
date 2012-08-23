@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Parrot.Infrastructure;
+using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Nodes
 {
@@ -19,7 +21,7 @@ namespace Parrot.Nodes
         public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteral(string value) : base("string")
+        public StringLiteral(IHost host, string value) : base(host, "string")
         {
             if (IsWrappedInQuotes(value))
             {
