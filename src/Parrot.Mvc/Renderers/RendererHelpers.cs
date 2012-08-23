@@ -46,27 +46,25 @@ namespace Parrot.Mvc.Renderers
         //    return sb.ToString();
         //}
 
-        internal static object GetModelValue(object model, ValueType valueType, string property)
+        internal static object GetModelValue(object model, ValueType valueType, object property)
         {
             switch (valueType)
             {
                 case ValueType.Property:
                     //check to see if the property is any one of several keywords
-                    if (property == "true")
-                    {
-                        return true;
-                    }
 
                     if (model == null)
                     {
                         throw new NullReferenceException("model");
                     }
 
-                    string[] parameters = property.Split(".".ToCharArray());
+                    var stringProperty = property.ToString();
+
+                    string[] parameters = stringProperty.Split(".".ToCharArray());
 
                     object modelToCheck = model;
 
-                    if (property == "this")
+                    if (stringProperty == "this")
                     {
                         return model;
                     }

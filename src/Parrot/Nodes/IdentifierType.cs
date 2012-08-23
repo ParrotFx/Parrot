@@ -4,6 +4,7 @@ namespace Parrot.Nodes
     {
         Id,
         Class,
-        Literal
+        Literal,
+        Type
     }
 }

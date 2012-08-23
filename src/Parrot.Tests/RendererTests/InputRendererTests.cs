@@ -44,14 +44,13 @@ namespace Parrot.Tests
         [Test]
         public void InputAttributes()
         {
-            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]"));
+            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]"));
 
             //input stuff needs special overrides for checked
-
-            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]"));
-            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]"));
-            //Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]"));
-            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[checked type=\"checkbox\"]"));
+            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]"));
+            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]"));
+            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]"));
+            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[checked type=\"checkbox\"]"));
         }
 
         [Test]
@@ -69,6 +68,19 @@ namespace Parrot.Tests
             var result = renderer.Render(nodes.Children.First(), null);
 
             Assert.AreEqual("<input attr=\"value\" />", result);
+        }
+
+        [Test]
+        public void InputWithTypeShortcuts()
+        {
+            Assert.AreEqual("<input type=\"submit\" />", Render("input:submit"));
+            Assert.AreEqual("<input type=\"text\" />", Render("input:text"));
+            Assert.AreEqual("<input type=\"checkbox\" />", Render("input:checkbox"));
+            Assert.AreEqual("<input type=\"radio\" />", Render("input:radio"));
+            Assert.AreEqual("<input type=\"password\" />", Render("input:password"));
+            Assert.AreEqual("<input type=\"reset\" />", Render("input:reset"));
+            Assert.AreEqual("<input type=\"file\" />", Render("input:file"));
+            Assert.AreEqual("<input type=\"image\" />", Render("input:image"));
         }
     }
 }

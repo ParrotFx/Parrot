@@ -5,7 +5,7 @@ namespace Parrot.Nodes
     public class Attribute : AbstractNode
     {
         public string Key { get; internal set; }
-        public string Value { get; internal set; }
+        public object Value { get; internal set; }
 
         public ValueType ValueType { get; internal set; }
 
@@ -17,7 +17,7 @@ namespace Parrot.Nodes
             var result = valueTypeProvider.GetValue(value);
 
             ValueType = result.Type;
-            Value = result.Value as string;
+            Value = result.Value;
         }
         
         public override bool IsTerminal

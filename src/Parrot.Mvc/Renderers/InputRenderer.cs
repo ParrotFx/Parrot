@@ -40,13 +40,29 @@ namespace Parrot.Mvc.Renderers
                 else
                 {
 
+                    Func<object, ValueType, bool> noOutput = (a, v) =>
+                    {
+                        if (a is bool && !(bool) attributeValue)
+                        {
+                            return true;
+                        }
+
+                        if (attributeValue == null && v == ValueType.Keyword)
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    };
+
                     if (attributeValue is bool && (bool)attributeValue)
                     {
                         tag.MergeAttribute(attribute.Key, attribute.Key, true);
                     }
-                    else if (attributeValue is bool && !(bool)attributeValue)
+                    else if (noOutput(attributeValue, attribute.ValueType))
                     {
-                        tag.MergeAttribute(attribute.Key, attribute.Key, false);
+                        //checked=false should not output the checked attribute
+                        //checked=null should not output the checked attribute
                     }
                     else
                     {

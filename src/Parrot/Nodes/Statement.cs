@@ -21,7 +21,7 @@ namespace Parrot.Nodes
             Parameters = new ParameterList(host);
 
             //required bullshit
-            if (name.Contains(".") || name.Contains("#"))
+            if (name.Contains(".") || name.Contains("#") || name.Contains(":"))
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
@@ -48,6 +48,11 @@ namespace Parrot.Nodes
 
                             AddAttribute(new Attribute(Host, "class", "\"" + part.Name + "\""));
                             break;
+
+                        case IdentifierType.Type:
+                            AddAttribute(new Attribute(host, "type", "\"" + part.Name + "\""));
+                            break;
+
                         case IdentifierType.Literal:
                             Name = part.Name;
                             break;
@@ -108,9 +113,11 @@ namespace Parrot.Nodes
         {
             if (node.Key == "id")
             {
-                if (node.Value != null && node.Value.Contains("."))
+                var nodeValue = node.Value as string;
+
+                if (nodeValue != null && nodeValue.Contains("."))
                 {
-                    var values = node.Value.Split(".".ToCharArray());
+                    var values = nodeValue.Split(".".ToCharArray());
                     foreach (var value in values.Skip(1))
                     {
                         Attributes.Add(new Attribute(Host, "class", value));
@@ -129,9 +136,10 @@ namespace Parrot.Nodes
             get { return false; }
         }
 
+        //TODO: Refactor this - too much duplicated code
         private IEnumerable<Identifier> GetIdentifierParts(string source)
         {
-            char[] splitBy = new[] { '.', '#' };
+            char[] splitBy = new[] { '.', '#', ':' };
             int start = 0;
             int index;
 
@@ -166,6 +174,13 @@ namespace Parrot.Nodes
                             Type = IdentifierType.Class
                         };
                         break;
+                    case ":":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(index, start - index - 1),
+                            Type = IdentifierType.Type
+                        };
+                        break;
                     default:
                         yield return new Identifier
                         {
@@ -194,6 +209,13 @@ namespace Parrot.Nodes
                         {
                             Name = source.Substring(start),
                             Type = IdentifierType.Class
+                        };
+                        break;
+                    case ":":
+                        yield return new Identifier
+                        {
+                            Name = source.Substring(start),
+                            Type = IdentifierType.Type
                         };
                         break;
                     default:
