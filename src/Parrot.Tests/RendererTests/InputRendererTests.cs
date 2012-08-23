@@ -81,6 +81,7 @@ namespace Parrot.Tests
             Assert.AreEqual("<input type=\"reset\" />", Render("input:reset"));
             Assert.AreEqual("<input type=\"file\" />", Render("input:file"));
             Assert.AreEqual("<input type=\"image\" />", Render("input:image"));
+            Assert.AreEqual("<input type=\"hidden\" />", Render("input:hidden"));
         }
     }
 }
