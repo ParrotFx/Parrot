@@ -22,7 +22,7 @@ namespace Parrot.Renderers.Infrastructure
             RegisterFactory("input", new InputRenderer(host));
             RegisterFactory("string", new StringLiteralRenderer(host));
             RegisterFactory("foreach", new ForeachRenderer(host));
-            RegisterFactory("ul", new UlRenderer(host));
+            RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
 
             //default renderer
             RegisterFactory("*", new HtmlRenderer(host));
