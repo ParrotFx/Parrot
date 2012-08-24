@@ -60,7 +60,7 @@
     <Compile Include="SelfClosingRenderer.cs" />
     <Compile Include="StringLiteralRenderer.cs" />
     <Compile Include="TagBuilder.cs" />
-    <Compile Include="UlRenderer.cs" />
+    <Compile Include="ListRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parrot\Parrot.csproj">
