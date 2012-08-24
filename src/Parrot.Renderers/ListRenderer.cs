@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UlRenderer.cs" company="">
+// <copyright file="ListRenderer.cs" company="">
 // TODO: Update copyright text.
 // </copyright>
 // -----------------------------------------------------------------------
@@ -12,9 +12,9 @@ namespace Parrot.Renderers
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class UlRenderer : HtmlRenderer
+    public class ListRenderer : HtmlRenderer
     {
-        public UlRenderer(IHost host) : base(host) {}
+        public ListRenderer(IHost host) : base(host) {}
 
         public override string DefaultChildTag
         {
