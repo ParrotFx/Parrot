@@ -145,10 +145,10 @@ namespace Parrot.Mvc
 
         internal Document LoadDocument(string template)
         {
-            Parser.Parser parser = new Parser.Parser();
+            Parser.Parser parser = new Parser.Parser(_host);
             Document document;
 
-            if (parser.Parse(new StringReader(template), _host, out document))
+            if (parser.Parse(template, out document))
             {
                 return document;
             }
@@ -161,8 +161,8 @@ namespace Parrot.Mvc
             string result;
 
             Stopwatch watch = Stopwatch.StartNew();
-            try
-            {
+            //try
+            //{
                 Document document = LoadDocument(template);
 
                 object model = null;
@@ -172,17 +172,17 @@ namespace Parrot.Mvc
                 }
 
                 result = _host.DependencyResolver.Get<DocumentRenderer>().Render(document, model);
-            }
-            catch (Exception e)
-            {
-                result = e.Message;
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    result = e.Message;
+            //}
 
             watch.Stop();
 
-            return result;
-                //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
-                //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
+            return result
+                + "\r\n\r\n<!--\r\n" + template + "\r\n-->"
+                + "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
         }
 
         #endregion

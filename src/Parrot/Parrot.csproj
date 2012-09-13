@@ -33,10 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GOLD Engine">
-      <HintPath>..\packages\Gold-Parser.5.0.0\GOLD Engine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debugger\Debug.cs" />
     <Compile Include="Infrastructure\DependencyResolver.cs" />
     <Compile Include="Infrastructure\Host.cs" />
     <Compile Include="Infrastructure\ValueTypeProvider.cs" />
@@ -68,19 +65,32 @@
     <Compile Include="Nodes\StringLiteralPipe.cs" />
     <Compile Include="Infrastructure\ValueType.cs" />
     <Compile Include="ParserException.cs" />
-    <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Parser\ParserFactory.cs" />
     <Compile Include="Nodes\StatementTail.cs" />
+    <Compile Include="Lexer\CloseBracesToken.cs" />
+    <Compile Include="Lexer\CloseBracketToken.cs" />
+    <Compile Include="Lexer\CloseParenthesisToken.cs" />
+    <Compile Include="Lexer\ColonToken.cs" />
+    <Compile Include="Lexer\CommaToken.cs" />
+    <Compile Include="Lexer\EqualToken.cs" />
+    <Compile Include="Lexer\GreaterThanToken.cs" />
+    <Compile Include="Lexer\IdentifierToken.cs" />
+    <Compile Include="Lexer\MultilineStringLiteralToken.cs" />
+    <Compile Include="Lexer\OpenBracesToken.cs" />
+    <Compile Include="Lexer\OpenBracketToken.cs" />
+    <Compile Include="Lexer\OpenParenthesisToken.cs" />
+    <Compile Include="Lexer\PlusToken.cs" />
+    <Compile Include="Lexer\QuotedStringLiteralToken.cs" />
+    <Compile Include="Lexer\StringLiteralPipeToken.cs" />
+    <Compile Include="Lexer\Token.cs" />
+    <Compile Include="Lexer\Tokenizer.cs" />
+    <Compile Include="Lexer\TokenType.cs" />
+    <Compile Include="Lexer\UnexpectedTokenException.cs" />
+    <Compile Include="Lexer\WhitespaceToken.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Production.cs" />
+    <Compile Include="Parser\Stream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\RawOutput.cs" />
-    <Compile Include="Parser\RuleException.cs" />
-    <Compile Include="Parser\SymbolException.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="parrot.egt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GOLD Engine.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

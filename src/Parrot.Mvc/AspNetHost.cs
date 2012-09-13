@@ -26,6 +26,7 @@ namespace Parrot.Mvc
             InitializeRendererFactory();
             DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
             DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
+            DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
         }
 
         private void InitializeRendererFactory()

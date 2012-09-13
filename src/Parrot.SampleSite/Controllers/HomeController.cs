@@ -87,7 +87,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                 return View(Tuple.Create(DefaultHtmlTemplate, DefaultModelTemplate, ""));
             }
 
-            Parser.Parser parser = new Parser.Parser();
+            Parser.Parser parser = new Parser.Parser(_host);
 
             Type T = TypeBuilderFromJson.CreateType(Newtonsoft.Json.JsonConvert.DeserializeObject(model) as JObject);
 
@@ -95,7 +95,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
 
             Document document;
             string result = null;
-            if (parser.Parse(new StringReader(template), _host, out document))
+            if (parser.Parse(template, out document))
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (var element in document.Children)

@@ -19,10 +19,10 @@ namespace Parrot.Tests
     {
         private Document Parse(string text, IHost host)
         {
-            Parser.Parser parsr = new Parser.Parser();
+            Parser.Parser parser = new Parser.Parser(host);
             Document document;
 
-            parsr.Parse(new StringReader(text), host, out document);
+            parser.Parse(text, out document);
 
             return document;
         }

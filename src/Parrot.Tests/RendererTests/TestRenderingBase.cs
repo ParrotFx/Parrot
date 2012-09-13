@@ -24,10 +24,10 @@ namespace Parrot.Tests
     {
         protected string Render(string parrot, object model, IHost host)
         {
-            Parser.Parser parser = new Parser.Parser();
+            Parser.Parser parser = new Parser.Parser(host);
             Document document;
 
-            parser.Parse(new StringReader(parrot), host, out document);
+            parser.Parse(parrot, out document);
 
             DocumentRenderer renderer = new DocumentRenderer(new MemoryHost());
 

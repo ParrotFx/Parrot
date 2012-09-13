@@ -1,366 +1,505 @@
+﻿// -----------------------------------------------------------------------
+// <copyright file="Parser.cs" company="">
+// TODO: Update copyright text.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System.Diagnostics;
 using Parrot.Infrastructure;
+using Parrot.Lexer;
+using Parrot.Nodes;
 
 namespace Parrot.Parser
 {
-    using System.Reflection;
-    using System.IO;
-    using GOLD;
-    using Nodes;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     public class Parser
     {
+        //public Func<Production, object[], object> ProductionFound;
+        private IHost _host;
 
-        private GOLD.Parser _parser = new GOLD.Parser();
-
-        private enum ProductionIndex
+        public Parser(IHost host)
         {
-            // ReSharper disable InconsistentNaming
-            @Parameter_Stringliteral = 0,              // <Parameter> ::= StringLiteral
-            @Parameter_Identifier = 1,                 // <Parameter> ::= Identifier
-            @Parameterlist = 2,                        // <Parameter List> ::= <Parameter>
-            @Parameterlist_Comma = 3,                  // <Parameter List> ::= <Parameter List> ',' <Parameter>
-            @Parameters_Lparan_Rparan = 4,             // <Parameters> ::= '(' <Parameter List> ')'
-            @Parameters = 5,                           // <Parameters> ::= 
-            @Attribute_Identifier_Eq_Stringliteral = 6,  // <Attribute> ::= Identifier '=' StringLiteral
-            @Attribute_Identifier_Eq_Identifier = 7,   // <Attribute> ::= Identifier '=' Identifier
-            @Attribute_Identifier = 8,                 // <Attribute> ::= Identifier
-            @Attributelist = 9,                        // <Attribute List> ::= <Attribute>
-            @Attributelist2 = 10,                      // <Attribute List> ::= <Attribute List> <Attribute>
-            @Attributes_Lbracket_Rbracket = 11,        // <Attributes> ::= '[' <Attribute List> ']'
-            @Attributes = 12,                          // <Attributes> ::= 
-            @Sibling_Plus = 13,                        // <Sibling> ::= <Statement> '+' <Statement>
-            @Sibling_Plus2 = 14,                       // <Sibling> ::= <Sibling> '+' <Statement>
-            @Parentchild_Gt = 15,                      // <ParentChild> ::= <Statement> '>' <Statement>
-            @Child = 16,                               // <Child> ::= <ParentChild>
-            @Child_Gt = 17,                            // <Child> ::= <Statement> '>' <Sibling>
-            @Child_Gt2 = 18,                           // <Child> ::= <Statement> '>' <Child>
-            @Statements = 19,                          // <Statements> ::= <Statement>
-            @Statements2 = 20,                         // <Statements> ::= <Statements> <Statement>
-            @Statements3 = 21,                         // <Statements> ::= <Sibling>
-            @Statements4 = 22,                         // <Statements> ::= <Child>
-            @Statements5 = 23,                         // <Statements> ::= <Statements> <Child>
-            @Statementtail_Lbrace_Rbrace = 24,         // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
-            @Statementtail_Lbrace_Rbrace2 = 25,        // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-            @Statementtail = 26,                       // <Statement Tail> ::= <Attributes> <Parameters>
-            @Statement_Identifier = 27,                // <Statement> ::= Identifier <Statement Tail>
-            @Statement = 28,                           // <Statement> ::= <OutputStatement>
-            @Statement_Multilinestringliteral = 29,    // <Statement> ::= MultiLineStringLiteral
-            @Statement_Stringliteral = 30,             // <Statement> ::= StringLiteral
-            @Statement_Stringliteralpipe = 31,         // <Statement> ::= StringLiteralPipe
-            @Outputstatement_Colon_Identifier = 32,    // <OutputStatement> ::= ':' Identifier
-            @Outputstatement_Eq_Identifier = 33        // <OutputStatement> ::= '=' Identifier
-            // ReSharper restore InconsistentNaming
+            _host = host;
         }
 
-        static Parser()
+        public bool Parse(string text, out Document document)
         {
-            //This procedure can be called to load the parse tables. The class can
-            //read tables using a BinaryReader.
-            System.AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            var tokenizer = new Tokenizer(text);
+
+            var tokens = tokenizer.Tokens();
+
+            var stream = new Stream<Token>(tokens);
+
+            document = new Document(_host);
+
+            foreach (var statement in Parse(stream))
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-
-                string name = args.Name.Substring(0, args.Name.IndexOf(','));
-
-                Stream stream = assembly.GetManifestResourceStream(string.Format("Parrot.{0}.dll", name));
-                byte[] block = new byte[stream.Length];
-                stream.Read(block, 0, block.Length);
-                Assembly a2 = Assembly.Load(block);
-                return a2;
-            };
-
-            ParserFactory.InitializeFactoryFromResource("Parrot.parrot.egt");
-        }
-
-        public bool Parse(TextReader reader, IHost host, out Document document)
-        {
-            document = null;
-
-            _parser = ParserFactory.CreateParser(reader);
-
-            //This procedure starts the GOLD Parser Engine and handles each of the
-            //messages it returns. Each time a reduction is made, you can create new
-            //custom object and reassign the .CurrentReduction property. Otherwise, 
-            //the system will use the Reduction object that was returned.
-            //
-            //The resulting tree will be a pure representation of the language 
-            //and will be ready to implement.
-
-            ParseMessage message;
-            bool done;                      //Controls when we leave the loop
-            bool accepted = false;          //Was the parse successful?
-
-            _parser.Open(reader);
-            _parser.TrimReductions = false;  //Please read about this feature before enabling  
-
-            done = false;
-            while (!done)
-            {
-                var response = _parser.Parse();
-
-                switch (response)
+                if (statement is Statement)
                 {
-                    case ParseMessage.LexicalError:
-                        //Cannot recognize token
-                        throw new Parrot.ParserException("find the message somehow");
+                    document.Children.Add(statement as Statement);
+                }
+                else if (statement is StatementList)
+                {
+                    foreach (var s in (statement as StatementList))
+                    {
+                        document.Children.Add(s);
+                    }
+                }
+            }
 
-                    case ParseMessage.SyntaxError:
-                        //Expecting a different token
-                        throw new Parrot.ParserException("find the message somehow");
+            return true;
+        }
 
-                    case ParseMessage.Reduction:
-                        //Create a customized object to store the reduction
+        private IEnumerable<object> Parse(Stream<Token> stream)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
 
-                        _parser.CurrentReduction = CreateNewObject(host, (Reduction)_parser.CurrentReduction);
+            List<Statement> siblings = new List<Statement>();
+
+            while (stream.Peek() != null)
+            {
+                var token = stream.Peek();
+                switch (token.Type)
+                {
+                    case TokenType.StringLiteral:
+                    case TokenType.MultiLineStringLiteral:
+                    case TokenType.StringLiteralPipe:
+                    case TokenType.QuotedStringLiteral:
+                    case TokenType.Identifier:
+                    case TokenType.OpenBracket:
+                    case TokenType.OpenParenthesis:
+                        TokenFound(token);
+                        var statement = ParseStatement(stream);
+
+                        //if (siblings.Any())
+                        //{
+                        //    //if we got here then we aren't joining siblings anymore
+                        //    yield return CreateStatementListFromSiblingList(siblings);
+                        //    siblings = new List<Statement>();
+                        //}
+
+                        //if (stream.Peek() != null && stream.Peek().Type == TokenType.Plus)
+                        //{
+                        //    siblings.Add(statement);
+
+                        //    //add to siblinglist
+                        //}
+                        //else
+                        //{
+                        yield return statement;
+                        //}
+
                         break;
+                    //case TokenType.Plus:
+                    //    TokenFound(token);
+                    //    siblings.Add(ParseSibling(stream));
+                    //    break;
+                    default:
+                        throw new ParserException(token);
+                }
 
-                    case ParseMessage.Accept:
-                        //Accepted!
-                        document = _parser.CurrentReduction as Document;
-                        //program = parser.CurrentReduction   //The root node!                 
-                        done = true;
-                        accepted = true;
+            }
+
+            watch.Stop();
+            Parrot.Debugger.Debug.WriteLine(watch.Elapsed);
+
+            //Accept
+            if (siblings.Any())
+            {
+                yield return CreateStatementListFromSiblingList(siblings);
+            }
+        }
+
+        private StatementList CreateStatementListFromSiblingList(List<Statement> productions)
+        {
+            ProductionFound(Production.StatementList);
+
+            return new StatementList(_host, productions.ToArray());
+        }
+
+        //let is know a token is found
+        private void TokenFound(Token token)
+        {
+            Parrot.Debugger.Debug.WriteLine("Token found: {0} ({1})", token.Type, token.Content);
+        }
+
+        //let us know a production was found
+        private void ProductionFound(Production production)
+        {
+            Parrot.Debugger.Debug.WriteLine("Production found: {0}", production);
+        }
+
+
+        /// <summary>
+        /// Parses a token stream creating the largest statement possible
+        /// </summary>
+        /// <param name="stream">Stream of tokens to parse</param>
+        /// <returns>Statement</returns>
+        private StatementList ParseStatement(Stream<Token> stream)
+        {
+            //statements can be made up of identifiers, attributes, parameters and children
+
+            var tokenType = stream.Peek().Type;
+            Token identifier = null;
+            switch (tokenType)
+            {
+                case TokenType.Identifier:
+                    //standard identifier
+                    identifier = stream.Next();
+                    break;
+                case TokenType.OpenBracket:
+                case TokenType.OpenParenthesis:
+                    //ignore these
+                    break;
+                case TokenType.StringLiteral:
+                case TokenType.MultiLineStringLiteral:
+                case TokenType.StringLiteralPipe:
+                case TokenType.QuotedStringLiteral:
+                    identifier = stream.Next();
+                    break;
+            }
+
+
+            Statement statement = null;
+            StatementTail tail = null;
+
+            //3 items
+            //attributes, parameters, children
+
+            while (stream.Peek() != null)
+            {
+                var token = stream.Peek();
+                if (token == null)
+                {
+                    break;
+                }
+
+                switch (token.Type)
+                {
+                    case TokenType.OpenParenthesis:
+                    case TokenType.OpenBrace:
+                    case TokenType.OpenBracket:
+                        tail = ParseStatementTail(stream);
                         break;
-
-                    case ParseMessage.TokenRead:
-                        //You don't have to do anything here.
+                    case TokenType.GreaterThan:
+                        //consume greater than
+                        stream.Next();
+                        //might be a single child or a statement list of siblings
+                        tail = ParseSingleStatementTail(stream);
                         break;
+                    case TokenType.Colon:
+                        //next thing must be an identifier
+                        var colon = stream.Next();
+                        identifier = stream.Next();
+                        statement = new EncodedOutput(_host, identifier.Content);
+                        goto checkForSiblings;
+                    case TokenType.Equal:
+                        //next thing must be an identifier
+                        var equal = stream.Next();
+                        identifier = stream.Next();
+                        statement = new RawOutput(_host, identifier.Content);
+                        goto checkForSiblings;
 
-                    case ParseMessage.InternalError:
-                        //INTERNAL ERROR! Something is horribly wrong.
-                        done = true;
+                    default:
+                        statement = GetStatementFromToken(identifier, tail);
+                        goto checkForSiblings;
+                }
+            }
+
+            statement = GetStatementFromToken(identifier, tail);
+
+        checkForSiblings:
+
+
+            var list = new StatementList(_host, statement);
+
+            while (stream.Peek() != null)
+            {
+                Parrot.Debugger.Debug.WriteLine("Looking for siblings");
+                if (stream.Peek().Type == TokenType.Plus)
+                {
+                    //it's now a statementlist not a statement
+                    stream.Next();
+                    var siblings = ParseStatement(stream);
+                    foreach (var sibling in siblings)
+                    {
+                        list.Add(sibling);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return list;
+        }
+
+        private Statement GetStatementFromToken(Token identifier, StatementTail tail)
+        {
+            var value = identifier != null ? identifier.Content : "";
+            if (identifier != null)
+            {
+                switch (identifier.Type)
+                {
+                    case TokenType.StringLiteral:
+                        return new StringLiteral(_host, value);
+                    case TokenType.QuotedStringLiteral:
+                        return new StringLiteral(_host, value);
+                    case TokenType.StringLiteralPipe:
+                        return new StringLiteralPipe(_host, value.Substring(1));
+                    case TokenType.MultiLineStringLiteral:
+                        return new StringLiteral(_host, value);
+                }
+            }
+
+            return new Statement(_host, value, tail);
+        }
+
+        private StatementTail ParseSingleStatementTail(Stream<Token> stream)
+        {
+            var statementList = ParseStatement(stream);
+            Parrot.Debugger.Debug.WriteLine("Found Single statement tail");
+            return new StatementTail(_host) { Children = statementList };
+        }
+
+        private StatementTail ParseStatementTail(Stream<Token> stream)
+        {
+            Parrot.Debugger.Debug.WriteLine("Parsing: StatementTail");
+
+            //expect an attribute
+            //expect a parameter
+            //expect a list of children
+
+            var additional = new object[3];
+
+            while (stream.Peek() != null)
+            {
+                var token = stream.Peek();
+                TokenFound(token);
+                if (token == null)
+                {
+                    break;
+                }
+
+                switch (token.Type)
+                {
+                    case TokenType.OpenParenthesis:
+                        additional[1] = ParseParameters(stream);
                         break;
-
-                    case ParseMessage.NotLoadedError:
-                        //This error occurs if the CGT was not loaded.                   
-                        done = true;
+                    case TokenType.OpenBracket:
+                        additional[0] = ParseAttributes(stream);
                         break;
+                    case TokenType.GreaterThan:
+                        additional[2] = ParseChildren(stream);
+                        break;
+                    case TokenType.OpenBrace:
+                        //parse children
+                        additional[2] = ParseChildren(stream);
+                        goto productionFound;
+                    //case TokenType.Identifier:
+                    //    additional[2] = ParseChildren(stream);
+                    //    goto productionFound;
+                    default:
+                        //no invalid token here
+                        goto productionFound;
+                }
+            }
 
-                    case ParseMessage.GroupError:
-                        //GROUP ERROR! Unexpected end of file
-                        done = true;
+        productionFound:
+            ProductionFound(Production.StatementTail);
+            return new StatementTail(_host)
+            {
+                Attributes = additional[0] as AttributeList,
+                Parameters = additional[1] as ParameterList,
+                Children = additional[2] as StatementList
+            };
+        }
+
+        private StatementList ParseChildren(Stream<Token> stream)
+        {
+            var open = stream.Next();
+            CloseBracesToken close = null;
+            List<Statement> children = new List<Statement>();
+
+            while (stream.Peek() != null)
+            {
+                var token = stream.Peek();
+                TokenFound(token);
+                if (token == null)
+                {
+                    break;
+                }
+
+                switch (token.Type)
+                {
+                    case TokenType.Plus:
+                        break;
+                    //case TokenType.Identifier:
+                    //    //we're done
+                    //    goto doneWithChildren;
+                    case TokenType.CloseBrace:
+                        close = stream.Next() as CloseBracesToken;
+                        goto doneWithChildren;
+                    default:
+                        var statements = ParseStatement(stream);
+                        foreach (var statement in statements)
+                        {
+                            children.Add(statement);
+                        }
                         break;
                 }
-            } //while
+            }
 
-            return accepted;
+        doneWithChildren:
+            ProductionFound(Production.ParameterGroup);
+            return new StatementList(_host, children.ToArray());
         }
 
-        private object CreateNewObject(IHost host, Reduction r)
+        private ParameterList ParseParameters(Stream<Token> stream)
         {
-            object result = null;
+            //( parameterlist )
+            var open = stream.Next();
+            CloseParenthesisToken close = null;
+            List<Parameter> children = new List<Parameter>();
 
-            switch ((ProductionIndex)r.Parent.TableIndex())
+            while (stream.Peek() != null)
             {
-                case ProductionIndex.Parameter_Stringliteral:
-                    // <Parameter> ::= StringLiteral
-                    return new Parameter(host, r[0].Data as string);
+                var token = stream.Peek();
+                TokenFound(token);
+                if (token == null)
+                {
+                    break;
+                }
 
-                case ProductionIndex.Parameter_Identifier:
-                    // <Parameter> ::= Identifier
-                    return new Parameter(host, r[0].Data as string);
+                switch (token.Type)
+                {
+                    case TokenType.Identifier:
+                    case TokenType.QuotedStringLiteral:
+                    case TokenType.StringLiteralPipe:
+                    case TokenType.MultiLineStringLiteral:
+                        children.Add(ParseParameter(stream));
+                        break;
+                    case TokenType.CloseParenthesis:
+                        close = stream.Next() as CloseParenthesisToken;
+                        goto doneWithParameter;
+                    default:
+                        throw new ParserException(token);
+                }
+            }
 
-                case ProductionIndex.Parameterlist:
-                    // <Parameter List> ::= <Parameter>
-                    return CreateParameterListFromParameter(host, r);
-
-                case ProductionIndex.Parameters_Lparan_Rparan:
-                    // <Parameters> ::= '(' <Parameter List> ')'
-                    return r[1].Data as ParameterList;
-
-                case ProductionIndex.Parameters:
-                    // <Parameters> ::= 
-                    return null;
-
-                case ProductionIndex.Attribute_Identifier_Eq_Stringliteral:
-                    // <Attribute> ::= Identifier '=' StringLiteral
-                    return CreateAttributeNodeFromIdentifierStringLiteral(host, r);
-
-                case ProductionIndex.Attribute_Identifier_Eq_Identifier:
-                    // <Attribute> ::= Identifier '=' Identifier
-                    return CreateAttributeNodeFromIdentifierIdentifier(host, r);
-
-                case ProductionIndex.Attribute_Identifier:
-                    // <Attribute> ::= Identifier
-                    return new Attribute(host, r[0].Data as string, null);
-
-                case ProductionIndex.Attributelist:
-                    // <Attribute List> ::= <Attribute>
-                    return CreateAttributeListFromAttribute(host, r);
-
-                case ProductionIndex.Attributelist2:
-                    // <Attribute List> ::= <Attribute List> <Attribute>
-                    return new AttributeList(host, r[0].Data as AttributeList, r[1].Data as Attribute);
-
-                case ProductionIndex.Attributes_Lbracket_Rbracket:
-                    // <Attributes> ::= '[' <Attribute List> ']'
-                    return r[1].Data as AttributeList;
-
-                case ProductionIndex.Attributes:
-                    // <Attributes> ::= 
-                    return null;
-
-                case ProductionIndex.Statements:
-                    // <Statements> ::= <Statement>
-                    return CreateDocumentNode(host, r);
-
-                case ProductionIndex.Statements2:
-                    // <Statements> ::= <Statements> <Statement>
-                    return CreateBlockNodeList(host, r);
-
-                case ProductionIndex.Statements3:
-                    return CreateDocumentNode(host, r);
-
-                case ProductionIndex.Statements4:
-                    return CreateDocumentNode(host, r);
-                case ProductionIndex.@Statements5:
-                    // <Statements> ::= <Statements> <Child>
-                    var tempdoc = r[0].Data as Document;
-                    var tempchild = r[1].Data as Statement;
-                    tempdoc.Children.Add(tempchild);
-
-                    return tempdoc;
-
-                case ProductionIndex.Sibling_Plus:
-
-                    return new StatementList(host, r[0].Data as Statement, r[2].Data as Statement);
-
-                case ProductionIndex.Sibling_Plus2:
-                    return new StatementList(host, r[0].Data as StatementList, r[2].Data as Statement);
-
-                case ProductionIndex.Statementtail:
-                    // <Statement Tail> ::= <Attributes> <Parameters>
-                    return CreateStatementTailWithAttributesParameters(host, r);
-
-                case ProductionIndex.Statementtail_Lbrace_Rbrace2:
-                    // <Statement Tail> ::= <Attributes> <Parameters> '{' '}'
-                    return new StatementTail(host)
-                    {
-                        Attributes = r[0].Data as AttributeList,
-                        Parameters = r[1].Data as ParameterList
-                    };
-
-                case ProductionIndex.Statementtail_Lbrace_Rbrace:
-                    // <Statement Tail> ::= <Attributes> <Parameters> '{' <Statements> '}'
-                    return new StatementTail(host)
-                    {
-                        Attributes = r[0].Data as AttributeList,
-                        Parameters = r[1].Data as ParameterList,
-                        Children = (r[3].Data as Document).Children
-                    };
-
-                case ProductionIndex.@Child:
-                    // <Child> ::= <ParentChild>
-                    return r[0].Data as Statement;
-
-                case ProductionIndex.Child_Gt:
-                    // <Child> ::= <Statement> '>' <Sibling>
-
-                    var parent = r[0].Data as Statement;
-                    var children = r[2].Data as StatementList;
-
-                    foreach (var child in children)
-                    {
-                        parent.Children.Add(child);
-                    }
-
-                    return parent;
-
-                case ProductionIndex.Child_Gt2:
-                    //parent then statementlist
-                    //<Statement> '>' <Child>
-                    var parent2 = r[0].Data as Statement;
-                    var child2 = r[2].Data as Statement;
-                    parent2.Children.Add(child2);
-
-                    return parent2;
-
-                case ProductionIndex.Parentchild_Gt:
-                    // <ParentChild> ::= <Statement> '>' <Statement>:
-                    var parent3 = r[0].Data as Statement;
-                    var child1 = r[2].Data as Statement;
-                    parent3.Children.Add(child1);
-
-                    return parent3;
-
-                case ProductionIndex.Statement:
-                    // <Statement> ::= <OutputStatement>
-                    return r[0].Data;
-
-                case ProductionIndex.Statement_Identifier:
-                    // <Statement> ::= Identifier <Statement Tail>
-                    return CreateStatementIdentifier(host, r);
-
-                case ProductionIndex.Statement_Stringliteralpipe:
-                    // <Statement> ::= StringLiteralPipe
-                    return new StringLiteralPipe(host, (r[0].Data as string).Substring(1));
-
-                case ProductionIndex.Statement_Multilinestringliteral:
-                case ProductionIndex.Statement_Stringliteral:
-                    // <Statement> ::= MultiLineStringLiteral
-                    // <Statement> ::= StringLiteral
-                    return new StringLiteral(host, r[0].Data as string);
-
-                case ProductionIndex.Outputstatement_Colon_Identifier:
-                    // <OutputStatement> ::= ':' Identifier
-                    return new EncodedOutput(host, r[1].Data as string);
-
-                case ProductionIndex.Outputstatement_Eq_Identifier:
-                    // <OutputStatement> ::= '=' Identifier
-                    return new RawOutput(host, r[1].Data as string);
-
-            }  //switch
-
-            return result;
+        doneWithParameter:
+            ProductionFound(Production.ParameterGroup);
+            return new ParameterList(_host, children.ToArray());
         }
 
-        private Attribute CreateAttributeNodeFromIdentifierIdentifier(IHost host, Reduction reduction)
+        private Parameter ParseParameter(Stream<Token> stream)
         {
-            return new Attribute(host, reduction[0].Data as string, reduction[2].Data as string);
-        }
-
-        private Document CreateBlockNodeList(IHost host, Reduction reduction)
-        {
-            // <Statements> ::= <Statements> <Statement>
-            return new Document(host, reduction[0].Data as Document, reduction[1].Data as Statement);
-        }
-
-        private StatementTail CreateStatementTailWithAttributesParameters(IHost host, Reduction reduction)
-        {
-            return new StatementTail(host)
+            var identifier = stream.Next();
+            switch (identifier.Type)
             {
-                Attributes = reduction[0].Data as AttributeList,
-                Parameters = reduction[1].Data as ParameterList
-            };
+                case TokenType.StringLiteralPipe:
+                case TokenType.MultiLineStringLiteral:
+                case TokenType.QuotedStringLiteral:
+                case TokenType.StringLiteral:
+                case TokenType.Identifier:
+                    break;
+                default:
+                    //invalid token
+                    throw new ParserException(identifier);
+            }
+
+            //reduction
+            return new Parameter(_host, identifier.Content);
         }
 
-        private Attribute CreateAttributeNodeFromIdentifierStringLiteral(IHost host, Reduction reduction)
+        private AttributeList ParseAttributes(Stream<Token> stream)
         {
-            return new Attribute(host, reduction[0].Data as string, reduction[2].Data as string);
-        }
+            var open = stream.Next();
+            CloseBracketToken close = null;
+            List<Parrot.Nodes.Attribute> children = new List<Parrot.Nodes.Attribute>();
+            Token token  = null;
 
-        private ParameterList CreateParameterListFromParameter(IHost host, Reduction reduction)
-        {
-            return new ParameterList(host, reduction[0].Data as Parameter);
-        }
-
-        private AttributeList CreateAttributeListFromAttribute(IHost host, Reduction reduction)
-        {
-            return new AttributeList(host, reduction[0].Data as Attribute);
-        }
-
-        private Document CreateDocumentNode(IHost host, Reduction reduction)
-        {
-            return new Document(host)
+            //expecting identifier
+            while (stream.Peek() != null)
             {
-                Children = reduction[0].Data as StatementList ?? new StatementList(host, reduction[0].Data as Statement)
-            };
+                token = stream.Peek();
+                TokenFound(token);
+                if (token == null)
+                {
+                    break;
+                }
+
+                switch (token.Type)
+                {
+                    case TokenType.Identifier:
+                        children.Add(ParseAttribute(stream));
+                        break;
+                    case TokenType.CloseBracket:
+                        close = stream.Next() as CloseBracketToken;
+                        goto doneWithAttribute;
+                    default:
+                        //invalid token
+                        throw new ParserException(token);
+                }
+            }
+
+        doneWithAttribute:
+            if (!children.Any())
+            {
+                //must be empty attribute list
+                throw new ParserException(token);
+            }
+            //do reduction here
+            ProductionFound(Production.AttributeGroup);
+            return new AttributeList(_host, children.ToArray());
         }
 
-        private Statement CreateStatementIdentifier(IHost host, Reduction reduction)
+        //expect identifier
+        //expect equals
+        //expect value
+
+        private Parrot.Nodes.Attribute ParseAttribute(Stream<Token> stream)
         {
-            // <Statement> ::= Identifier <Statement Tail>
-            return new Statement(host, reduction[0].Data as string, reduction[1].Data as StatementTail);
+            var identifier = stream.Next();
+            var equalsToken = stream.Peek() as EqualToken;
+            if (equalsToken != null)
+            {
+                stream.Next();
+                var valueToken = stream.Peek();
+                if (valueToken == null)
+                {
+                    throw new ParserException(string.Format("Unexpected end of stream"));
+                }
+
+                stream.Next();
+
+                switch (valueToken.Type)
+                {
+                    case TokenType.StringLiteralPipe:
+                    case TokenType.MultiLineStringLiteral:
+                    case TokenType.QuotedStringLiteral:
+                    case TokenType.StringLiteral:
+                    case TokenType.Identifier:
+                        break;
+                    default:
+                        //invalid token
+                        throw new ParserException(valueToken);
+                }
+
+                //reduction
+                return new Parrot.Nodes.Attribute(_host, identifier.Content, valueToken.Content);
+            }
+            else
+            {
+                //single attribute only
+                return new Parrot.Nodes.Attribute(_host, identifier.Content, null);
+            }
         }
-    } //MyParser
+
+    }
 }

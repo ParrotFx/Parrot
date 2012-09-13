@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using Parrot.Infrastructure;
 
 namespace Parrot.Nodes
 {
+    [Description("Raw output is for = identifier")]
     public class RawOutput : Statement
     {
         public string VariableName { get; set; }
