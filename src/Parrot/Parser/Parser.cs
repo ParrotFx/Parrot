@@ -295,7 +295,7 @@ namespace Parrot.Parser
                         additional[0] = ParseAttributes(stream);
                         break;
                     case TokenType.GreaterThan:
-                        additional[2] = ParseChildren(stream);
+                        additional[2] = ParseChild(stream);
                         break;
                     case TokenType.OpenBrace:
                         //parse children
@@ -318,6 +318,38 @@ namespace Parrot.Parser
                 Parameters = additional[1] as ParameterList,
                 Children = additional[2] as StatementList
             };
+        }
+
+        private StatementList ParseChild(Stream<Token> stream)
+        {
+            var open = stream.Next();
+            CloseBracesToken close = null;
+            List<Statement> children = new List<Statement>();
+
+            while (stream.Peek() != null)
+            {
+                var token = stream.Peek();
+                TokenFound(token);
+                if (token == null)
+                {
+                    break;
+                }
+
+                switch (token.Type)
+                {
+                    default:
+                        var statements = ParseStatement(stream);
+                        foreach (var statement in statements)
+                        {
+                            children.Add(statement);
+                        }
+                        goto doneWithChildren;
+                }
+            }
+
+        doneWithChildren:
+            ProductionFound(Production.ParameterGroup);
+            return new StatementList(_host, children.ToArray());
         }
 
         private StatementList ParseChildren(Stream<Token> stream)

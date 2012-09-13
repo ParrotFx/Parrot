@@ -364,6 +364,18 @@ namespace Parrot.Tests
                 Assert.AreEqual(1, document.Children.Count);
                 Assert.AreEqual("string", document.Children[0].Name);
             }
+
+            [Test]
+            public void StringLiteralPipeChildFollowedByStringLiteralPipeChild()
+            {
+                var document = Parse(@"container { 
+                                            style[type='text/css'] > |label { margin-right: .5em; font-weight: bold; }
+                                            title > |Parrot Test Drive
+                                       }");
+
+                Assert.AreEqual(1, document.Children.Count);
+                Assert.AreEqual(2, document.Children[0].Children.Count);
+            }
         }
     }
 
