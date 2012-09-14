@@ -270,8 +270,8 @@ namespace Parrot.Tests
             [Test]
             public void ElementWithInvalidAttributeDeclarationsThrowsParserException()
             {
-                //Assert.Throws<ParserException>(() => Parse("div[attr1=]"));
-                //Assert.Throws<ParserException>(() => Parse("div[]"));
+                Assert.Throws<ParserException>(() => Parse("div[attr1=]"));
+                Assert.Throws<ParserException>(() => Parse("div[]"));
                 //Assert.Throws<ParserException>(() => Parse("div[=\"value only\"]"));
                 Assert.Throws<ParserException>(() => Parse("div[attr1=\"missing closing quote]"));
                 Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]"));

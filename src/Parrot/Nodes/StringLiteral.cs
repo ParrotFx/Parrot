@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Parrot.Infrastructure;
@@ -15,9 +16,6 @@ namespace Parrot.Nodes
 {
     public class StringLiteral : Statement
     {
-        private static List<char> _idHeader = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_' };
-        private static List<char> _idFooter = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
-
         public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
@@ -90,7 +88,7 @@ namespace Parrot.Nodes
                         //it's a single ":" escaped
                         c[tempCounter++] = comparer;
                     }
-                    else if (_idHeader.Contains(source[i]))
+                    else if (IsIdentifierHead(source[i])) //.Contains(source[i]))
                     {
                         //build a new word
 
@@ -106,7 +104,8 @@ namespace Parrot.Nodes
                         //read until non-identifier character
                         for (; i < source.Length; i++, tempCounter++)
                         {
-                            if (!_idFooter.Contains(source[i]))
+                            if (!IsIdTail(source[i]))
+                            //if (!_idFooter.Contains(source[i]))
                             {
                                 break;
                             }
@@ -151,6 +150,36 @@ namespace Parrot.Nodes
             }
 
             return parts;
+        }
+
+
+        private bool IsIdentifierHead(char character)
+        {
+            return Char.IsLetter(character) ||
+                   character == '_' ||
+                   character == '#' ||
+                   character == '.' ||
+                   Char.GetUnicodeCategory(character) == UnicodeCategory.LetterNumber;
+        }
+
+        private bool IsIdTail(char character)
+        {
+            return Char.IsDigit(character) ||
+                   IsIdentifierHead(character) ||
+                   character == ':' ||
+                   character == '-' ||
+                   character == '.' ||
+                   IsIdentifierUnicode(character);
+        }
+
+        private bool IsIdentifierUnicode(char character)
+        {
+            UnicodeCategory category = Char.GetUnicodeCategory(character);
+
+            return category == UnicodeCategory.NonSpacingMark ||
+                   category == UnicodeCategory.SpacingCombiningMark ||
+                   category == UnicodeCategory.ConnectorPunctuation ||
+                   category == UnicodeCategory.Format;
         }
 
     }

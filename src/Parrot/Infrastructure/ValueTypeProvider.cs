@@ -70,15 +70,26 @@ namespace Parrot.Infrastructure
             return result;
         }
 
+        private static bool EndsWith(string source, char value)
+        {
+            int length = source.Length;
+            return length != 0 && source[length - 1] == value;
+        }
+
+        private static bool StartsWith(string source, char value)
+        {
+            return source.Length > 0 && source[0] == value;
+        }
+
         private bool IsWrappedInQuotes(string value)
         {
-            return (value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") || value.EndsWith("'"));
+            return (StartsWith(value, '"') && EndsWith(value, '"')) || (StartsWith(value, '\'') || EndsWith(value, '\''));
         }
 
         private bool IsWrappedInInvalidQuotes(string value)
         {
-            return value != null && (((value.StartsWith("\"") && !value.EndsWith("\"")) || (value.StartsWith("'") && !value.EndsWith("'")))
-                                 || ((!value.StartsWith("\"") && value.EndsWith("\"")) || (!value.StartsWith("'") && value.EndsWith("'"))));
+            return value != null && (((StartsWith(value, '"') && !EndsWith(value, '"')) || (StartsWith(value, '\'') && !EndsWith(value, '\'')))
+                                 || ((!StartsWith(value, '"') && EndsWith(value, '"')) || (!StartsWith(value, '\'') && EndsWith(value, '\''))));
         }
 
     }

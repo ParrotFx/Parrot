@@ -10,20 +10,19 @@ namespace Parrot.Parser
     /// </summary>
     public class Stream<T> where T: class
     {
-        private IEnumerable<T> _source;
-        private Queue<T> _storage;
-        private IEnumerator<T> _enumerator;
+        private readonly Queue<T> _storage;
+        private readonly IEnumerator<T> _enumerator;
+        
 
         public Stream(IEnumerable<T> source)
         {
             _storage = new Queue<T>();
-            _source = source;
             _enumerator = source.GetEnumerator();
         }
 
         public T Peek()
         {
-            if (!_storage.Any())
+            if (_storage.Count == 0)
             {
                 try
                 {
@@ -38,9 +37,31 @@ namespace Parrot.Parser
             return _storage.Peek();
         }
 
+        public void NextNoReturn()
+        {
+            if (_storage.Count > 0)
+            {
+                _storage.Dequeue();
+                return;
+            }
+
+            GetNextNoReturn();
+        }
+
+        public void GetNextNoReturn()
+        {
+            while (_enumerator.MoveNext())
+            {
+                if ((_enumerator.Current as Token).Type != TokenType.Whitespace)
+                {
+                    break;
+                }
+            }
+        }
+
         public T Next()
         {
-            if (_storage.Any())
+            if (_storage.Count > 0)
             {
                 return _storage.Dequeue();
             }

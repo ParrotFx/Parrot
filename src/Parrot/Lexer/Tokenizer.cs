@@ -25,6 +25,16 @@ namespace Parrot.Lexer
             return _reader.Peek() != -1;
         }
 
+        private void ConsumeWithoutReturn()
+        {
+            _currentIndex += 1;
+
+            if (_reader.Read() == -1)
+            {
+                throw new EndOfStreamException();
+            }
+        }
+
         private int Consume()
         {
             _currentIndex += 1;
@@ -66,34 +76,34 @@ namespace Parrot.Lexer
             switch (currentCharacter)
             {
                 case ',': //this is for the future
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new CommaToken { Index = _currentIndex };
                 case '(': //parameter list start
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new OpenParenthesisToken { Index = _currentIndex };
                 case ')': //parameter list end
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new CloseParenthesisToken { Index = _currentIndex };
                 case '[': //attribute list start
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new OpenBracketToken { Index = _currentIndex };
                 case ']': //attribute list end
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new CloseBracketToken { Index = _currentIndex };
                 case '=': //attribute assignment, raw output
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new EqualToken { Index = _currentIndex };
                 case '{': //child block start
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new OpenBracesToken { Index = _currentIndex };
                 case '}': //child block end
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new CloseBracesToken { Index = _currentIndex };
                 case '>': //child assignment
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new GreaterThanToken { Index = _currentIndex };
                 case '+': //sibling assignment
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new PlusToken { Index = _currentIndex };
                 case '|': //string literal pipe
                     return new StringLiteralPipeToken
@@ -118,7 +128,7 @@ namespace Parrot.Lexer
                     };
                 case '@': //multilinestringliteral
                     //read next token
-                    Consume();
+                    ConsumeWithoutReturn();
                     int nextCharacter = _reader.Peek();
                     char quoteType = nextCharacter == -1 ? '\0' : (char)nextCharacter;
                     return new MultilineStringLiteralToken
@@ -128,7 +138,7 @@ namespace Parrot.Lexer
                         Index = _currentIndex
                     };
                 case ':': //Encoded output
-                    Consume();
+                    ConsumeWithoutReturn();
                     return new ColonToken { Index = _currentIndex };
                 default:
                     throw new UnexpectedTokenException(string.Format("Unexpected token: {0}", currentCharacter));
@@ -149,18 +159,19 @@ namespace Parrot.Lexer
 
         private string ReadUntil(Func<char, bool> until)
         {
-            List<char> result = new List<char>();
+            StringBuilder sb = new StringBuilder();
             int peek = _reader.Peek();
             var currentCharacter = peek == -1 ? '\0' : (char)peek;
             while (!until(currentCharacter))
             {
-                Consume();
-                result.Add(currentCharacter);
+                ConsumeWithoutReturn();
+                sb.Append(currentCharacter);
                 peek = _reader.Peek();
                 currentCharacter = peek == -1 ? '\0' : (char)peek;
             }
 
-            return string.Join("", result);
+            //return string.Join("", result);
+            return sb.ToString();
         }
 
         private bool IsIdentifierHead(char character)

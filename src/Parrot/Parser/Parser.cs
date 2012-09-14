@@ -5,6 +5,8 @@
 // -----------------------------------------------------------------------
 
 
+using System;
+
 namespace Parrot.Parser
 {
     using System.Collections.Generic;
@@ -70,7 +72,6 @@ namespace Parrot.Parser
                     case TokenType.Identifier:
                     case TokenType.OpenBracket:
                     case TokenType.OpenParenthesis:
-                        TokenFound(token);
                         var statement = ParseStatement(stream);
                         yield return statement;
                         break;
@@ -81,7 +82,7 @@ namespace Parrot.Parser
             }
 
             watch.Stop();
-            Parrot.Debugger.Debug.WriteLine(watch.Elapsed);
+            //Parrot.Debugger.Debug.WriteLine(watch.Elapsed);
 
             //Accept
             if (siblings.Any())
@@ -92,23 +93,8 @@ namespace Parrot.Parser
 
         private StatementList CreateStatementListFromSiblingList(List<Statement> productions)
         {
-            ProductionFound(Production.StatementList);
-
             return new StatementList(_host, productions.ToArray());
         }
-
-        //let is know a token is found
-        private void TokenFound(Token token)
-        {
-            Parrot.Debugger.Debug.WriteLine("Token found: {0} ({1})", token.Type, token.Content);
-        }
-
-        //let us know a production was found
-        private void ProductionFound(Production production)
-        {
-            Parrot.Debugger.Debug.WriteLine("Production found: {0}", production);
-        }
-
 
         /// <summary>
         /// Parses a token stream creating the largest statement possible
@@ -159,7 +145,7 @@ namespace Parrot.Parser
                         break;
                     case TokenType.GreaterThan:
                         //consume greater than
-                        stream.Next();
+                        stream.NextNoReturn();
 
                         //might be a single child or a statement list of siblings
                         tail = ParseSingleStatementTail(stream);
@@ -192,11 +178,11 @@ namespace Parrot.Parser
 
             while (stream.Peek() != null)
             {
-                Parrot.Debugger.Debug.WriteLine("Looking for siblings");
+                //Parrot.Debugger.Debug.WriteLine("Looking for siblings");
                 if (stream.Peek().Type == TokenType.Plus)
                 {
                     //it's now a statementlist not a statement
-                    stream.Next();
+                    stream.NextNoReturn();
                     var siblings = ParseStatement(stream);
                     foreach (var sibling in siblings)
                     {
@@ -236,13 +222,13 @@ namespace Parrot.Parser
         private StatementTail ParseSingleStatementTail(Stream<Token> stream)
         {
             var statementList = ParseStatement(stream);
-            Parrot.Debugger.Debug.WriteLine("Found Single statement tail");
+            //Parrot.Debugger.Debug.WriteLine("Found Single statement tail");
             return new StatementTail(_host) { Children = statementList };
         }
 
         private StatementTail ParseStatementTail(Stream<Token> stream)
         {
-            Parrot.Debugger.Debug.WriteLine("Parsing: StatementTail");
+            //Parrot.Debugger.Debug.WriteLine("Parsing: StatementTail");
 
             //expect an attribute
             //expect a parameter
@@ -253,7 +239,6 @@ namespace Parrot.Parser
             while (stream.Peek() != null)
             {
                 var token = stream.Peek();
-                TokenFound(token);
                 if (token == null)
                 {
                     break;
@@ -281,7 +266,6 @@ namespace Parrot.Parser
             }
 
         productionFound:
-            ProductionFound(Production.StatementTail);
             return new StatementTail(_host)
             {
                 Attributes = additional[0] as AttributeList,
@@ -298,7 +282,6 @@ namespace Parrot.Parser
             while (stream.Peek() != null)
             {
                 var token = stream.Peek();
-                TokenFound(token);
                 if (token == null)
                 {
                     break;
@@ -317,7 +300,6 @@ namespace Parrot.Parser
             }
 
         doneWithChildren:
-            ProductionFound(Production.ParameterGroup);
             return new StatementList(_host, children.ToArray());
         }
 
@@ -325,12 +307,13 @@ namespace Parrot.Parser
         {
             var open = stream.Next();
             CloseBracesToken close = null;
-            List<Statement> children = new List<Statement>();
+            Statement[] children = new Statement[1024];
+            int childIndex = 0;
+            //List<Statement> children = new List<Statement>();
 
             while (stream.Peek() != null)
             {
                 var token = stream.Peek();
-                TokenFound(token);
                 if (token == null)
                 {
                     break;
@@ -343,21 +326,23 @@ namespace Parrot.Parser
                         break;
                     case TokenType.CloseBrace:
                         //consume closing brace
-                        stream.Next();
+                        stream.NextNoReturn();
                         goto doneWithChildren;
                     default:
                         var statements = ParseStatement(stream);
                         foreach (var statement in statements)
                         {
-                            children.Add(statement);
+                            children[childIndex] = statement;
+                            childIndex += 1;
                         }
                         break;
                 }
             }
 
         doneWithChildren:
-            ProductionFound(Production.ParameterGroup);
-            return new StatementList(_host, children.ToArray());
+            var childrenCopy = new Statement[childIndex];
+            Array.Copy(children, 0, childrenCopy, 0, childIndex);
+            return new StatementList(_host, childrenCopy);
         }
 
         private ParameterList ParseParameters(Stream<Token> stream)
@@ -369,7 +354,6 @@ namespace Parrot.Parser
             while (stream.Peek() != null)
             {
                 var token = stream.Peek();
-                TokenFound(token);
                 if (token == null)
                 {
                     break;
@@ -385,7 +369,7 @@ namespace Parrot.Parser
                         break;
                     case TokenType.CloseParenthesis:
                         //consume close parenthesis
-                        stream.Next();
+                        stream.NextNoReturn();
                         goto doneWithParameter;
                     default:
                         throw new ParserException(token);
@@ -393,7 +377,6 @@ namespace Parrot.Parser
             }
 
         doneWithParameter:
-            ProductionFound(Production.ParameterGroup);
             return new ParameterList(_host, children.ToArray());
         }
 
@@ -421,13 +404,12 @@ namespace Parrot.Parser
         {
             var open = stream.Next();
             List<Nodes.Attribute> children = new List<Nodes.Attribute>();
-            Token token  = null;
+            Token token = null;
 
             //expecting identifier
             while (stream.Peek() != null)
             {
                 token = stream.Peek();
-                TokenFound(token);
                 if (token == null)
                 {
                     break;
@@ -440,7 +422,7 @@ namespace Parrot.Parser
                         break;
                     case TokenType.CloseBracket:
                         //consume close bracket
-                        stream.Next();
+                        stream.NextNoReturn();
                         goto doneWithAttribute;
                     default:
                         //invalid token
@@ -456,7 +438,6 @@ namespace Parrot.Parser
             }
 
             //do reduction here
-            ProductionFound(Production.AttributeGroup);
             return new AttributeList(_host, children.ToArray());
         }
 
@@ -466,14 +447,14 @@ namespace Parrot.Parser
             var equalsToken = stream.Peek() as EqualToken;
             if (equalsToken != null)
             {
-                stream.Next();
+                stream.NextNoReturn();
                 var valueToken = stream.Peek();
                 if (valueToken == null)
                 {
                     throw new ParserException(string.Format("Unexpected end of stream"));
                 }
 
-                stream.Next();
+                stream.NextNoReturn();
 
                 switch (valueToken.Type)
                 {
@@ -492,7 +473,7 @@ namespace Parrot.Parser
                 //reduction
                 return new Nodes.Attribute(_host, identifier.Content, valueToken.Content);
             }
-            
+
             //single attribute only
             return new Nodes.Attribute(_host, identifier.Content, null);
         }
