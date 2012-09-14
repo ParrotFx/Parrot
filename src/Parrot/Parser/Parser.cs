@@ -301,9 +301,6 @@ namespace Parrot.Parser
                         //parse children
                         additional[2] = ParseChildren(stream);
                         goto productionFound;
-                    //case TokenType.Identifier:
-                    //    additional[2] = ParseChildren(stream);
-                    //    goto productionFound;
                     default:
                         //no invalid token here
                         goto productionFound;

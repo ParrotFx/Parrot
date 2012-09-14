@@ -180,9 +180,9 @@ namespace Parrot.Mvc
 
             watch.Stop();
 
-            return result
-                + "\r\n\r\n<!--\r\n" + template + "\r\n-->"
-                + "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
+            return result;
+                //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
+                //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
         }
 
         #endregion
