@@ -70,7 +70,7 @@ namespace Parrot.Nodes
             //_a-z
 
             //example identifiers because unicode is allowed... :(
-            List<StringLiteralPart> parts = new List<StringLiteralPart>();
+            List<StringLiteralPart> parts = new List<StringLiteralPart>(128);
 
             int tempCounter = 0;
             char[] c = new char[source.Length];

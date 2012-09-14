@@ -307,9 +307,7 @@ namespace Parrot.Parser
         {
             var open = stream.Next();
             CloseBracesToken close = null;
-            Statement[] children = new Statement[1024];
-            int childIndex = 0;
-            //List<Statement> children = new List<Statement>();
+            List<Statement> children = new List<Statement>(128);
 
             while (stream.Peek() != null)
             {
@@ -332,24 +330,21 @@ namespace Parrot.Parser
                         var statements = ParseStatement(stream);
                         foreach (var statement in statements)
                         {
-                            children[childIndex] = statement;
-                            childIndex += 1;
+                            children.Add(statement);
                         }
                         break;
                 }
             }
 
         doneWithChildren:
-            var childrenCopy = new Statement[childIndex];
-            Array.Copy(children, 0, childrenCopy, 0, childIndex);
-            return new StatementList(_host, childrenCopy);
+            return new StatementList(_host, children.ToArray());
         }
 
         private ParameterList ParseParameters(Stream<Token> stream)
         {
             //( parameterlist )
             var open = stream.Next();
-            List<Parameter> children = new List<Parameter>();
+            List<Parameter> children = new List<Parameter>(16);
 
             while (stream.Peek() != null)
             {
@@ -403,7 +398,7 @@ namespace Parrot.Parser
         private AttributeList ParseAttributes(Stream<Token> stream)
         {
             var open = stream.Next();
-            List<Nodes.Attribute> children = new List<Nodes.Attribute>();
+            List<Attribute> children = new List<Attribute>(128);
             Token token = null;
 
             //expecting identifier
