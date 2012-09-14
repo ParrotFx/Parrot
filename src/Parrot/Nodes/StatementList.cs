@@ -9,19 +9,19 @@ namespace Parrot.Nodes
 
         public StatementList(IHost host, params Statement[] nodes) : base(host)
         {
-            _list.AddRange(nodes);
+            List.AddRange(nodes);
         }
 
         public StatementList(IHost host, StatementList list, params Statement[] nodes) : base(host)
         {
             if (list != null)
             {
-                _list.AddRange(list);
+                List.AddRange(list);
             }
 
             if (nodes != null)
             {
-                _list.AddRange(nodes);
+                List.AddRange(nodes);
             }
         }
     }

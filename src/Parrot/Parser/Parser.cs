@@ -6,6 +6,7 @@
 
 
 using System;
+using System.IO;
 
 namespace Parrot.Parser
 {
@@ -26,32 +27,30 @@ namespace Parrot.Parser
             _host = host;
         }
 
-        public bool Parse(string text, out Document document)
+        public bool Parse(Stream stream, out Document document)
         {
-            var tokenizer = new Tokenizer(text);
+            var tokenizer = new Tokenizer(stream);
 
             var tokens = tokenizer.Tokens();
 
-            var stream = new Stream<Token>(tokens);
+            var tokenStream = new Stream<Token>(tokens);
 
             document = new Document(_host);
 
-            foreach (var statement in Parse(stream))
+            foreach (var statement in Parse(tokenStream))
             {
-                if (statement is Statement)
+                foreach (var s in (statement as StatementList))
                 {
-                    document.Children.Add(statement as Statement);
-                }
-                else if (statement is StatementList)
-                {
-                    foreach (var s in (statement as StatementList))
-                    {
-                        document.Children.Add(s);
-                    }
+                    document.Children.Add(s);
                 }
             }
 
             return true;
+        }
+
+        public bool Parse(string text, out Document document)
+        {
+            return Parse(new MemoryStream(System.Text.Encoding.Default.GetBytes(text)), out document);
         }
 
         private IEnumerable<object> Parse(Stream<Token> stream)
@@ -426,7 +425,7 @@ namespace Parrot.Parser
             }
 
         doneWithAttribute:
-            if (!children.Any())
+            if (children.Count == 0)
             {
                 //must be empty attribute list
                 throw new ParserException(token);
@@ -436,7 +435,7 @@ namespace Parrot.Parser
             return new AttributeList(_host, children.ToArray());
         }
 
-        private Nodes.Attribute ParseAttribute(Stream<Token> stream)
+        private Attribute ParseAttribute(Stream<Token> stream)
         {
             var identifier = stream.Next();
             var equalsToken = stream.Peek() as EqualToken;

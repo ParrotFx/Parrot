@@ -108,17 +108,16 @@ namespace Parrot.Renderers
 
         protected TagBuilder CreateTag(object model, Statement statement)
         {
+            Type modelType = model != null ? model.GetType() : null;
+
             object localModel = model;
             var modelValueProviderFactory = Host.DependencyResolver.Get<IModelValueProviderFactory>();
             
-            if (statement.Parameters != null && statement.Parameters.Any())
+            if (statement.Parameters.Count > 0)
             {
-                //statement.Parameters.First().SetModel(model);
+                var modelValueProvider = modelValueProviderFactory.Get(modelType);
 
-                var modelValueProvider = modelValueProviderFactory.Get(model.GetType());
-
-                //localModel = RendererHelpers.GetModelValue(model, statement.Parameters.First().ValueType, statement.Parameters.First().Value);
-                localModel = modelValueProvider.GetValue(model, statement.Parameters.First().ValueType, statement.Parameters.First().Value);
+                localModel = modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value);
             }
 
             statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
@@ -129,7 +128,7 @@ namespace Parrot.Renderers
                 object attributeValue = model;
                 if (attributeValue != null)
                 {
-                    attributeValue = modelValueProviderFactory.Get(model.GetType()).GetValue(model, attribute.ValueType, attribute.Value);
+                    attributeValue = modelValueProviderFactory.Get(modelType).GetValue(model, attribute.ValueType, attribute.Value);
                 }
                 else
                 {
@@ -146,13 +145,13 @@ namespace Parrot.Renderers
                 }
             }
 
-            if (statement.Children.Any())
+            if (statement.Children.Count > 0)
             {
                 builder.InnerHtml = RenderChildren(statement, localModel);
             }
             else
             {
-                if (statement.Parameters != null && statement.Parameters.Any())
+                if (statement.Parameters.Count > 0)
                 {
                     builder.InnerHtml = localModel != null ? localModel.ToString() : "";
                 }

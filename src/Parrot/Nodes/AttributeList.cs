@@ -6,13 +6,13 @@ namespace Parrot.Nodes
     {
         public AttributeList(IHost host, params Attribute[] nodes) : base(host)
         {
-            _list.AddRange(nodes);
+            List.AddRange(nodes);
         }
 
         public AttributeList(IHost host, AttributeList list, params Attribute[] nodes) : base(host)
         {
-            _list.AddRange(list);
-            _list.AddRange(nodes);
+            List.AddRange(list);
+            List.AddRange(nodes);
         }
     }
 }

@@ -79,7 +79,7 @@ namespace Parrot.Nodes
 
         public AbstractNodeList(IHost host) : base(host)
         {
-            _list = new List<AbstractNode>();
+            _list = new List<AbstractNode>(64);
         }
 
         public override bool IsTerminal
@@ -92,11 +92,11 @@ namespace Parrot.Nodes
     public class AbstractNodeList<T> : AbstractNode, IList<T> where T: AbstractNode
     {
         #region " IList Members "
-        protected List<T> _list = new List<T>();
+        protected List<T> List = new List<T>(64);
 
         public IEnumerator<T> GetEnumerator()
         {
-            return _list.GetEnumerator();
+            return List.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -106,32 +106,32 @@ namespace Parrot.Nodes
 
         public void Add(T item)
         {
-            _list.Add(item);
+            List.Add(item);
         }
 
         public void Clear()
         {
-            _list.Clear();
+            List.Clear();
         }
 
         public bool Contains(T item)
         {
-            return _list.Contains(item);
+            return List.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            _list.CopyTo(array, arrayIndex);
+            List.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)
         {
-            return _list.Remove(item);
+            return List.Remove(item);
         }
 
         public int Count
         {
-            get { return _list.Count; }
+            get { return List.Count; }
         }
 
         public bool IsReadOnly
@@ -141,29 +141,29 @@ namespace Parrot.Nodes
 
         public int IndexOf(T item)
         {
-            return _list.IndexOf(item);
+            return List.IndexOf(item);
         }
 
         public void Insert(int index, T item)
         {
-            _list.Insert(index, item);
+            List.Insert(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            _list.RemoveAt(index);
+            List.RemoveAt(index);
         }
 
         public T this[int index]
         {
-            get { return _list[index]; }
-            set { _list[index] = value; }
+            get { return List[index]; }
+            set { List[index] = value; }
         }
         #endregion
 
         public AbstractNodeList(IHost host) : base(host)
         {
-            _list = new List<T>();
+            List = new List<T>();
         }
 
         public override bool IsTerminal

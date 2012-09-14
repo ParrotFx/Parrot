@@ -25,7 +25,7 @@ namespace Parrot.Nodes
             {
                 ValueType = ValueType.StringLiteral;
                 //strip quotes
-                value = value.Substring(value.StartsWith("@") ? 2 : 1, value.Length - (value.StartsWith("@") ? 3 : 2));
+                value = value.Substring(StartsWith(value, '@') ? 2 : 1, value.Length - (StartsWith(value, '@') ? 3 : 2));
             }
             else if (value == "this")
             {
@@ -43,16 +43,20 @@ namespace Parrot.Nodes
             if (ValueType == ValueType.StringLiteral)
             {
                 Values = Parse(value);
-                //what to do with this
             }
 
         }
 
-        private bool IsWrappedInQuotes(string value)
+        private static bool StartsWith(string source, char value)
         {
-            return ((value.StartsWith("\"") || value.StartsWith("@\"")) && value.EndsWith("\"")) || ((value.StartsWith("'") || value.StartsWith("@'")) && value.EndsWith("'"));
+            return source.Length > 0 && source[0] == value;
         }
 
+        private bool IsWrappedInQuotes(string value)
+        {
+            return (StartsWith(value, '"') || StartsWith(value, '\''));
+        }
+        
         public override bool IsTerminal
         {
             get { return true; }
@@ -65,11 +69,6 @@ namespace Parrot.Nodes
 
         private List<StringLiteralPart> Parse(string source)
         {
-            //valid characters
-            //:_abcdefgh1234567890
-            //_a-z
-
-            //example identifiers because unicode is allowed... :(
             List<StringLiteralPart> parts = new List<StringLiteralPart>(128);
 
             int tempCounter = 0;
@@ -88,13 +87,13 @@ namespace Parrot.Nodes
                         //it's a single ":" escaped
                         c[tempCounter++] = comparer;
                     }
-                    else if (IsIdentifierHead(source[i])) //.Contains(source[i]))
+                    else if (IsIdentifierHead(source[i]))
                     {
                         //build a new word
 
                         if (tempCounter > 0)
                         {
-                            parts.Add(new StringLiteralPart(StringLiteralPartType.Literal, string.Join("", c.Take(tempCounter).ToArray()), i - tempCounter));
+                            parts.Add(new StringLiteralPart(StringLiteralPartType.Literal, new string(c, 0, tempCounter), i - tempCounter));
                         }
 
                         tempCounter = 0;
@@ -105,7 +104,6 @@ namespace Parrot.Nodes
                         for (; i < source.Length; i++, tempCounter++)
                         {
                             if (!IsIdTail(source[i]))
-                            //if (!_idFooter.Contains(source[i]))
                             {
                                 break;
                             }
@@ -125,7 +123,6 @@ namespace Parrot.Nodes
                             parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
                             tempCounter = 0;
                         }
-                        //
 
                         if (i < source.Length)
                         {
@@ -146,13 +143,12 @@ namespace Parrot.Nodes
 
             if (tempCounter > 0)
             {
-                parts.Add(new StringLiteralPart(StringLiteralPartType.Literal, string.Join("", c.Take(tempCounter).ToArray()), source.Length - tempCounter));
+                parts.Add(new StringLiteralPart(StringLiteralPartType.Literal, new string(c, 0, tempCounter), source.Length - tempCounter));
             }
 
             return parts;
         }
-
-
+        
         private bool IsIdentifierHead(char character)
         {
             return Char.IsLetter(character) ||

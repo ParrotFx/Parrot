@@ -14,14 +14,15 @@ namespace Parrot.Nodes
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 
-        protected Statement(IHost host, string name) : base(host)
+        protected Statement(IHost host, string name)
+            : base(host)
         {
             Attributes = new AttributeList(host);
             Children = new StatementList(host);
             Parameters = new ParameterList(host);
 
             //required bullshit
-            if (name.Contains(".") || name.Contains("#") || name.Contains(":"))
+            if (name.IndexOf(".") > -1 || name.IndexOf("#") > -1 || name.IndexOf(":") > -1)
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
@@ -66,48 +67,63 @@ namespace Parrot.Nodes
 
         }
 
-        public Statement(IHost host, string name, StatementTail statementTail) : this(host, name)
+        public Statement(IHost host, string name, StatementTail statementTail)
+            : this(host, name)
         {
             if (statementTail != null)
             {
-                AddParameters(statementTail.Parameters);
+                if (statementTail.Parameters != null)
+                {
+                    Parameters = statementTail.Parameters;
+                }
+
                 AddAttributes(statementTail.Attributes);
-                AddChildren(statementTail.Children);
+
+                if (statementTail.Children != null)
+                {
+                    Children = statementTail.Children;
+                }
             }
         }
 
         private void AddAttributes(AttributeList attributes)
         {
-            if (attributes != null && attributes.Any())
+            if (attributes == null) return;
+
+            int length = attributes.Count;
+            for (int i = 0; i < length; i++)
             {
-                foreach (var attribute in attributes)
-                {
-                    Attributes.Add(attribute);
-                }
+                Attributes.Add(attributes[i]);
             }
         }
 
-        private void AddParameters(ParameterList parameters)
-        {
-            if (parameters != null && parameters.Any())
-            {
-                foreach (var parameter in parameters)
-                {
-                    Parameters.Add(parameter);
-                }
-            }
-        }
+        //private void AddParameters(ParameterList parameters)
+        //{
+        //    if (parameters == null) return;
 
-        private void AddChildren(StatementList statements)
-        {
-            if (statements != null && statements.Any())
-            {
-                foreach (var statement in statements)
-                {
-                    Children.Add(statement);
-                }
-            }
-        }
+        //    int length = parameters.Count;
+        //    if (length > 0)
+        //    {
+        //        for (int i = 0; i < length; i++)
+        //        {
+        //            Parameters.Add(parameters[i]);
+        //        }
+        //    }
+        //}
+
+        //private void AddChildren(StatementList statements)
+        //{
+        //    if (statements == null) return;
+
+        //    int length = statements.Count;
+        //    if (length > 0)
+        //    {
+        //        for (int i = 0; i < length; i++)
+        //        {
+        //            Children.Add(statements[i]);
+        //        }
+        //    }
+        //}
 
         private void AddAttribute(Attribute node)
         {

@@ -16,11 +16,11 @@ namespace Parrot.Infrastructure
     /// </summary>
     public class ValueTypeProvider : IValueTypeProvider
     {
-        private static Lazy<IDictionary<string, Func<string, ValueTypeResult>>> keywordHandlers = new Lazy<IDictionary<string, Func<string, ValueTypeResult>>>(() => InitializeKeywordHanlders());
+        private static readonly Lazy<IDictionary<string, Func<string, ValueTypeResult>>> KeywordHandlers = new Lazy<IDictionary<string, Func<string, ValueTypeResult>>>(InitializeKeywordHanlders);
 
         private static IDictionary<string, Func<string, ValueTypeResult>> InitializeKeywordHanlders()
         {
-            var handlers = new Dictionary<string, Func<string, ValueTypeResult>>();
+            var handlers = new Dictionary<string, Func<string, ValueTypeResult>>(4);
             handlers.Add("this", s => new ValueTypeResult { Type = ValueType.Local, Value = "this" });
             handlers.Add("false", s => new ValueTypeResult { Type = ValueType.Keyword, Value = false });
             handlers.Add("true", s => new ValueTypeResult { Type = ValueType.Keyword, Value = true });
@@ -41,11 +41,6 @@ namespace Parrot.Infrastructure
                     Value = null
                 };
             }
-
-            if (IsWrappedInInvalidQuotes(value))
-            {
-                throw new ParserException("Unterminated string literal");
-            }
             
             if (IsWrappedInQuotes(value))
             {
@@ -56,9 +51,9 @@ namespace Parrot.Infrastructure
             else
             {
                 //check for keywords
-                if (keywordHandlers.Value.ContainsKey(value))
+                if (KeywordHandlers.Value.ContainsKey(value))
                 {
-                    result = keywordHandlers.Value[value](value);
+                    result = KeywordHandlers.Value[value](value);
                 }
                 else
                 {
@@ -84,12 +79,6 @@ namespace Parrot.Infrastructure
         private bool IsWrappedInQuotes(string value)
         {
             return (StartsWith(value, '"') && EndsWith(value, '"')) || (StartsWith(value, '\'') || EndsWith(value, '\''));
-        }
-
-        private bool IsWrappedInInvalidQuotes(string value)
-        {
-            return value != null && (((StartsWith(value, '"') && !EndsWith(value, '"')) || (StartsWith(value, '\'') && !EndsWith(value, '\'')))
-                                 || ((!StartsWith(value, '"') && EndsWith(value, '"')) || (!StartsWith(value, '\'') && EndsWith(value, '\''))));
         }
 
     }
