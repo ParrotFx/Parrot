@@ -9,9 +9,9 @@ namespace Parrot.Lexer
 {
     public class Tokenizer
     {
-        private Stack<Token> tokens = new Stack<Token>();
-        private int currentIndex = 0;
-        private StreamReader _reader;
+        private readonly Stack<Token> _tokens = new Stack<Token>();
+        private int _currentIndex;
+        private readonly StreamReader _reader;
 
         public Tokenizer(string source) : this(new MemoryStream(Encoding.Default.GetBytes(source))) { }
 
@@ -27,7 +27,7 @@ namespace Parrot.Lexer
 
         private int Consume()
         {
-            currentIndex += 1;
+            _currentIndex += 1;
             var character = _reader.Read();
 
             if (character == -1)
@@ -45,77 +45,76 @@ namespace Parrot.Lexer
 
             if (IsIdentifierHead(currentCharacter))
             {
-                //return ReadIdentifier(reader);
                 return new IdentifierToken
                 {
                     Content = ReadUntil(c => !IsIdTail(c)),
-                    Index = currentIndex,
+                    Index = _currentIndex,
                     Type = TokenType.Identifier
                 };
             }
-            else if (IsWhitespace(currentCharacter))
+            
+            if (IsWhitespace(currentCharacter))
             {
-                //return ReadwhitespaceToken(reader);
                 return new WhitespaceToken
                 {
                     Content = ReadUntil(c => !IsWhitespace(c)),
-                    Index = currentIndex,
+                    Index = _currentIndex,
                     Type = TokenType.Whitespace
                 };
             }
 
             switch (currentCharacter)
             {
-                case ',':
+                case ',': //this is for the future
                     Consume();
-                    return new CommaToken() { Index = currentIndex };
-                case '(':
+                    return new CommaToken { Index = _currentIndex };
+                case '(': //parameter list start
                     Consume();
-                    return new OpenParenthesisToken() { Index = currentIndex };
-                case ')':
+                    return new OpenParenthesisToken { Index = _currentIndex };
+                case ')': //parameter list end
                     Consume();
-                    return new CloseParenthesisToken() { Index = currentIndex };
+                    return new CloseParenthesisToken { Index = _currentIndex };
                 case '[': //attribute list start
                     Consume();
-                    return new OpenBracketToken() { Index = currentIndex };
+                    return new OpenBracketToken { Index = _currentIndex };
                 case ']': //attribute list end
                     Consume();
-                    return new CloseBracketToken() { Index = currentIndex };
-                case '=': //attribute assignment
+                    return new CloseBracketToken { Index = _currentIndex };
+                case '=': //attribute assignment, raw output
                     Consume();
-                    return new EqualToken() { Index = currentIndex };
+                    return new EqualToken { Index = _currentIndex };
                 case '{': //child block start
                     Consume();
-                    return new OpenBracesToken() { Index = currentIndex };
+                    return new OpenBracesToken { Index = _currentIndex };
                 case '}': //child block end
                     Consume();
-                    return new CloseBracesToken() { Index = currentIndex };
+                    return new CloseBracesToken { Index = _currentIndex };
                 case '>': //child assignment
                     Consume();
-                    return new GreaterThanToken() { Index = currentIndex };
+                    return new GreaterThanToken { Index = _currentIndex };
                 case '+': //sibling assignment
                     Consume();
-                    return new PlusToken() { Index = currentIndex };
+                    return new PlusToken { Index = _currentIndex };
                 case '|': //string literal pipe
                     return new StringLiteralPipeToken
                     {
                         Content = (char)Consume() + ReadUntil(IsNewLine),
                         Type = TokenType.StringLiteralPipe,
-                        Index = currentIndex
+                        Index = _currentIndex
                     };
                 case '"': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
                         Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == '"') + (char)Consume(),
                         Type = TokenType.QuotedStringLiteral,
-                        Index = currentIndex
+                        Index = _currentIndex
                     };
                 case '\'': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
                         Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == '\'') + (char)Consume(),
                         Type = TokenType.QuotedStringLiteral,
-                        Index = currentIndex
+                        Index = _currentIndex
                     };
                 case '@': //multilinestringliteral
                     //read next token
@@ -126,11 +125,11 @@ namespace Parrot.Lexer
                     {
                         Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == nextCharacter) + (char)Consume(),
                         Type = TokenType.StringLiteralPipe,
-                        Index = currentIndex
+                        Index = _currentIndex
                     };
-                case ':':
+                case ':': //Encoded output
                     Consume();
-                    return new ColonToken() { Index = currentIndex };
+                    return new ColonToken { Index = _currentIndex };
                 default:
                     throw new UnexpectedTokenException(string.Format("Unexpected token: {0}", currentCharacter));
             }
@@ -204,24 +203,17 @@ namespace Parrot.Lexer
 
         public Stack<Token> Tokenize()
         {
-            //_reader = new StringReader(identifier);
-
             while (HasAvailableTokens())
             {
                 //gonna yield these tokens later
-                tokens.Push(GetNextToken());
+                _tokens.Push(GetNextToken());
             }
 
-            return tokens;
+            return _tokens;
         }
 
         public IEnumerable<Token> Tokens()
         {
-            //yield return new Token
-            //{
-            //Type = TokenType.Start
-            //};
-
             while (HasAvailableTokens())
             {
                 yield return GetNextToken();
