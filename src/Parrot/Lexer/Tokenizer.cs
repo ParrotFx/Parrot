@@ -115,14 +115,14 @@ namespace Parrot.Lexer
                 case '"': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
-                        Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == '"') + (char)Consume(),
+                        Content = ConsumeQuotedStringLiteral('"'),
                         Type = TokenType.QuotedStringLiteral,
                         Index = _currentIndex
                     };
                 case '\'': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
-                        Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == '\'') + (char)Consume(),
+                        Content = ConsumeQuotedStringLiteral('\''),
                         Type = TokenType.QuotedStringLiteral,
                         Index = _currentIndex
                     };
@@ -143,6 +143,25 @@ namespace Parrot.Lexer
                 default:
                     throw new UnexpectedTokenException(string.Format("Unexpected token: {0}", currentCharacter));
             }
+        }
+
+        private string ConsumeQuotedStringLiteral(char quote)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append((char)Consume());
+            int peek = _reader.Peek();
+            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            
+            while ((!IsNewLine(currentCharacter) && currentCharacter != quote))
+            {
+                ConsumeWithoutReturn();
+                sb.Append(currentCharacter);
+                peek = _reader.Peek();
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
+            }
+
+            sb.Append((char)Consume());
+            return sb.ToString();
         }
 
         private bool IsWhitespace(char character)
