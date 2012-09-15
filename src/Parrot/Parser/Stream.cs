@@ -8,77 +8,60 @@ namespace Parrot.Parser
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class Stream<T> where T: class
+    public class Stream
     {
-        private readonly Queue<T> _storage;
-        private readonly IEnumerator<T> _enumerator;
-        
+        private readonly IList<Token> _list;
+        private int _index;
+        private readonly int _count;
 
-        public Stream(IEnumerable<T> source)
+        public Stream(IList<Token> source)
         {
-            _storage = new Queue<T>();
-            _enumerator = source.GetEnumerator();
+            _list = source;
+            _index = -1;
+            _count = source.Count;
         }
 
-        public T Peek()
+        public Token Peek()
         {
-            if (_storage.Count == 0)
+            var temp = _index + 1;
+            while (temp < _count)
             {
-                try
+                if (_list[temp].Type != TokenType.Whitespace)
                 {
-                    _storage.Enqueue(GetNext());
+                    return _list[temp];
                 }
-                catch (Exception)
-                {
-                    return default(T);
-                }
+
+                temp++;
             }
 
-            return _storage.Peek();
+            return null;
         }
 
         public void NextNoReturn()
         {
-            if (_storage.Count > 0)
-            {
-                _storage.Dequeue();
-                return;
-            }
-
             GetNextNoReturn();
         }
 
         public void GetNextNoReturn()
         {
-            while (_enumerator.MoveNext())
+            _index++;
+            while (_index < _count && _list[_index].Type == TokenType.Whitespace)
             {
-                if ((_enumerator.Current as Token).Type != TokenType.Whitespace)
-                {
-                    break;
-                }
+                _index++;
             }
         }
 
-        public T Next()
+        public Token Next()
         {
-            if (_storage.Count > 0)
+            _index ++;
+            while (_index < _count)
             {
-                return _storage.Dequeue();
-            }
-
-            return GetNext();
-        }
-
-        private T GetNext()
-        {
-            //should i consume whitespace here?
-
-            while (_enumerator.MoveNext())
-            {
-                if ((_enumerator.Current as Token).Type != TokenType.Whitespace)
+                if (_list[_index].Type != TokenType.Whitespace)
                 {
-                    return _enumerator.Current;
+                    return _list[_index];
                 }
+
+                _index++;
             }
 
             return null;

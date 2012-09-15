@@ -27,13 +27,13 @@ namespace Parrot.Parser
             _host = host;
         }
 
-        public bool Parse(Stream stream, out Document document)
+        public bool Parse(System.IO.Stream stream, out Document document)
         {
             var tokenizer = new Tokenizer(stream);
 
             var tokens = tokenizer.Tokens();
 
-            var tokenStream = new Stream<Token>(tokens);
+            var tokenStream = new Stream(tokens);
 
             document = new Document(_host);
 
@@ -53,12 +53,8 @@ namespace Parrot.Parser
             return Parse(new MemoryStream(System.Text.Encoding.Default.GetBytes(text)), out document);
         }
 
-        private IEnumerable<object> Parse(Stream<Token> stream)
+        private IEnumerable<StatementList> Parse(Stream stream)
         {
-            Stopwatch watch = Stopwatch.StartNew();
-
-            List<Statement> siblings = new List<Statement>();
-
             while (stream.Peek() != null)
             {
                 var token = stream.Peek();
@@ -79,20 +75,6 @@ namespace Parrot.Parser
                 }
 
             }
-
-            watch.Stop();
-            //Parrot.Debugger.Debug.WriteLine(watch.Elapsed);
-
-            //Accept
-            if (siblings.Any())
-            {
-                yield return CreateStatementListFromSiblingList(siblings);
-            }
-        }
-
-        private StatementList CreateStatementListFromSiblingList(List<Statement> productions)
-        {
-            return new StatementList(_host, productions.ToArray());
         }
 
         /// <summary>
@@ -100,7 +82,7 @@ namespace Parrot.Parser
         /// </summary>
         /// <param name="stream">Stream of tokens to parse</param>
         /// <returns>Statement</returns>
-        private StatementList ParseStatement(Stream<Token> stream)
+        private StatementList ParseStatement(Stream stream)
         {
             var tokenType = stream.Peek().Type;
             Token identifier = null;
@@ -173,7 +155,8 @@ namespace Parrot.Parser
         checkForSiblings:
 
 
-            var list = new StatementList(_host, statement);
+            var list = new StatementList(_host);
+            list.Add(statement);
 
             while (stream.Peek() != null)
             {
@@ -218,14 +201,14 @@ namespace Parrot.Parser
             return new Statement(_host, value, tail);
         }
 
-        private StatementTail ParseSingleStatementTail(Stream<Token> stream)
+        private StatementTail ParseSingleStatementTail(Stream stream)
         {
             var statementList = ParseStatement(stream);
             //Parrot.Debugger.Debug.WriteLine("Found Single statement tail");
             return new StatementTail(_host) { Children = statementList };
         }
 
-        private StatementTail ParseStatementTail(Stream<Token> stream)
+        private StatementTail ParseStatementTail(Stream stream)
         {
             //Parrot.Debugger.Debug.WriteLine("Parsing: StatementTail");
 
@@ -273,10 +256,11 @@ namespace Parrot.Parser
             };
         }
 
-        private StatementList ParseChild(Stream<Token> stream)
+        private StatementList ParseChild(Stream stream)
         {
+            var child = new StatementList(_host);
+
             var open = stream.Next();
-            List<Statement> children = new List<Statement>();
 
             while (stream.Peek() != null)
             {
@@ -292,21 +276,21 @@ namespace Parrot.Parser
                         var statements = ParseStatement(stream);
                         foreach (var statement in statements)
                         {
-                            children.Add(statement);
+                            child.Add(statement);
                         }
                         goto doneWithChildren;
                 }
             }
 
         doneWithChildren:
-            return new StatementList(_host, children.ToArray());
+            return child;
         }
 
-        private StatementList ParseChildren(Stream<Token> stream)
+        private StatementList ParseChildren(Stream stream)
         {
+            StatementList statement = new StatementList(_host);
             var open = stream.Next();
             CloseBracesToken close = null;
-            List<Statement> children = new List<Statement>(128);
 
             while (stream.Peek() != null)
             {
@@ -330,21 +314,22 @@ namespace Parrot.Parser
                         int length = statements.Count;
                         for (int i = 0; i < length; i++)
                         {
-                            children.Add(statements[i]);
+                            statement.Add(statements[i]);
                         }
                         break;
                 }
             }
 
         doneWithChildren:
-            return new StatementList(_host, children.ToArray());
+            return statement;
         }
 
-        private ParameterList ParseParameters(Stream<Token> stream)
+        private ParameterList ParseParameters(Stream stream)
         {
+            var parameterList = new ParameterList(_host);
+
             //( parameterlist )
             var open = stream.Next();
-            List<Parameter> children = new List<Parameter>(16);
 
             while (stream.Peek() != null)
             {
@@ -360,7 +345,7 @@ namespace Parrot.Parser
                     case TokenType.QuotedStringLiteral:
                     case TokenType.StringLiteralPipe:
                     case TokenType.MultiLineStringLiteral:
-                        children.Add(ParseParameter(stream));
+                        parameterList.Add(ParseParameter(stream));
                         break;
                     case TokenType.CloseParenthesis:
                         //consume close parenthesis
@@ -372,10 +357,10 @@ namespace Parrot.Parser
             }
 
         doneWithParameter:
-            return new ParameterList(_host, children.ToArray());
+            return parameterList;
         }
 
-        private Parameter ParseParameter(Stream<Token> stream)
+        private Parameter ParseParameter(Stream stream)
         {
             var identifier = stream.Next();
             switch (identifier.Type)
@@ -395,10 +380,11 @@ namespace Parrot.Parser
             return new Parameter(_host, identifier.Content);
         }
 
-        private AttributeList ParseAttributes(Stream<Token> stream)
+        private AttributeList ParseAttributes(Stream stream)
         {
+            var attributes = new AttributeList(_host);
+
             var open = stream.Next();
-            List<Attribute> children = new List<Attribute>(128);
             Token token = null;
 
             //expecting identifier
@@ -413,7 +399,7 @@ namespace Parrot.Parser
                 switch (token.Type)
                 {
                     case TokenType.Identifier:
-                        children.Add(ParseAttribute(stream));
+                        attributes.Add(ParseAttribute(stream));
                         break;
                     case TokenType.CloseBracket:
                         //consume close bracket
@@ -426,17 +412,17 @@ namespace Parrot.Parser
             }
 
         doneWithAttribute:
-            if (children.Count == 0)
+            if (attributes.Count == 0)
             {
                 //must be empty attribute list
                 throw new ParserException(token);
             }
 
             //do reduction here
-            return new AttributeList(_host, children.ToArray());
+            return attributes;
         }
 
-        private Attribute ParseAttribute(Stream<Token> stream)
+        private Attribute ParseAttribute(Stream stream)
         {
             var identifier = stream.Next();
             var equalsToken = stream.Peek() as EqualToken;
@@ -466,11 +452,11 @@ namespace Parrot.Parser
                 }
 
                 //reduction
-                return new Nodes.Attribute(_host, identifier.Content, valueToken.Content);
+                return new Attribute(_host, identifier.Content, valueToken.Content);
             }
 
             //single attribute only
-            return new Nodes.Attribute(_host, identifier.Content, null);
+            return new Attribute(_host, identifier.Content, null);
         }
 
     }

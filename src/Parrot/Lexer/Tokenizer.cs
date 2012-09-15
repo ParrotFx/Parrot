@@ -9,7 +9,7 @@ namespace Parrot.Lexer
 {
     public class Tokenizer
     {
-        private readonly Stack<Token> _tokens = new Stack<Token>();
+        private readonly List<Token> _tokens = new List<Token>();
         private int _currentIndex;
         private readonly StreamReader _reader;
 
@@ -23,16 +23,6 @@ namespace Parrot.Lexer
         private bool HasAvailableTokens()
         {
             return _reader.Peek() != -1;
-        }
-
-        private void ConsumeWithoutReturn()
-        {
-            _currentIndex += 1;
-
-            if (_reader.Read() == -1)
-            {
-                throw new EndOfStreamException();
-            }
         }
 
         private int Consume()
@@ -62,7 +52,7 @@ namespace Parrot.Lexer
                     Type = TokenType.Identifier
                 };
             }
-            
+
             if (IsWhitespace(currentCharacter))
             {
                 return new WhitespaceToken
@@ -76,39 +66,39 @@ namespace Parrot.Lexer
             switch (currentCharacter)
             {
                 case ',': //this is for the future
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new CommaToken { Index = _currentIndex };
                 case '(': //parameter list start
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new OpenParenthesisToken { Index = _currentIndex };
                 case ')': //parameter list end
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new CloseParenthesisToken { Index = _currentIndex };
                 case '[': //attribute list start
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new OpenBracketToken { Index = _currentIndex };
                 case ']': //attribute list end
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new CloseBracketToken { Index = _currentIndex };
                 case '=': //attribute assignment, raw output
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new EqualToken { Index = _currentIndex };
                 case '{': //child block start
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new OpenBracesToken { Index = _currentIndex };
                 case '}': //child block end
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new CloseBracesToken { Index = _currentIndex };
                 case '>': //child assignment
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new GreaterThanToken { Index = _currentIndex };
                 case '+': //sibling assignment
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new PlusToken { Index = _currentIndex };
                 case '|': //string literal pipe
                     return new StringLiteralPipeToken
                     {
-                        Content = (char)Consume() + ReadUntil(IsNewLine),
+                        Content = ConsumeUntilNewline(),
                         Type = TokenType.StringLiteralPipe,
                         Index = _currentIndex
                     };
@@ -128,7 +118,7 @@ namespace Parrot.Lexer
                     };
                 case '@': //multilinestringliteral
                     //read next token
-                    ConsumeWithoutReturn();
+                    Consume();
                     int nextCharacter = _reader.Peek();
                     char quoteType = nextCharacter == -1 ? '\0' : (char)nextCharacter;
                     return new MultilineStringLiteralToken
@@ -138,23 +128,42 @@ namespace Parrot.Lexer
                         Index = _currentIndex
                     };
                 case ':': //Encoded output
-                    ConsumeWithoutReturn();
+                    Consume();
                     return new ColonToken { Index = _currentIndex };
+                case '\0':
+                    return null;
                 default:
                     throw new UnexpectedTokenException(string.Format("Unexpected token: {0}", currentCharacter));
             }
         }
 
+        private string ConsumeUntilNewline()
+        {
+            //(char)Consume() + ReadUntil(IsNewLine)
+            StringBuilder sb = new StringBuilder();
+            int peek = _reader.Peek();
+            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+
+            while (!IsNewLine(currentCharacter))
+            {
+                Consume();
+                sb.Append(currentCharacter);
+                peek = _reader.Peek();
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
+            }
+
+            return sb.ToString();
+        }
+
         private string ConsumeIdentifier()
         {
-            //ReadUntil(c => !IsIdTail(c))
             StringBuilder sb = new StringBuilder();
             int peek = _reader.Peek();
             var currentCharacter = peek == -1 ? '\0' : (char)peek;
 
             while ((IsIdTail(currentCharacter)))
             {
-                ConsumeWithoutReturn();
+                Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
                 currentCharacter = peek == -1 ? '\0' : (char)peek;
@@ -171,7 +180,7 @@ namespace Parrot.Lexer
 
             while ((IsWhitespace(currentCharacter)))
             {
-                ConsumeWithoutReturn();
+                Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
                 currentCharacter = peek == -1 ? '\0' : (char)peek;
@@ -186,10 +195,10 @@ namespace Parrot.Lexer
             sb.Append((char)Consume());
             int peek = _reader.Peek();
             var currentCharacter = peek == -1 ? '\0' : (char)peek;
-            
+
             while ((!IsNewLine(currentCharacter) && currentCharacter != quote))
             {
-                ConsumeWithoutReturn();
+                Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
                 currentCharacter = peek == -1 ? '\0' : (char)peek;
@@ -209,23 +218,6 @@ namespace Parrot.Lexer
                    character == '\t' ||
                    character == '\u000B' || // Vertical Tab
                    Char.GetUnicodeCategory(character) == UnicodeCategory.SpaceSeparator;
-        }
-
-        private string ReadUntil(Func<char, bool> until)
-        {
-            StringBuilder sb = new StringBuilder();
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
-            while (!until(currentCharacter))
-            {
-                ConsumeWithoutReturn();
-                sb.Append(currentCharacter);
-                peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
-            }
-
-            //return string.Join("", result);
-            return sb.ToString();
         }
 
         private bool IsIdentifierHead(char character)
@@ -265,23 +257,27 @@ namespace Parrot.Lexer
                 || character == '\u2029'; // Paragraph separator
         }
 
-        public Stack<Token> Tokenize()
+        public List<Token> Tokenize()
         {
-            while (HasAvailableTokens())
+            try
             {
-                //gonna yield these tokens later
-                _tokens.Push(GetNextToken());
+                Token token;
+                while ((token = GetNextToken()) != null)
+                {
+                    _tokens.Add(token);
+                }
+            }
+            catch(EndOfStreamException)
+            {
+                throw new ParserException("");
             }
 
             return _tokens;
         }
 
-        public IEnumerable<Token> Tokens()
+        public IList<Token> Tokens()
         {
-            while (HasAvailableTokens())
-            {
-                yield return GetNextToken();
-            }
+            return Tokenize();
         }
     }
 }
