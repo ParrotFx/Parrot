@@ -57,7 +57,7 @@ namespace Parrot.Lexer
             {
                 return new IdentifierToken
                 {
-                    Content = ReadUntil(c => !IsIdTail(c)),
+                    Content = ConsumeIdentifier(),
                     Index = _currentIndex,
                     Type = TokenType.Identifier
                 };
@@ -67,7 +67,7 @@ namespace Parrot.Lexer
             {
                 return new WhitespaceToken
                 {
-                    Content = ReadUntil(c => !IsWhitespace(c)),
+                    Content = ConsumeWhitespace(),
                     Index = _currentIndex,
                     Type = TokenType.Whitespace
                 };
@@ -133,7 +133,7 @@ namespace Parrot.Lexer
                     char quoteType = nextCharacter == -1 ? '\0' : (char)nextCharacter;
                     return new MultilineStringLiteralToken
                     {
-                        Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == nextCharacter) + (char)Consume(),
+                        //Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == nextCharacter) + (char)Consume(),
                         Type = TokenType.StringLiteralPipe,
                         Index = _currentIndex
                     };
@@ -143,6 +143,41 @@ namespace Parrot.Lexer
                 default:
                     throw new UnexpectedTokenException(string.Format("Unexpected token: {0}", currentCharacter));
             }
+        }
+
+        private string ConsumeIdentifier()
+        {
+            //ReadUntil(c => !IsIdTail(c))
+            StringBuilder sb = new StringBuilder();
+            int peek = _reader.Peek();
+            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+
+            while ((IsIdTail(currentCharacter)))
+            {
+                ConsumeWithoutReturn();
+                sb.Append(currentCharacter);
+                peek = _reader.Peek();
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
+            }
+
+            return sb.ToString();
+        }
+
+        private string ConsumeWhitespace()
+        {
+            StringBuilder sb = new StringBuilder();
+            int peek = _reader.Peek();
+            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+
+            while ((IsWhitespace(currentCharacter)))
+            {
+                ConsumeWithoutReturn();
+                sb.Append(currentCharacter);
+                peek = _reader.Peek();
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
+            }
+
+            return sb.ToString();
         }
 
         private string ConsumeQuotedStringLiteral(char quote)
@@ -208,7 +243,6 @@ namespace Parrot.Lexer
                    IsIdentifierHead(character) ||
                    character == ':' ||
                    character == '-' ||
-                   character == '.' ||
                    IsIdentifierUnicode(character);
         }
 

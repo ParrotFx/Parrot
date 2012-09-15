@@ -327,9 +327,10 @@ namespace Parrot.Parser
                         goto doneWithChildren;
                     default:
                         var statements = ParseStatement(stream);
-                        foreach (var statement in statements)
+                        int length = statements.Count;
+                        for (int i = 0; i < length; i++)
                         {
-                            children.Add(statement);
+                            children.Add(statements[i]);
                         }
                         break;
                 }

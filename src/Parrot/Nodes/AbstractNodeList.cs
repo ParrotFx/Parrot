@@ -8,6 +8,7 @@ namespace Parrot.Nodes
     public class AbstractNodeList : AbstractNode, IList<AbstractNode>
     {
         #region " IList Members "
+
         protected List<AbstractNode> _list = new List<AbstractNode>();
 
         public IEnumerator<AbstractNode> GetEnumerator()
@@ -92,7 +93,7 @@ namespace Parrot.Nodes
     public class AbstractNodeList<T> : AbstractNode, IList<T> where T: AbstractNode
     {
         #region " IList Members "
-        protected List<T> List = new List<T>(64);
+        protected internal List<T> List = new List<T>(64);
 
         public IEnumerator<T> GetEnumerator()
         {
