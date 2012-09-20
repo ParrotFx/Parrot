@@ -1,3 +1,4 @@
+using System;
 using Parrot.Infrastructure;
 
 namespace Parrot.Nodes
@@ -22,7 +23,7 @@ namespace Parrot.Nodes
             Parameters = new ParameterList(host);
 
             //required bullshit
-            if (name.IndexOf(".") > -1 || name.IndexOf("#") > -1 || name.IndexOf(":") > -1)
+            if (name.IndexOfAny(new [] { '.', '#', ':'}) > -1)
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
@@ -97,34 +98,6 @@ namespace Parrot.Nodes
             }
         }
 
-        //private void AddParameters(ParameterList parameters)
-        //{
-        //    if (parameters == null) return;
-
-        //    int length = parameters.Count;
-        //    if (length > 0)
-        //    {
-        //        for (int i = 0; i < length; i++)
-        //        {
-        //            Parameters.Add(parameters[i]);
-        //        }
-        //    }
-        //}
-
-        //private void AddChildren(StatementList statements)
-        //{
-        //    if (statements == null) return;
-
-        //    int length = statements.Count;
-        //    if (length > 0)
-        //    {
-        //        for (int i = 0; i < length; i++)
-        //        {
-        //            Children.Add(statements[i]);
-        //        }
-        //    }
-        //}
-
         private void AddAttribute(Attribute node)
         {
             if (node.Key == "id")
@@ -152,97 +125,54 @@ namespace Parrot.Nodes
             get { return false; }
         }
 
-        //TODO: Refactor this - too much duplicated code
+        private void IdentifierTypeFromCharacter(char character, ref IdentifierType currentType)
+        {
+            switch (character)
+            {
+                case ':': 
+                    currentType = IdentifierType.Type;
+                    break;
+                case '#': 
+                    currentType = IdentifierType.Id;
+                    break;
+                case '.': 
+                    currentType = IdentifierType.Class;
+                    break;
+            }
+        }
+
         private IEnumerable<Identifier> GetIdentifierParts(string source)
         {
-            char[] splitBy = new[] { '.', '#', ':' };
-            int start = 0;
-            int index;
+            int index = 0;
+            int partLocation = 0;
 
-            string previousCharacter = "";
+            var partType = IdentifierType.Literal;
+            IdentifierType nextType = IdentifierType.None;
 
-            //check for a starting character
-            index = source.IndexOfAny(splitBy, start);
-            if (index == 0)
+            for (int i = 0; i < source.Length; i++)
             {
-                previousCharacter = source.Substring(0, 1);
-                source = source.Substring(1);
-            }
+                IdentifierTypeFromCharacter(source[i], ref nextType);
 
-            while ((index = source.IndexOfAny(splitBy, start)) != -1)
-            {
-                index++;
-                index = Interlocked.Exchange(ref start, index);
-
-                switch (previousCharacter)
+                if (nextType != IdentifierType.None)
                 {
-                    case "#":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(index, start - index - 1),
-                            Type = IdentifierType.Id
-                        };
-                        break;
-                    case ".":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(index, start - index - 1),
-                            Type = IdentifierType.Class
-                        };
-                        break;
-                    case ":":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(index, start - index - 1),
-                            Type = IdentifierType.Type
-                        };
-                        break;
-                    default:
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(index, start - index - 1),
-                            Type = IdentifierType.Literal
-                        };
-                        break;
+                    yield return new Identifier
+                    {
+                        Name = source.Substring(index, i - index),
+                        Type = partType
+                    };
+
+                    index = i + 1;
+                    partType = nextType;
+                    nextType = IdentifierType.None;
                 }
 
-                previousCharacter = source.Substring(start - 1, 1);
             }
 
-            if (start < source.Length)
+            yield return new Identifier
             {
-                switch (previousCharacter)
-                {
-                    case "#":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(start),
-                            Type = IdentifierType.Id
-                        };
-                        break;
-                    case ".":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(start),
-                            Type = IdentifierType.Class
-                        };
-                        break;
-                    case ":":
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(start),
-                            Type = IdentifierType.Type
-                        };
-                        break;
-                    default:
-                        yield return new Identifier
-                        {
-                            Name = source.Substring(start),
-                            Type = IdentifierType.Literal
-                        };
-                        break;
-                }
-            }
+                Name = source.Substring(index),
+                Type = partType
+            };
         }
     }
 }

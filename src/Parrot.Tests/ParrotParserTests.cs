@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Threading;
 using Parrot.Infrastructure;
 using Parrot.Mvc.Renderers;
 
@@ -335,7 +336,7 @@ namespace Parrot.Tests
                 Assert.AreEqual(2, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
-                Assert.AreEqual("keyword_only_endsin", parts[0].Data); 
+                Assert.AreEqual("keyword_only_endsin", parts[0].Data);
                 Assert.AreEqual(". a dot", parts[1].Data);
 
 
@@ -376,7 +377,77 @@ namespace Parrot.Tests
                 Assert.AreEqual(1, document.Children.Count);
                 Assert.AreEqual(2, document.Children[0].Children.Count);
             }
+
+            [Test]
+            public void IdentifierPartsTests()
+            {
+                var results = GetIdentifierParts("input:submit#id.class").ToList();
+                Assert.AreEqual(4, results.Count);
+
+                Assert.AreEqual("input", results[0].Name);
+                Assert.AreEqual(IdentifierType.Literal, results[0].Type);
+                Assert.AreEqual("submit", results[1].Name);
+                Assert.AreEqual(IdentifierType.Type, results[1].Type);
+                Assert.AreEqual("id", results[2].Name);
+                Assert.AreEqual(IdentifierType.Id, results[2].Type);
+                Assert.AreEqual("class", results[3].Name);
+                Assert.AreEqual(IdentifierType.Class, results[3].Type);
+            }
+
+            public IEnumerable<Identifier> GetIdentifierParts(string source)
+            {
+                int index = 0;
+
+                string previousCharacter = "";
+
+                var partType = IdentifierType.Literal;
+
+                for (int i = 0; i < source.Length; i++)
+                {
+                    switch (source[i])
+                    {
+                        case ':':
+                            yield return new Identifier
+                            {
+                                Name = source.Substring(index, i - index),
+                                Type = partType
+                            };
+                            partType = IdentifierType.Type;
+                            index = i + 1;
+                            break;
+                        case '#':
+                            yield return new Identifier
+                            {
+                                Name = source.Substring(index, i - index),
+                                Type = partType
+                            };
+                            partType = IdentifierType.Id;
+                            index = i + 1;
+                            break;
+                        case '.':
+                            yield return new Identifier
+                            {
+                                Name = source.Substring(index, i - index),
+                                Type = partType
+                            };
+                            partType = IdentifierType.Class;
+                            index = i + 1;
+                            break;
+                    }
+                }
+
+                yield return new Identifier
+                {
+                    Name = source.Substring(index),
+                    Type = partType
+                };
+            }
+
         }
+
+    }
+    public class IdentifierExtractionTests
+    {
     }
 
 }

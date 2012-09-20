@@ -1,10 +1,11 @@
 namespace Parrot.Nodes
 {
-    internal enum IdentifierType
+    public enum IdentifierType
     {
         Id,
         Class,
         Literal,
-        Type
+        Type,
+        None
     }
 }
