@@ -8,8 +8,9 @@ namespace Parrot.Nodes
     {
         public string VariableName { get; set; }
 
-        public RawOutput(IHost host, string variableName) : base(host, "rawoutput")
+        public RawOutput(IHost host, string variableName) : base(host)
         {
+            Name = "rawoutput";
             VariableName = variableName;
         }
 

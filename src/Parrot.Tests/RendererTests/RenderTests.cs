@@ -136,7 +136,7 @@ namespace Parrot.Tests
             Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color:white\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
-            Assert.AreEqual("<p class=\"foo baz bar\"></p>", Render("p.bar.baz[class=\"foo\"]"));
+            Assert.AreEqual("<p class=\"baz bar foo\"></p>", Render("p.bar.baz[class=\"foo\"]"));
 
             Assert.AreEqual("<p data-lang=\"en\"></p>", Render("p[data-lang = \"en\"]"));
             Assert.AreEqual("<p data-dynamic=\"true\"></p>", Render("p[data-dynamic= \"true\"]"));

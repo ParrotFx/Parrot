@@ -8,8 +8,9 @@ namespace Parrot.Nodes
     {
         public string VariableName { get; private set; }
 
-        public EncodedOutput(IHost host, string variableName) : base(host, "output")
+        public EncodedOutput(IHost host, string variableName) : base(host)
         {
+            Name = "output";
             VariableName = variableName;
         }
 

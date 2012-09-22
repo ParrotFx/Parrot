@@ -15,12 +15,17 @@ namespace Parrot.Nodes
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 
-        protected Statement(IHost host, string name)
+        internal Statement(IHost host)
             : base(host)
         {
             Attributes = new AttributeList(host);
             Children = new StatementList(host);
             Parameters = new ParameterList(host);
+        }
+
+        protected Statement(IHost host, string name)
+            : this(host)
+        {
 
             //required bullshit
             if (name.IndexOfAny(new [] { '.', '#', ':'}) > -1)
@@ -78,7 +83,15 @@ namespace Parrot.Nodes
                     Parameters = statementTail.Parameters;
                 }
 
-                AddAttributes(statementTail.Attributes);
+                //AddAttributes(statementTail.Attributes);
+                if (statementTail.Attributes != null)
+                {
+                    for (int i = 0; i < Attributes.Count; i++)
+                    {
+                        statementTail.Attributes.Add(Attributes[i]);
+                    }
+                    Attributes = statementTail.Attributes;
+                }
 
                 if (statementTail.Children != null)
                 {

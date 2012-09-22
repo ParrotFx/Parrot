@@ -19,13 +19,17 @@ namespace Parrot.Nodes
         public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteral(IHost host, string value) : base(host, "string")
+        public StringLiteral(IHost host, string value) : base(host)
         {
+            base.Name = "string";
+
             if (IsWrappedInQuotes(value))
             {
                 ValueType = ValueType.StringLiteral;
                 //strip quotes
-                value = value.Substring(StartsWith(value, '@') ? 2 : 1, value.Length - (StartsWith(value, '@') ? 3 : 2));
+
+                int offset = StartsWith(value, '@') ? 2 : 1;
+                value = new string(value.ToArray(), offset, value.Length - (offset + 1));
             }
             else if (value == "this")
             {
