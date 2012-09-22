@@ -27,7 +27,7 @@ namespace Parrot.Renderers
 
         public virtual string RenderChildren(Statement statement, object localModel, string defaultTag = null)
         {
-            var factory = Host.DependencyResolver.Get<IRendererFactory>();
+            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
 
             if (string.IsNullOrEmpty(defaultTag))
             {
@@ -94,7 +94,7 @@ namespace Parrot.Renderers
 
         public string Render(Document document, object model)
         {
-            var factory = Host.DependencyResolver.Get<IRendererFactory>();
+            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
@@ -111,7 +111,7 @@ namespace Parrot.Renderers
             Type modelType = model != null ? model.GetType() : null;
 
             object localModel = model;
-            var modelValueProviderFactory = Host.DependencyResolver.Get<IModelValueProviderFactory>();
+            var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
             
             if (statement.Parameters.Count > 0)
             {

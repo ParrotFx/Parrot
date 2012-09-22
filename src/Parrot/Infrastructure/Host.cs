@@ -9,14 +9,14 @@ namespace Parrot.Infrastructure
     using System;
 
     /// <summary>
-    /// TODO: Update summary.
+    /// Host context used to store the dependency resolver.
     /// </summary>
-    public class Host : IHost
+    public abstract class Host : IHost
     {
         private readonly Lazy<IDependencyResolver> _defaultResolver = new Lazy<IDependencyResolver>(() => new DependencyResolver());
         private IDependencyResolver _resolver;
 
-        public Host(IDependencyResolver resolver)
+        protected Host(IDependencyResolver resolver)
         {
             _resolver = resolver;
         }
@@ -34,6 +34,9 @@ namespace Parrot.Infrastructure
         }
     }
 
+    /// <summary>
+    /// Host interface
+    /// </summary>
     public interface IHost
     {
         IDependencyResolver DependencyResolver { get; set; }

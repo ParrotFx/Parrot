@@ -13,7 +13,7 @@ namespace Parrot.Nodes
         {
             Key = key;
 
-            var valueTypeProvider = host.DependencyResolver.Get<IValueTypeProvider>();
+            var valueTypeProvider = host.DependencyResolver.Resolve<IValueTypeProvider>();
             var result = valueTypeProvider.GetValue(value);
 
             ValueType = result.Type;

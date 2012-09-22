@@ -53,7 +53,7 @@ namespace Parrot.Mvc.Renderers
             //ok...we need to load the view
             //then pass the model to it and
             //then return the result
-            var engine = _host.DependencyResolver.Get<IViewEngine>();
+            var engine = _host.DependencyResolver.Resolve<IViewEngine>();
             var result = engine.FindView(null, layout, null, false);
             if (result != null)
             {
@@ -63,7 +63,7 @@ namespace Parrot.Mvc.Renderers
                     string contents = new StreamReader(stream).ReadToEnd();
 
                     var document = parrotView.LoadDocument(contents);
-                    var renderer = _host.DependencyResolver.Get<DocumentRenderer>();
+                    var renderer = _host.DependencyResolver.Resolve<DocumentRenderer>();
 
                     return renderer.Render(document, new
                     {

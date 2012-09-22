@@ -10,7 +10,7 @@ namespace Parrot.Nodes
 
         public Parameter(IHost host, string value) : base(host)
         {
-            var valueTypeProvider = host.DependencyResolver.Get<IValueTypeProvider>();
+            var valueTypeProvider = host.DependencyResolver.Resolve<IValueTypeProvider>();
             var result = valueTypeProvider.GetValue(value);
 
             ValueType = result.Type;

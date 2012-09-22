@@ -102,7 +102,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                 {
                     if (element != null)
                     {
-                        var renderer = _host.DependencyResolver.Get<IRendererFactory>().GetRenderer(element.Name);
+                        var renderer = _host.DependencyResolver.Resolve<IRendererFactory>().GetRenderer(element.Name);
                         sb.AppendLine(renderer.Render(element, modelObject));
                     }
                 }

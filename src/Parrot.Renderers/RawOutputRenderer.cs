@@ -17,7 +17,7 @@ namespace Parrot.Renderers
 
         public string Render(AbstractNode node, object model)
         {
-            var modelValueProviderFactory = _host.DependencyResolver.Get<IModelValueProviderFactory>();
+            var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 
             if (node == null)
             {

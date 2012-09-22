@@ -21,7 +21,7 @@ namespace Parrot.Mvc.Renderers
 
         public override string Render(AbstractNode node, object model)
         {
-            var modelValueProviderFactory = Host.DependencyResolver.Get<IModelValueProviderFactory>();
+            var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 
             if (node == null)
             {
@@ -64,7 +64,7 @@ namespace Parrot.Mvc.Renderers
 
                     var document = parrotView.LoadDocument(contents);
 
-                    return Host.DependencyResolver.Get<DocumentRenderer>().Render(document, localModel);
+                    return Host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, localModel);
 
                 }
             }

@@ -29,7 +29,7 @@ namespace Parrot.Renderers
 
         public string Render(Document document, object model)
         {
-            var factory = _host.DependencyResolver.Get<IRendererFactory>();
+            var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
@@ -43,7 +43,7 @@ namespace Parrot.Renderers
 
         public string Render(StatementList statements, object model)
         {
-            var factory = _host.DependencyResolver.Get<IRendererFactory>();
+            var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in statements)

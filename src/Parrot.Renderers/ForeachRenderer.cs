@@ -24,7 +24,7 @@ namespace Parrot.Renderers
 
         public override string Render(AbstractNode node, object model)
         {
-            var modelValueProviderFactory = Host.DependencyResolver.Get<IModelValueProviderFactory>();
+            var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
             object localModel = model;
             
             if (node == null)
@@ -53,7 +53,7 @@ namespace Parrot.Renderers
             }
 
             StringBuilder sb = new StringBuilder();
-            var documentRenderer = Host.DependencyResolver.Get<DocumentRenderer>();
+            var documentRenderer = Host.DependencyResolver.Resolve<DocumentRenderer>();
             foreach (var item in loop)
             {
                 sb.Append(documentRenderer.Render(blockNode.Children, item));

@@ -8,11 +8,9 @@ namespace Parrot.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
-    /// TODO: Update summary.
+    /// Takes a parrot declaration, wraps it and determines type
     /// </summary>
     public class ValueTypeProvider : IValueTypeProvider
     {
@@ -29,6 +27,11 @@ namespace Parrot.Infrastructure
             return handlers;
         }
 
+        /// <summary>
+        /// Converts a string into a ValueType
+        /// </summary>
+        /// <param name="value">Value to conver</param>
+        /// <returns>Wrapped value</returns>
         public ValueTypeResult GetValue(string value)
         {
             var result = new ValueTypeResult();

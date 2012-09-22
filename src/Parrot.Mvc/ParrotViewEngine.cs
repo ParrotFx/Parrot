@@ -78,7 +78,7 @@ namespace Parrot.Mvc
 
         public string FindPath(string viewName, string controllerName, out string[] searchedLocations)
         {
-            var pathResolver = _host.DependencyResolver.Get<IPathResolver>();
+            var pathResolver = _host.DependencyResolver.Resolve<IPathResolver>();
 
             searchedLocations = new string[SearchLocations.Length];
 
@@ -124,7 +124,7 @@ namespace Parrot.Mvc
 
         internal Stream LoadStream()
         {
-            var pathResolver = _host.DependencyResolver.Get<IPathResolver>();
+            var pathResolver = _host.DependencyResolver.Resolve<IPathResolver>();
             return pathResolver.OpenFile(_viewPath);
         }
 
@@ -171,7 +171,7 @@ namespace Parrot.Mvc
                     model = viewContext.ViewData.Model;
                 }
 
-                result = _host.DependencyResolver.Get<DocumentRenderer>().Render(document, model);
+                result = _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, model);
             //}
             //catch (Exception e)
             //{

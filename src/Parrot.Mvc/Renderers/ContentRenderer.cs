@@ -24,7 +24,7 @@ namespace Parrot.Mvc.Renderers
                 Children = localModel.Children
             };
 
-            return _host.DependencyResolver.Get<DocumentRenderer>().Render(document, localModel.Model);
+            return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, localModel.Model);
         }
 
         [Obsolete]
