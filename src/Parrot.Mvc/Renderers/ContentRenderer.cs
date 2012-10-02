@@ -15,6 +15,16 @@ namespace Parrot.Mvc.Renderers
             _host = host;
         }
 
+        public string RenderFromLayout(AbstractNode node, StatementList children, object model)
+        {
+            Document document = new Document(_host)
+            {
+                Children = children
+            };
+
+            return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, model);
+        }
+
         public string Render(AbstractNode node, object model)
         {
             dynamic localModel = model;

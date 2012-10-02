@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConditionalRenderer.cs" />
+    <Compile Include="LiteralRenderer.cs" />
     <Compile Include="DocTypeRenderer.cs" />
     <Compile Include="DocumentRenderer.cs" />
     <Compile Include="ForeachRenderer.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="StringLiteralRenderer.cs" />
     <Compile Include="TagBuilder.cs" />
     <Compile Include="ListRenderer.cs" />
+    <Compile Include="ThisRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parrot\Parrot.csproj">

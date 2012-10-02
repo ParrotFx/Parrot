@@ -9,7 +9,7 @@ namespace Parrot.Renderers
 
     public class StringLiteralRenderer : IRenderer
     {
-        private IHost _host;
+        private readonly IHost _host;
 
         public StringLiteralRenderer(IHost host)
         {
@@ -37,8 +37,6 @@ namespace Parrot.Renderers
                 result += GetModelValue(modelValueProviderFactory, model, value.Type, value.Data);
             }
 
-            //return RendererHelpers.GetModelValue(model, stringNode.Parrot.Infrastructure.ValueType, stringNode)
-
             return result;
             //return stringNode.GetValue() as string;
         }
@@ -50,12 +48,17 @@ namespace Parrot.Renderers
 
         private string GetModelValue(IModelValueProviderFactory factory, object model, StringLiteralPartType type, string data)
         {
+            IValueTypeProvider valueTypeProvider = _host.DependencyResolver.Resolve<IValueTypeProvider>();
+            var valueType = valueTypeProvider.GetValue(data);
+            
             switch (type)
             {
                 case StringLiteralPartType.Encoded:
-                    return System.Net.WebUtility.HtmlEncode((string)factory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, data));
+                    //get the valuetype
+
+                    return System.Net.WebUtility.HtmlEncode(factory.Get(model.GetType()).GetValue(model, valueType.Type, data).ToString());
                 case StringLiteralPartType.Raw:
-                    return (string)factory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, data);
+                    return factory.Get(model.GetType()).GetValue(model, valueType.Type, data).ToString();
             }
 
             //default type is string literal

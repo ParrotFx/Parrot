@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModelValueProviderTests.cs" />
+    <Compile Include="RendererTests\ConditionalRendererTests.cs" />
     <Compile Include="RendererTests\InputRendererTests.cs" />
     <Compile Include="MemoryHost.cs" />
     <Compile Include="ParrotParserTests.cs" />

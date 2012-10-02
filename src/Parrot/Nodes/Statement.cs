@@ -15,8 +15,7 @@ namespace Parrot.Nodes
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
 
-        internal Statement(IHost host)
-            : base(host)
+        internal Statement(IHost host) : base(host)
         {
             Attributes = new AttributeList(host);
             Children = new StatementList(host);
@@ -45,7 +44,7 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id added more than once");
                             }
 
-                            AddAttribute(new Attribute(Host, "id", "\"" + part.Name + "\""));
+                            AddAttribute(new Attribute(Host, "id", new StringLiteral(host, "\"" + part.Name + "\"")));
                             break;
                         case IdentifierType.Class:
                             if (part.Name.Length == 1)
@@ -53,11 +52,11 @@ namespace Parrot.Nodes
                                 throw new ParserException("Id must have a length");
                             }
 
-                            AddAttribute(new Attribute(Host, "class", "\"" + part.Name + "\""));
+                            AddAttribute(new Attribute(Host, "class", new StringLiteral(host, "\"" + part.Name + "\"")));
                             break;
 
                         case IdentifierType.Type:
-                            AddAttribute(new Attribute(host, "type", "\"" + part.Name + "\""));
+                            AddAttribute(new Attribute(host, "type", new StringLiteral(host, "\"" + part.Name + "\"")));
                             break;
 
                         case IdentifierType.Literal:
@@ -73,8 +72,12 @@ namespace Parrot.Nodes
 
         }
 
-        public Statement(IHost host, string name, StatementTail statementTail)
-            : this(host, name)
+        public Statement(IHost host, string name, StatementTail statementTail) : this(host, name)
+        {
+            ParseStatementTail(statementTail);
+        }
+
+        protected internal void ParseStatementTail(StatementTail statementTail)
         {
             if (statementTail != null)
             {
@@ -113,22 +116,22 @@ namespace Parrot.Nodes
 
         private void AddAttribute(Attribute node)
         {
-            if (node.Key == "id")
-            {
-                var nodeValue = node.Value as string;
+            //if (node.Key == "id")
+            //{
+            //    var nodeValue = node.Value as string;
 
-                if (nodeValue != null && nodeValue.Contains("."))
-                {
-                    var values = nodeValue.Split(".".ToCharArray());
-                    foreach (var value in values.Skip(1))
-                    {
-                        Attributes.Add(new Attribute(Host, "class", value));
-                    }
+            //    if (nodeValue != null && nodeValue.Contains("."))
+            //    {
+            //        var values = nodeValue.Split(".".ToCharArray());
+            //        foreach (var value in values.Skip(1))
+            //        {
+            //            Attributes.Add(new Attribute(Host, "class", value));
+            //        }
 
-                    Attributes.Add(new Attribute(Host, node.Key, values[0]));
-                    return;
-                }
-            }
+            //        Attributes.Add(new Attribute(Host, node.Key, values[0]));
+            //        return;
+            //    }
+            //}
 
             Attributes.Add(node);
         }

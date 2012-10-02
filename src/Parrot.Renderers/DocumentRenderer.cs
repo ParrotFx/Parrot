@@ -20,16 +20,16 @@ namespace Parrot.Renderers
     /// </summary>
     public class DocumentRenderer
     {
-        private readonly IHost _host;
+        protected readonly IHost Host;
 
         public DocumentRenderer(IHost host)
         {
-            _host = host;
+            Host = host;
         }
 
-        public string Render(Document document, object model)
+        public virtual string Render(Document document, object model)
         {
-            var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
+            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in document.Children)
@@ -41,9 +41,9 @@ namespace Parrot.Renderers
             return sb.ToString().Trim();
         }
 
-        public string Render(StatementList statements, object model)
+        public virtual string Render(StatementList statements, object model)
         {
-            var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
+            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
 
             StringBuilder sb = new StringBuilder();
             foreach (var element in statements)

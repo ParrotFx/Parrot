@@ -19,10 +19,10 @@ namespace Parrot.Nodes
         public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteral(IHost host, string value) : base(host)
-        {
-            base.Name = "string";
+        public StringLiteral(IHost host, string value) : this(host, value, null) { }
 
+        public StringLiteral(IHost host, string value, StatementTail tail) : base(host, "string", tail)
+        {
             if (IsWrappedInQuotes(value))
             {
                 ValueType = ValueType.StringLiteral;
@@ -48,7 +48,6 @@ namespace Parrot.Nodes
             {
                 Values = Parse(value);
             }
-
         }
 
         private static bool StartsWith(string source, char value)

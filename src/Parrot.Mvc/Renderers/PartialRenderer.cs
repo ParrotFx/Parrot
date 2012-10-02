@@ -10,17 +10,22 @@ namespace Parrot.Mvc.Renderers
     using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
-    public class PartialRenderer : HtmlRenderer
+    public class PartialRenderer : Parrot.Renderers.HtmlRenderer
     {
-        private readonly IViewEngine _engine;
+        private IViewEngine _engine;
 
-        public PartialRenderer(IHost host, IViewEngine engine) : base(host)
+        public PartialRenderer(IHost host) : base(host)
         {
-            _engine = engine;
+            
         }
 
         public override string Render(AbstractNode node, object model)
         {
+            if (_engine == null)
+            {
+                _engine = Host.DependencyResolver.Resolve<IViewEngine>();
+            }
+
             var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 
             if (node == null)
@@ -36,11 +41,11 @@ namespace Parrot.Mvc.Renderers
 
             object localModel = model;
 
-            if (blockNode.Parameters != null && blockNode.Parameters.Any())
-            {
-                localModel = modelValueProviderFactory.Get(model.GetType()).GetValue(model, blockNode.Parameters.First().ValueType,
-                                                           blockNode.Parameters.First().Value);
-            }
+            //if (blockNode.Parameters != null && blockNode.Parameters.Any())
+            //{
+            //    localModel = modelValueProviderFactory.Get(model.GetType()).GetValue(model, blockNode.Parameters.First().ValueType,
+            //                                               blockNode.Parameters.First().Value);
+            //}
 
             //get the parameter
             string layout = "";

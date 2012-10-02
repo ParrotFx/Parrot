@@ -19,6 +19,7 @@ namespace Parrot.Renderers
 
         public string Render(AbstractNode node, object model)
         {
+            var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
             
             if (node == null)
@@ -40,46 +41,46 @@ namespace Parrot.Renderers
             foreach (var attribute in blockNode.Attributes)
             {
                 object attributeValue = model;
-                if (attributeValue != null)
+
+                if (attribute.Value != null)
                 {
-                    attributeValue = modelValueProviderFactory.Get(model.GetType()).GetValue(model, attribute.ValueType, attribute.Value);
+                    var renderer = factory.GetRenderer(attribute.Value.Name);
+
+                    if (renderer is HtmlRenderer)
+                    {
+                        //nope!
+                        renderer = factory.GetRenderer("literal");
+                    }
+                    //attributeValue = modelValueProviderFactory.Get(modelType).GetValue(model, attribute.ValueType, attribute.Value);
+                    attributeValue = renderer.Render(attribute.Value, model);
                 }
                 else
                 {
-                    attributeValue = modelValueProviderFactory.Get(typeof(object)).GetValue(model, attribute.ValueType, attribute.Value);
+                    //var renderer = factory.GetRenderer(attribute.Value.Name);
+                    //attributeValue = modelValueProviderFactory.Get(typeof(object)).GetValue(model, attribute.ValueType, attribute.Value);
+                    attributeValue = null;
                 }
-
                 if (attribute.Key == "class")
                 {
                     tag.AddCssClass((string)attributeValue);
                 }
                 else
                 {
+                    //attributeValue = modelValueProviderFactory.Get(typeof (object)).GetValue(attributeValue);
 
-                    Func<object, Parrot.Infrastructure.ValueType, bool> noOutput = (a, v) =>
-                    {
-                        if (a is bool && !(bool) attributeValue)
-                        {
-                            return true;
-                        }
-
-                        if (attributeValue == null && v == Parrot.Infrastructure.ValueType.Keyword)
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    };
-
-                    if (attributeValue is bool && (bool)attributeValue)
+                    if (attributeValue == null || attributeValue.Equals("true"))
                     {
                         tag.MergeAttribute(attribute.Key, attribute.Key, true);
                     }
-                    else if (noOutput(attributeValue, attribute.ValueType))
+                    else if (attributeValue == null || attributeValue.Equals("false") || attributeValue.Equals("null"))
                     {
-                        //checked=false should not output the checked attribute
-                        //checked=null should not output the checked attribute
+                        //no output
                     }
+                    //else if (noOutput(attributeValue))
+                    //{
+                    //    //checked=false should not output the checked attribute
+                    //    //checked=null should not output the checked attribute
+                    //}
                     else
                     {
                         tag.MergeAttribute(attribute.Key, (string)attributeValue, true);

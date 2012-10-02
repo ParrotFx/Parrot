@@ -84,7 +84,8 @@ namespace Parrot.Parser
         /// <returns>Statement</returns>
         private StatementList ParseStatement(Stream stream)
         {
-            var tokenType = stream.Peek().Type;
+            var previousToken = stream.Peek();
+            var tokenType = previousToken.Type;
             Token identifier = null;
             switch (tokenType)
             {
@@ -103,6 +104,12 @@ namespace Parrot.Parser
                     //string statement
                     identifier = stream.Next();
                     break;
+                case TokenType.Colon:
+                    stream.GetNextNoReturn();
+                    identifier = stream.Next();
+                    break;
+                default:
+                    throw new ParserException(stream.Peek());
             }
 
 
@@ -120,8 +127,8 @@ namespace Parrot.Parser
                 switch (token.Type)
                 {
                     case TokenType.OpenParenthesis:
-                    case TokenType.OpenBrace:
                     case TokenType.OpenBracket:
+                    case TokenType.OpenBrace:
                         tail = ParseStatementTail(stream);
                         break;
                     case TokenType.GreaterThan:
@@ -150,9 +157,9 @@ namespace Parrot.Parser
                 }
             }
 
-            statement = GetStatementFromToken(identifier, tail);
 
         checkForSiblings:
+            statement = GetStatementFromToken(identifier, tail, previousToken);
 
 
             var list = new StatementList(_host);
@@ -180,7 +187,7 @@ namespace Parrot.Parser
             return list;
         }
 
-        private Statement GetStatementFromToken(Token identifier, StatementTail tail)
+        private Statement GetStatementFromToken(Token identifier, StatementTail tail, Token previousToken = null)
         {
             var value = identifier != null ? identifier.Content : "";
             if (identifier != null)
@@ -188,13 +195,21 @@ namespace Parrot.Parser
                 switch (identifier.Type)
                 {
                     case TokenType.StringLiteral:
-                        return new StringLiteral(_host, value);
-                    case TokenType.QuotedStringLiteral:
-                        return new StringLiteral(_host, value);
-                    case TokenType.StringLiteralPipe:
-                        return new StringLiteralPipe(_host, value.Substring(1));
                     case TokenType.MultiLineStringLiteral:
-                        return new StringLiteral(_host, value);
+                    case TokenType.QuotedStringLiteral:
+                        return new StringLiteral(_host, value, tail);
+
+                    case TokenType.StringLiteralPipe:
+                        return new StringLiteralPipe(_host, value.Substring(1), tail);
+                }
+            }
+
+            if (previousToken != null)
+            {
+                switch(previousToken.Type)
+                {
+                    case TokenType.Colon:
+                        return new EncodedOutput(_host, value);
                 }
             }
 
@@ -347,6 +362,10 @@ namespace Parrot.Parser
                     case TokenType.MultiLineStringLiteral:
                         parameterList.Add(ParseParameter(stream));
                         break;
+                    case TokenType.Comma:
+                        //another parameter - consume this
+                        stream.NextNoReturn();
+                        break;
                     case TokenType.CloseParenthesis:
                         //consume close parenthesis
                         stream.NextNoReturn();
@@ -429,30 +448,27 @@ namespace Parrot.Parser
             if (equalsToken != null)
             {
                 stream.NextNoReturn();
+                Statement value;
                 var valueToken = stream.Peek();
                 if (valueToken == null)
                 {
                     throw new ParserException(string.Format("Unexpected end of stream"));
                 }
 
-                stream.NextNoReturn();
+                value = ParseStatement(stream).SingleOrDefault();
+                //force this as an attribute type
 
-                switch (valueToken.Type)
+                switch (value.Name)
                 {
-                    case TokenType.StringLiteralPipe:
-                    case TokenType.MultiLineStringLiteral:
-                    case TokenType.QuotedStringLiteral:
-                    case TokenType.StringLiteral:
-                    case TokenType.Identifier:
-                        //only accept tokens that are valid for attribute values
+                    case "true":
+                    case "false":
+                    case "null":
+                        value = new StringLiteral(_host, "\"" + value.Name + "\"");
                         break;
-                    default:
-                        //invalid token
-                        throw new ParserException(valueToken);
                 }
 
                 //reduction
-                return new Attribute(_host, identifier.Content, valueToken.Content);
+                return new Attribute(_host, identifier.Content, value);
             }
 
             //single attribute only

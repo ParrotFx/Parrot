@@ -21,7 +21,11 @@ namespace Parrot.Renderers.Infrastructure
             RegisterFactory("output", new OutputRenderer(host));
             RegisterFactory("input", new InputRenderer(host));
             RegisterFactory("string", new StringLiteralRenderer(host));
+            RegisterFactory("literal", new LiteralRenderer(host));
+            RegisterFactory("attribute", new LiteralRenderer(host));
             RegisterFactory("foreach", new ForeachRenderer(host));
+            RegisterFactory("conditional", new ConditionalRenderer(host));
+            //RegisterFactory("this", new ThisRenderer(host));
             RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
 
             //default renderer
@@ -38,6 +42,11 @@ namespace Parrot.Renderers.Infrastructure
 
         public void RegisterFactory(string blockName, Func<AbstractNode, object, string> renderer)
         {
+            if (_renderers.ContainsKey(blockName))
+            {
+                _renderers.Remove(blockName);
+            }
+            
             _renderers.Add(blockName, new FuncRenderer(renderer));
         }
 
@@ -61,10 +70,12 @@ namespace Parrot.Renderers.Infrastructure
                 throw new ArgumentNullException("renderer");
             }
 
-            if (!_renderers.ContainsKey(blockName))
+            if (_renderers.ContainsKey(blockName))
             {
-                _renderers.Add(blockName, renderer);
+                _renderers.Remove(blockName);
             }
+
+            _renderers.Add(blockName, renderer);
         }
 
         public IRenderer GetRenderer(string blockName)

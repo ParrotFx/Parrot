@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using Parrot.Renderers.Infrastructure;
-using Parrot.Nodes;
-
-namespace Parrot.Renderers
+﻿namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
-    using Parrot.Renderers;
-    using Attribute = Nodes.Attribute;
+    using System;
+    using System.Collections;
+    using System.Linq;
+    using System.Text;
+    using Parrot.Renderers.Infrastructure;
+    using Parrot.Nodes;
 
     public class HtmlRenderer : IRenderer
     {
         protected IHost Host;
+
+        protected Func<string, object, string> PreRenderAttribute; 
 
         public HtmlRenderer(IHost host)
         {
@@ -108,11 +107,13 @@ namespace Parrot.Renderers
 
         protected TagBuilder CreateTag(object model, Statement statement)
         {
+            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
+            
             Type modelType = model != null ? model.GetType() : null;
 
             object localModel = model;
             var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
-            
+
             if (statement.Parameters.Count > 0)
             {
                 var modelValueProvider = modelValueProviderFactory.Get(modelType);
@@ -123,40 +124,54 @@ namespace Parrot.Renderers
             statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
 
             TagBuilder builder = new TagBuilder(statement.Name);
-            foreach (var attribute in statement.Attributes)
-            {
-                object attributeValue = model;
-                if (attributeValue != null)
-                {
-                    attributeValue = modelValueProviderFactory.Get(modelType).GetValue(model, attribute.ValueType, attribute.Value);
-                }
-                else
-                {
-                    attributeValue = modelValueProviderFactory.Get(typeof(object)).GetValue(model, attribute.ValueType, attribute.Value);
-                }
 
-                if (attribute.Key == "class")
-                {
-                    builder.AddCssClass((string) attributeValue);
-                }
-                else
-                {
-                    builder.MergeAttribute(attribute.Key, (string) attributeValue, true);
-                }
-            }
+            RenderAttributes(model, statement, builder, factory);
 
             if (statement.Children.Count > 0)
             {
                 builder.InnerHtml = RenderChildren(statement, localModel);
             }
-            else
+            return builder;
+        }
+
+        private void RenderAttributes(object model, Statement statement, TagBuilder builder, IRendererFactory factory)
+        {
+            foreach (var attribute in statement.Attributes)
             {
-                if (statement.Parameters.Count > 0)
+                object attributeValue = model;
+
+                if (attribute.Value == null)
                 {
-                    builder.InnerHtml = localModel != null ? localModel.ToString() : "";
+                    builder.MergeAttribute(attribute.Key, attribute.Key, true);
+                }
+                else
+                {
+                    var renderer = factory.GetRenderer(attribute.Value.Name);
+
+                    if (renderer is HtmlRenderer)
+                    {
+                        renderer = factory.GetRenderer("literal");
+                    }
+
+                    attributeValue = attributeValue != null 
+                        ? renderer.Render(attribute.Value, model) 
+                        : renderer.Render(attribute.Value);
+                    
+                    if (PreRenderAttribute != null)
+                    {
+                        attributeValue = PreRenderAttribute(attribute.Key, attributeValue);
+                    }
+                    
+                    if (attribute.Key == "class")
+                    {
+                        builder.AddCssClass((string) attributeValue);
+                    }
+                    else
+                    {
+                        builder.MergeAttribute(attribute.Key, (string) attributeValue, true);
+                    }
                 }
             }
-            return builder;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Parrot.Mvc.Renderers
         {
             _host = host;
         }
-        
+
         public string Render(AbstractNode node, object model)
         {
             if (node == null)
@@ -65,11 +65,21 @@ namespace Parrot.Mvc.Renderers
                     var document = parrotView.LoadDocument(contents);
                     var renderer = _host.DependencyResolver.Resolve<DocumentRenderer>();
 
-                    return renderer.Render(document, new
+                    var facotry = _host.DependencyResolver.Resolve<IRendererFactory>();
+                    facotry.RegisterFactory("content", (abstractNode, o) =>
                     {
-                        Children = new StatementList(_host, blockNode.Children.ToArray()),
-                        Model = model
+                        var contentDoc = new Document(_host)
+                        {
+                            Children = new StatementList(_host, blockNode.Children.ToArray())
+                        };
+
+                        var source =  _host.DependencyResolver.Resolve<DocumentRenderer>().Render(contentDoc, model);
+                        return source;
                     });
+
+                    //need to somehow set up a funcrenderer for "content" rather than an actual content renderer
+
+                    return renderer.Render(document, model);
                 }
             }
 

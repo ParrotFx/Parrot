@@ -185,7 +185,8 @@ namespace Parrot.Tests
                 var document = Parse(string.Format("{0}#{1}", element, id));
                 Assert.AreEqual(element, document.Children[0].Name);
                 Assert.AreEqual("id", document.Children[0].Attributes[0].Key);
-                Assert.AreEqual(id, document.Children[0].Attributes[0].Value);
+                Assert.IsInstanceOf<StringLiteral>(document.Children[0].Attributes[0].Value);
+                Assert.AreEqual(id, (document.Children[0].Attributes[0].Value as StringLiteral).Values[0].Data);
             }
 
             [Test]
@@ -203,7 +204,8 @@ namespace Parrot.Tests
             {
                 var document = Parse(string.Format("{0}.{1}", element, @class));
                 Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
-                Assert.AreEqual(@class, document.Children[0].Attributes[0].Value);
+                Assert.IsInstanceOf<StringLiteral>(document.Children[0].Attributes[0].Value);
+                Assert.AreEqual(@class, (document.Children[0].Attributes[0].Value as StringLiteral).Values[0].Data);
             }
 
             [TestCase("div", "class1", "class2", "class3")]
@@ -213,7 +215,8 @@ namespace Parrot.Tests
                 Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
                 for (int i = 0; i < classes.Length; i++)
                 {
-                    Assert.AreEqual(classes[i], document.Children[0].Attributes[i].Value);
+                    Assert.IsInstanceOf<StringLiteral>(document.Children[0].Attributes[i].Value);
+                    Assert.AreEqual(classes[i], (document.Children[0].Attributes[i].Value as StringLiteral).Values[0].Data);
                 }
             }
         }
@@ -239,7 +242,7 @@ namespace Parrot.Tests
             {
                 var document = Parse("div[attr1=Value]");
                 Assert.AreEqual(1, document.Children[0].Attributes.Count);
-                Assert.AreEqual(ValueType.Property, document.Children[0].Attributes[0].ValueType);
+                //Assert.AreEqual(ValueType.Property, document.Children[0].Attributes[0].ValueType);
             }
 
             [Test]
@@ -247,7 +250,7 @@ namespace Parrot.Tests
             {
                 var document = Parse("div[attr1=this]");
                 Assert.AreEqual(1, document.Children[0].Attributes.Count);
-                Assert.AreEqual(ValueType.Local, document.Children[0].Attributes[0].ValueType);
+                //Assert.AreEqual(ValueType.Local, document.Children[0].Attributes[0].ValueType);
             }
 
             [Test]
@@ -264,8 +267,9 @@ namespace Parrot.Tests
                 var document = Parse(".sample-class");
                 Assert.IsNullOrEmpty(null, document.Children[0].Name);
                 Assert.AreEqual("class", document.Children[0].Attributes[0].Key);
-                Assert.AreEqual("sample-class", document.Children[0].Attributes[0].Value);
-                Assert.AreEqual(ValueType.StringLiteral, document.Children[0].Attributes[0].ValueType);
+                Assert.IsInstanceOf<StringLiteral>(document.Children[0].Attributes[0].Value);
+                Assert.AreEqual("sample-class", (document.Children[0].Attributes[0].Value as StringLiteral).Values[0].Data);
+                //Assert.AreEqual(ValueType.StringLiteral, document.Children[0].Attributes[0].ValueType);
             }
 
             [Test]
@@ -340,6 +344,23 @@ namespace Parrot.Tests
                 Assert.AreEqual(". a dot", parts[1].Data);
 
 
+            }
+        }
+
+        public class ParameterTests
+        {
+            [Test]
+            public void ParameterLoadsOneParameter()
+            {
+                var document = Parse("div(param1)");
+                Assert.AreEqual(1, document.Children[0].Parameters.Count);
+            }
+
+            [Test]
+            public void ParameterLoadsTwoParameters()
+            {
+                var document = Parse("div(param1, param2)");
+                Assert.AreEqual(2, document.Children[0].Parameters.Count);
             }
         }
 

@@ -38,6 +38,7 @@ namespace Parrot.Tests
 
             factory.RegisterFactory("layout", new LayoutRenderer(this));
             factory.RegisterFactory("content", new ContentRenderer(this));
+            factory.RegisterFactory("conditional", new ConditionalRenderer(this));
 
             DependencyResolver.Register(typeof(IRendererFactory), () => factory);
         }

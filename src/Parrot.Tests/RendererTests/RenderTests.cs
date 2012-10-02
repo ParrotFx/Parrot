@@ -33,8 +33,8 @@ namespace Parrot.Tests
         public void ForeachRendererTests()
         {
             object model = new[] {1, 2};
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div(this) }", model));
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div(this) }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div > :this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div > :this }", model));
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
         }
@@ -102,7 +102,7 @@ namespace Parrot.Tests
         [Test]
         public void RenderATagWithModel()
         {
-            var block = "a[href=FirstName](FirstName)";
+            var block = "a[href=FirstName] > :FirstName";
             var result = Render(block, new { FirstName = "Ben" });
             Assert.AreEqual("<a href=\"Ben\">Ben</a>", result);
         }
@@ -131,9 +131,9 @@ namespace Parrot.Tests
             Assert.AreEqual("<p class=\"foo,bar,baz\"></p>", Render("p[class=\"foo,bar,baz\"]"));
             Assert.AreEqual("<a href=\"http://google.com\" title=\"Some : weird = title\"></a>", Render("a[href= \"http://google.com\" title= \"Some : weird = title\"]"));
             Assert.AreEqual("<label for=\"name\"></label>", Render("label[for=\"name\"]"));
-            Assert.AreEqual("<meta content=\"width=device-width\" name=\"viewport\" />", Render("meta[name=\"viewport\" content=\"width=device-width\"]"));
+            Assert.AreEqual("<meta content=\"width=device-width\" name=\"viewport\" />", Render("meta[name=\"viewport\" content=\"width==device-width\"]"));
             Assert.AreEqual("<div style=\"color= white\"></div>", Render("div[style=\"color= white\"]"));
-            Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color:white\"]"));
+            Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color::white\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
             Assert.AreEqual("<p class=\"baz bar foo\"></p>", Render("p.bar.baz[class=\"foo\"]"));
@@ -143,11 +143,12 @@ namespace Parrot.Tests
             Assert.AreEqual("<p class=\"name\" data-dynamic=\"true\"></p>", Render("p[class= \"name\" data-dynamic= \"true\"]"));
             Assert.AreEqual("<p data-dynamic=\"true\"></p>", Render("p[data-dynamic= \"true\"]"));
             Assert.AreEqual("<p class=\"name\" data-dynamic=\"true\"></p>", Render("p[class= \"name\" data-dynamic= \"true\"]"));
+
             Assert.AreEqual("<p class=\"name\" data-dynamic=\"true\" yay=\"yay\"></p>", Render("p[class= \"name\" data-dynamic= \"true\" yay]"));
 
             Assert.AreEqual("<a data-foo=\"{ foo: &#39;bar&#39;, bar= &#39;baz&#39; }\"></a>", Render("a[data-foo = \"{ foo: 'bar', bar= 'baz' }\"]"));
 
-            Assert.AreEqual("<meta content=\"IE=edge,chrome=1\" http-equiv=\"X-UA-Compatible\" />", Render("meta[http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\"]"));
+            Assert.AreEqual("<meta content=\"IE=edge,chrome=1\" http-equiv=\"X-UA-Compatible\" />", Render("meta[http-equiv=\"X-UA-Compatible\" content=\"IE==edge,chrome==1\"]"));
 
             Assert.AreEqual("<div style=\"background: url(/images/test.png)\"></div>", Render("div[style= \"background: url(/images/test.png)\"]"));
             Assert.AreEqual("<div style=\"background = url(/images/test.png)\"></div>", Render("div[style= \"background = url(/images/test.png)\"]"));

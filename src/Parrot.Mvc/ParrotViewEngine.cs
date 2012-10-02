@@ -114,7 +114,7 @@ namespace Parrot.Mvc
         readonly string _viewPath;
         private readonly IHost _host;
 
-        public ParrotView(IHost host,string viewPath)
+        public ParrotView(IHost host, string viewPath)
         {
             this._viewPath = viewPath;
             _host = host;
@@ -171,7 +171,7 @@ namespace Parrot.Mvc
                     model = viewContext.ViewData.Model;
                 }
 
-                result = _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, model);
+                result = _host.DependencyResolver.Resolve<Parrot.Mvc.Renderers.DocumentRenderer>().Render(document, model);
             //}
             //catch (Exception e)
             //{
