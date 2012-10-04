@@ -16,15 +16,15 @@
     doctype
     html {
       head {
-        title("This is Parrot!")
+        title > "This is Parrot!"
       }
       body {
-        h1#header(Header)
-        p#tagname.small("All new Asp.Net View Engine")
+        h1#header > :Header
+        p#tagname.small > "All new Asp.Net View Engine"
         div#description.rounded-corners {
-          h2("Features")
+          h2 > "Features"
           ul(Features) {
-            li(this)
+            li > :this
           }
         }
       }
