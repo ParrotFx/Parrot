@@ -149,18 +149,18 @@ namespace Parrot.Renderers
 
         protected object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
         {
+            object value = null;
+            if (statement.Parameters.Count > 0)
+            {
+                //check here first
+                if (modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
+                {
+                    return value;
+                }
+            }
+
             if (model != null)
             {
-                object value = null;
-                if (statement.Parameters.Count > 0)
-                {
-                    //check here first
-                    if (modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
-                    {
-                        return value;
-                    }
-                }
-
                 //check DocumentHost next
                 if (modelValueProvider.GetValue(documentHost.GetValueOrDefault("DOCUMENTHOST"), Parrot.Infrastructure.ValueType.Property, null, out value))
                 {

@@ -60,6 +60,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RendererTests\ConditionalRendererTests.cs" />
     <Compile Include="RendererTests\RenderTests.cs">
       <SubType>Code</SubType>
     </Compile>

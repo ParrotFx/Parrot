@@ -34,6 +34,7 @@ namespace Parrot.Tests
             rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
             rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(
                 new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, 
