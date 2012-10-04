@@ -1,32 +1,35 @@
 using System;
+using System.Collections.Generic;
 using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
 
 namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
-    using Parrot.Renderers;
 
     public class SelfClosingRenderer : HtmlRenderer
     {
-        public SelfClosingRenderer(IHost host) : base(host) {}
+        public SelfClosingRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override string Render(AbstractNode node, object model)
+        public override void Render(System.IO.StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            Type modelType = model != null ? model.GetType() : null;
+            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
 
-            var blockNode = node as Statement;
-            if (blockNode == null)
-            {
-                throw new ArgumentException("node");
-            }
+            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
-            var tag = CreateTag(model, blockNode);
+            CreateTag(writer, documentHost, localModel, statement, modelValueProvider);
+        }
 
-            return tag.ToString(TagRenderMode.SelfClosing);
+        protected override void CreateTag(System.IO.StringWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        {
+            string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
+
+            TagBuilder builder = new TagBuilder(tagName);
+            //add attributes
+            RenderAttributes(documentHost, model, statement, builder);
+
+            writer.Write(builder.ToString(TagRenderMode.SelfClosing));
         }
     }
 }

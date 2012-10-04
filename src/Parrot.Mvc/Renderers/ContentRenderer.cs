@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.IO;
+
 namespace Parrot.Mvc.Renderers
 {
     using Parrot.Infrastructure;
@@ -6,41 +9,52 @@ namespace Parrot.Mvc.Renderers
     using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
-    public class ContentRenderer : IRenderer
+    public class ContentRenderer : HtmlRenderer
     {
-        private readonly IHost _host;
 
-        public ContentRenderer(IHost host)
-        {
-            _host = host;
-        }
 
-        public string RenderFromLayout(AbstractNode node, StatementList children, object model)
+        //public string RenderFromLayout(AbstractNode node, StatementList children, object model)
+        //{
+        //    Document document = new Document(_host)
+        //    {
+        //        Children = children
+        //    };
+
+        //    return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, model);
+        //}
+
+        //public string Render(AbstractNode node, object documentHost)
+        //{
+        //    dynamic localModel = documentHost;
+
+        //    Document document = new Document(_host)
+        //    {
+        //        Children = localModel.Children
+        //    };
+
+        //    return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, localModel.Model);
+        //}
+
+        //[Obsolete]
+        //public string Render(AbstractNode node)
+        //{
+        //    throw new InvalidOperationException();
+        //}
+
+        public ContentRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+
+        public override void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            Document document = new Document(_host)
+            var childrenQueue = documentHost.GetValueOrDefault("_LayoutChildren_") as Queue<StatementList>;
+            if (childrenQueue == null)
             {
-                Children = children
-            };
+                //TODO: replace this with a real exception
+                throw new Exception("Children elements empty");
+            }
 
-            return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, model);
-        }
+            var children = childrenQueue.Dequeue();
 
-        public string Render(AbstractNode node, object model)
-        {
-            dynamic localModel = model;
-
-            Document document = new Document(_host)
-            {
-                Children = localModel.Children
-            };
-
-            return _host.DependencyResolver.Resolve<DocumentRenderer>().Render(document, localModel.Model);
-        }
-
-        [Obsolete]
-        public string Render(AbstractNode node)
-        {
-            throw new InvalidOperationException();
+            RenderChildren(writer, children, documentHost, DefaultChildTag, model);
         }
     }
 }

@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using Parrot.Renderers.Infrastructure;
 
 namespace Parrot.Renderers
@@ -20,30 +21,14 @@ namespace Parrot.Renderers
     /// </summary>
     public class ForeachRenderer : HtmlRenderer
     {
-        public ForeachRenderer(IHost host) : base(host) {}
+        public ForeachRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override string Render(AbstractNode node, object model)
+        public override void Render(System.IO.StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
-            object localModel = model;
-            
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            Type modelType = model != null ? model.GetType() : null;
+            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
 
-            var blockNode = node as Statement;
-            if (blockNode == null)
-            {
-                //somehow we're not rendering a blockNode
-                throw new InvalidCastException("node");
-            }
-
-            //use the passed in parameter property or use the page model
-            if (blockNode.Parameters.Any())
-            {
-                localModel = modelValueProviderFactory.Get(model.GetType()).GetValue(model, blockNode.Parameters[0].ValueType, blockNode.Parameters[0].Value);
-            }
+            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
             //Assert that we're looping over something
             IEnumerable loop = localModel as IEnumerable;
@@ -52,20 +37,15 @@ namespace Parrot.Renderers
                 throw new InvalidCastException("model is not IEnumerable");
             }
 
-            StringBuilder sb = new StringBuilder();
-            var documentRenderer = Host.DependencyResolver.Resolve<DocumentRenderer>();
             foreach (var item in loop)
             {
-                sb.Append(documentRenderer.Render(blockNode.Children, item));
-                //sb.Append(blockNode.Children.Render(item));
+
+                foreach (var child in statement.Children)
+                {
+                    var renderer = RendererFactory.GetRenderer(child.Name);
+                    renderer.Render(writer, child, documentHost, item);
+                }
             }
-
-            return sb.ToString();
-        }
-
-        public override string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

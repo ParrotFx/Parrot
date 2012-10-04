@@ -17,7 +17,7 @@ namespace Parrot.Renderers
             _host = host;
         }
 
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, object documentHost)
         {
             var factory = _host.DependencyResolver.Resolve<IRendererFactory>();
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
@@ -35,12 +35,12 @@ namespace Parrot.Renderers
                 throw new Exception("Block can't have any children");
             }
 
-            var localModel = model;
+            var localModel = documentHost;
 
             TagBuilder tag = new TagBuilder("input");
             foreach (var attribute in blockNode.Attributes)
             {
-                object attributeValue = model;
+                object attributeValue = documentHost;
 
                 if (attribute.Value != null)
                 {
@@ -52,7 +52,7 @@ namespace Parrot.Renderers
                         renderer = factory.GetRenderer("literal");
                     }
                     //attributeValue = modelValueProviderFactory.Get(modelType).GetValue(model, attribute.ValueType, attribute.Value);
-                    attributeValue = renderer.Render(attribute.Value, model);
+                    attributeValue = renderer.Render(attribute.Value, documentHost);
                 }
                 else
                 {

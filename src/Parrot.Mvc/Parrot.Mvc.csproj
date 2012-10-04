@@ -49,7 +49,6 @@
     <Compile Include="PathLocationResult.cs" />
     <Compile Include="PathResolver.cs" />
     <Compile Include="Renderers\ContentRenderer.cs" />
-    <Compile Include="Renderers\DocumentRenderer.cs" />
     <Compile Include="Renderers\HtmlRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="ParrotViewEngine.cs" />

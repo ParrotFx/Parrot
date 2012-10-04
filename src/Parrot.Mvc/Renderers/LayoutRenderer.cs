@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Parrot.Infrastructure;
 
@@ -19,35 +20,25 @@ namespace Parrot.Mvc.Renderers
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class LayoutRenderer : IRenderer
+    public class LayoutRenderer : BaseRenderer, IRenderer
     {
         private readonly IHost _host;
+        private readonly IRendererFactory _rendererFactory;
 
-        public LayoutRenderer(IHost host)
+        public LayoutRenderer(IHost host, IRendererFactory rendererFactory) : base(host)
         {
             _host = host;
+            _rendererFactory = rendererFactory;
         }
 
-        public string Render(AbstractNode node, object model)
+        public void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-
-            var blockNode = node as Statement;
-            if (blockNode == null)
-            {
-                throw new InvalidCastException("node");
-            }
-
-            //get the parameter
             string layout = "";
-            if (blockNode.Parameters != null && blockNode.Parameters.Any())
+            if (statement.Parameters != null && statement.Parameters.Any())
             {
                 //assume only the first is the path
                 //second is the argument (model)
-                layout = blockNode.Parameters[0].Value;
+                layout = statement.Parameters[0].Value;
             }
 
             //ok...we need to load the view
@@ -63,32 +54,19 @@ namespace Parrot.Mvc.Renderers
                     string contents = new StreamReader(stream).ReadToEnd();
 
                     var document = parrotView.LoadDocument(contents);
-                    var renderer = _host.DependencyResolver.Resolve<DocumentRenderer>();
 
-                    var facotry = _host.DependencyResolver.Resolve<IRendererFactory>();
-                    facotry.RegisterFactory("content", (abstractNode, o) =>
+                    //Create a new DocumentView and DocumentHost
+                    if (!documentHost.ContainsKey("_LayoutChildren_"))
                     {
-                        var contentDoc = new Document(_host)
-                        {
-                            Children = new StatementList(_host, blockNode.Children.ToArray())
-                        };
+                        documentHost.Add("_LayoutChildren_", new Queue<StatementList>());
+                    }
+                    (documentHost["_LayoutChildren_"] as Queue<StatementList>).Enqueue(statement.Children);
 
-                        var source =  _host.DependencyResolver.Resolve<DocumentRenderer>().Render(contentDoc, model);
-                        return source;
-                    });
+                    DocumentView view = new DocumentView(_host, _rendererFactory, documentHost, document);
 
-                    //need to somehow set up a funcrenderer for "content" rather than an actual content renderer
-
-                    return renderer.Render(document, model);
+                    view.Render(writer);
                 }
             }
-
-            throw new InvalidOperationException();
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
         }
     }
 }

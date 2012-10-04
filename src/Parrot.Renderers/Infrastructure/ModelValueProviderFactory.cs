@@ -24,7 +24,7 @@ namespace Parrot.Renderers.Infrastructure
 
         public void Register(Type type, Func<IModelValueProvider> provider)
         {
-            if (_providers.ContainsKey(type))
+            if (type != null && _providers.ContainsKey(type))
             {
                 _providers.Remove(type);
             }
@@ -36,7 +36,7 @@ namespace Parrot.Renderers.Infrastructure
 
         public IModelValueProvider Get(Type type)
         {
-            if (_providers.ContainsKey(type))
+            if (type != null && _providers.ContainsKey(type))
             {
                 return _providers[type]();
             }

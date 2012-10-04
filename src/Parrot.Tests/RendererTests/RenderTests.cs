@@ -11,6 +11,9 @@ using Parrot.Infrastructure;
 using Parrot.Mvc;
 using Parrot.Mvc.Renderers;
 using Parrot.Nodes;
+using Parrot.Renderers;
+using Parrot.Renderers.Infrastructure;
+using HtmlRenderer = Parrot.Renderers.HtmlRenderer;
 using IDependencyResolver = Parrot.Infrastructure.IDependencyResolver;
 
 namespace Parrot.Tests
@@ -30,13 +33,20 @@ namespace Parrot.Tests
         //https://github.com/visionmedia/jade/blob/master/test/jade.test.js
         
         [Test]
+        public void ThisKeywordHandling()
+        {
+            var text = "div(Model) > :this";
+            Assert.AreEqual("<div>testing this</div>", Render(text, new { Model = "testing this"}));
+        }
+
+        [Test]
         public void ForeachRendererTests()
         {
             object model = new[] {1, 2};
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div > :this }", model));
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(this) { div > :this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
 
-            Assert.Throws<InvalidCastException>(() => Render("foreach(this) { div(this) }", new {Item = 1}));
+            Assert.Throws<InvalidCastException>(() => Render("foreach(Model) { div(this) }", new { Model = new { Item = 1 } }));
         }
         
         [Test]
@@ -55,6 +65,20 @@ namespace Parrot.Tests
 
             //register the path resolver with the dependency resolver
             host.DependencyResolver.Register(typeof(IPathResolver), () => pathResolver.Object);
+
+            //default renderer
+            var rendererFactory = new RendererFactory(host);
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(
+                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
+                new SelfClosingRenderer(host, rendererFactory)
+            );
+
+            host.DependencyResolver.Register(typeof(IRendererFactory), () => rendererFactory);
 
             ////TODO: Figure this out later...
             var view = new ParrotView(host, "index.parrot");
@@ -85,6 +109,21 @@ namespace Parrot.Tests
 
             host.DependencyResolver.Register(typeof(IPathResolver), () => pathResolver.Object);
 
+            var rendererFactory = new RendererFactory(host);
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("content", new ContentRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(
+                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
+                new SelfClosingRenderer(host, rendererFactory)
+            );
+
+            host.DependencyResolver.Register(typeof (IRendererFactory), () => rendererFactory);
+
             ////TODO: Figure this out later...
             var view = new ParrotView(host, "index.parrot");
             StringBuilder sb = new StringBuilder();
@@ -102,8 +141,8 @@ namespace Parrot.Tests
         [Test]
         public void RenderATagWithModel()
         {
-            var block = "a[href=FirstName] > :FirstName";
-            var result = Render(block, new { FirstName = "Ben" });
+            var block = "a(Model)[href=:FirstName] > :FirstName";
+            var result = Render(block, new { Model = new { FirstName = "Ben"} });
             Assert.AreEqual("<a href=\"Ben\">Ben</a>", result);
         }
 
@@ -154,9 +193,9 @@ namespace Parrot.Tests
             Assert.AreEqual("<div style=\"background = url(/images/test.png)\"></div>", Render("div[style= \"background = url(/images/test.png)\"]"));
 
             Assert.AreEqual("<rss xmlns:atom=\"atom\"></rss>", Render("rss[xmlns:atom=\"atom\"]"));
-            Assert.AreEqual("<p></p>", Render("p[id=name]", new { name = "" }));
-            Assert.AreEqual("<p id=\"tj\"></p>", Render("p[id= name]", new { name = "tj" }));
-            Assert.AreEqual("<p id=\"something\"></p>", Render("p[id='something']", new { name = "" }));
+            Assert.AreEqual("<p></p>", Render("p(Model)[id=name]", new { name = "" }));
+            Assert.AreEqual("<p id=\"tj\"></p>", Render("p(Model)[id= name]", new { name = "tj" }));
+            Assert.AreEqual("<p id=\"something\"></p>", Render("p(Model)[id='something']", new { name = "" }));
         }
     
         [Test]

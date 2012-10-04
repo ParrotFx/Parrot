@@ -1,140 +1,99 @@
-﻿namespace Parrot.Renderers
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
     using System;
-    using System.Collections;
-    using System.Linq;
-    using System.Text;
     using Parrot.Renderers.Infrastructure;
     using Parrot.Nodes;
 
-    public class HtmlRenderer : IRenderer
+    public class HtmlRenderer : BaseRenderer, IRenderer
     {
-        protected IHost Host;
+        protected IRendererFactory RendererFactory;
+        protected Func<string, object, string> PreRenderAttribute;
 
-        protected Func<string, object, string> PreRenderAttribute; 
-
-        public HtmlRenderer(IHost host)
+        public HtmlRenderer(IHost host, IRendererFactory rendererFactory)
+            : base(host)
         {
-            Host = host;
+            RendererFactory = rendererFactory;
         }
-        
+
         public virtual string DefaultChildTag
         {
             get { return "div"; }
         }
 
-        public virtual string RenderChildren(Statement statement, object localModel, string defaultTag = null)
+        public virtual void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
+            Type modelType = model != null ? model.GetType() : null;
+            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
 
+            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
+
+            CreateTag(writer, documentHost, localModel, statement, modelValueProvider);
+        }
+
+        protected virtual void CreateTag(StringWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        {
+            string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
+
+            TagBuilder builder = new TagBuilder(tagName);
+            //add attributes
+            RenderAttributes(documentHost, model, statement, builder);
+            //AppendAttributes(builder, statement.Attributes, documentHost, modelValueProvider);
+
+            writer.Write(builder.ToString(TagRenderMode.StartTag));
+            //render children
+
+            if (statement.Children.Count > 0)
+            {
+                RenderChildren(writer, statement, documentHost, model);
+            }
+
+            writer.Write(builder.ToString(TagRenderMode.EndTag));
+        }
+
+        public virtual void RenderChildren(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model, string defaultTag = null)
+        {
             if (string.IsNullOrEmpty(defaultTag))
             {
                 defaultTag = DefaultChildTag;
             }
 
-            Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
 
-            var sb = new StringBuilder();
-            if (localModel is IEnumerable && statement.Parameters != null && statement.Parameters.Any())
+            if (model is IEnumerable && statement.Parameters.Any())
             {
-                foreach (object item in localModel as IEnumerable)
+                foreach (object item in model as IEnumerable)
                 {
                     var localItem = item;
 
-                    foreach (var child in statement.Children)
-                    {
-                        child.Name = tagName(child.Name);
-                        var renderer = factory.GetRenderer(child.Name);
-
-                        sb.AppendLine(renderer.Render(child, localItem));
-                    }
+                    RenderChildren(writer, statement.Children, documentHost, defaultTag, localItem);
                 }
             }
             else
             {
-                foreach (var child in statement.Children)
-                {
-                    if (child != null)
-                    {
-                        child.Name = tagName(child.Name);
-                        var renderer = factory.GetRenderer(child.Name);
-
-                        sb.Append(renderer.Render(child, localModel));
-                    }
-                }
+                RenderChildren(writer, statement.Children, documentHost, defaultTag, model);
             }
-
-            return sb.ToString();
         }
 
-        public virtual string Render(AbstractNode node)
+        protected void RenderChildren(StringWriter writer, StatementList children, IDictionary<string, object> documentHost, string defaultTag, object model)
         {
-            return Render(node, null);
+            Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
+
+            foreach (var child in children)
+            {
+                child.Name = tagName(child.Name);
+                var renderer = RendererFactory.GetRenderer(child.Name);
+
+                renderer.Render(writer, child, documentHost, model);
+            }
         }
 
-        public virtual string Render(AbstractNode node, object model)
-        {
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-
-            var blockNode = node as Statement;
-            if (blockNode == null)
-            {
-                throw new ArgumentException("node");
-            }
-
-            var tag = CreateTag(model, blockNode);
-
-            return tag.ToString();
-        }
-
-        public string Render(Document document, object model)
-        {
-            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var element in document.Children)
-            {
-                var renderer = factory.GetRenderer(element.Name);
-                sb.AppendLine(renderer.Render(element, model));
-            }
-
-            return sb.ToString();
-        }
-
-        protected TagBuilder CreateTag(object model, Statement statement)
-        {
-            var factory = Host.DependencyResolver.Resolve<IRendererFactory>();
-            
-            Type modelType = model != null ? model.GetType() : null;
-
-            object localModel = model;
-            var modelValueProviderFactory = Host.DependencyResolver.Resolve<IModelValueProviderFactory>();
-
-            if (statement.Parameters.Count > 0)
-            {
-                var modelValueProvider = modelValueProviderFactory.Get(modelType);
-
-                localModel = modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value);
-            }
-
-            statement.Name = string.IsNullOrEmpty(statement.Name) ? DefaultChildTag : statement.Name;
-
-            TagBuilder builder = new TagBuilder(statement.Name);
-
-            RenderAttributes(model, statement, builder, factory);
-
-            if (statement.Children.Count > 0)
-            {
-                builder.InnerHtml = RenderChildren(statement, localModel);
-            }
-            return builder;
-        }
-
-        private void RenderAttributes(object model, Statement statement, TagBuilder builder, IRendererFactory factory)
+        protected void RenderAttributes(IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
         {
             foreach (var attribute in statement.Attributes)
             {
@@ -146,32 +105,69 @@
                 }
                 else
                 {
-                    var renderer = factory.GetRenderer(attribute.Value.Name);
+                    var renderer = RendererFactory.GetRenderer(attribute.Value.Name);
 
                     if (renderer is HtmlRenderer)
                     {
-                        renderer = factory.GetRenderer("literal");
+                        renderer = RendererFactory.GetRenderer("string");
                     }
 
-                    attributeValue = attributeValue != null 
-                        ? renderer.Render(attribute.Value, model) 
-                        : renderer.Render(attribute.Value);
-                    
+                    StringBuilder sb = new StringBuilder();
+                    var tempWriter = new StringWriter(sb);
+                    renderer.Render(tempWriter, attribute.Value, documentHost, model);
+
+                    attributeValue = sb.ToString();
+
                     if (PreRenderAttribute != null)
                     {
                         attributeValue = PreRenderAttribute(attribute.Key, attributeValue);
                     }
-                    
+
                     if (attribute.Key == "class")
                     {
-                        builder.AddCssClass((string) attributeValue);
+                        builder.AddCssClass((string)attributeValue);
                     }
                     else
                     {
-                        builder.MergeAttribute(attribute.Key, (string) attributeValue, true);
+                        builder.MergeAttribute(attribute.Key, (string)attributeValue, true);
                     }
                 }
             }
+        }
+    }
+
+    public abstract class BaseRenderer
+    {
+        protected IHost Host;
+        protected IModelValueProviderFactory ModelValueProviderFactory;
+
+        protected BaseRenderer(IHost host)
+        {
+            Host = host;
+            ModelValueProviderFactory = host.DependencyResolver.Resolve<IModelValueProviderFactory>();
+        }
+
+        protected object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
+        {
+            if (model != null)
+            {
+                object value = null;
+                if (statement.Parameters.Count > 0)
+                {
+                    //check here first
+                    if (modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
+                    {
+                        return value;
+                    }
+                }
+
+                //check DocumentHost next
+                if (modelValueProvider.GetValue(documentHost.GetValueOrDefault("DOCUMENTHOST"), Parrot.Infrastructure.ValueType.Property, null, out value))
+                {
+                    return value;
+                }
+            }
+            return model;
         }
     }
 }

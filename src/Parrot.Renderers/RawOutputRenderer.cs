@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Parrot.Renderers.Infrastructure;
 using Parrot.Nodes;
 
@@ -15,29 +17,40 @@ namespace Parrot.Renderers
             _host = host;
         }
 
-        public string Render(AbstractNode node, object model)
+        private string GetModelValue(IModelValueProviderFactory factory, object model, StringLiteralPartType type, string data)
+        {
+            IValueTypeProvider valueTypeProvider = _host.DependencyResolver.Resolve<IValueTypeProvider>();
+            var valueType = valueTypeProvider.GetValue(data);
+
+            object value = null;
+            switch (type)
+            {
+                case StringLiteralPartType.Encoded:
+                    //get the valuetype
+                    if (factory.Get(model.GetType()).GetValue(model, valueType.Type, data, out value))
+                    {
+                        return System.Net.WebUtility.HtmlEncode(value.ToString());
+                    }
+                    break;
+                case StringLiteralPartType.Raw:
+                    if (factory.Get(model.GetType()).GetValue(model, valueType.Type, data, out value))
+                    {
+                        return value.ToString();
+                    }
+                    break;
+            }
+
+            //default type is string literal
+            return data;
+        }
+        
+        public void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            var value = GetModelValue(modelValueProviderFactory, model, StringLiteralPartType.Raw, statement.Name);
 
-            var outputNode = node as RawOutput;
-            if (outputNode == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-
-            var value = modelValueProviderFactory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, outputNode.VariableName);
-
-            return value.ToString();
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
+            writer.Write(value);
         }
     }
 }

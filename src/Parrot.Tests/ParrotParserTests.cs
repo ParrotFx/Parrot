@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using Parrot.Infrastructure;
-using Parrot.Mvc.Renderers;
 
 namespace Parrot.Tests
 {
@@ -370,6 +369,24 @@ namespace Parrot.Tests
             public void ColonWithChildren()
             {
                 var document = Parse("pre { :Item3 }");
+            }
+
+            [Test]
+            public void EqualWithChild()
+            {
+                var document = Parse("pre { =Item3 }");
+            }
+        }
+
+        public class SiblingTests
+        {
+            [Test]
+            public void RandomTestUntilIComeUpWithAName()
+            {
+                var document = Parse("h2 > \"Render\" :sibling");
+                Assert.AreEqual(2, document.Children.Count);
+                Assert.AreEqual("h2", document.Children[0].Name);
+                Assert.AreEqual("string", document.Children[1].Name);
             }
         }
 

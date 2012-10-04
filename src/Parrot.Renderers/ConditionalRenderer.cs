@@ -32,7 +32,7 @@ namespace Parrot.Renderers
             return null;
         }
 
-        public override string Render(AbstractNode node, object model)
+        public override string Render(AbstractNode node, object documentHost)
         {
             //throw new NotImplementedException();
 
@@ -47,10 +47,10 @@ namespace Parrot.Renderers
                 {
                     //value provider type
                     IModelValueProviderFactory factory = new ModelValueProviderFactory();
-                    if (model != null)
+                    if (documentHost != null)
                     {
-                        var provider = factory.Get(model.GetType());
-                        var value = provider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value);
+                        var provider = factory.Get(documentHost.GetType());
+                        var value = provider.GetValue(documentHost, statement.Parameters[0].ValueType, statement.Parameters[0].Value);
                         statementToOutput = value.ToString();
                     }
                     else
@@ -92,7 +92,7 @@ namespace Parrot.Renderers
                     {
                         var rendererFactory = Host.DependencyResolver.Resolve<IRendererFactory>();
                         //render only the child
-                        return RenderChildren(child, model);
+                        return RenderChildren(child, documentHost);
                     }
                 }
 
@@ -102,7 +102,7 @@ namespace Parrot.Renderers
                 {
                     var rendererFactory = Host.DependencyResolver.Resolve<IRendererFactory>();
                     //render only the child
-                    return RenderChildren(childToRender, model);
+                    return RenderChildren(childToRender, documentHost);
                 }
             }
 

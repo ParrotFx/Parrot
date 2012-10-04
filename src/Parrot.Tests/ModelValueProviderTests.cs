@@ -39,7 +39,8 @@ namespace Parrot.Tests
             object model = null;
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -52,7 +53,8 @@ namespace Parrot.Tests
             object model = new { Name = "Ben" };
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual(model, result);
         }
@@ -65,7 +67,8 @@ namespace Parrot.Tests
             object model = null;
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -78,7 +81,8 @@ namespace Parrot.Tests
             object model = new { Name = "Ben" };
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -91,7 +95,8 @@ namespace Parrot.Tests
             object model = new { Name = new { FirstName = "Ben", LastName = "Dornis" } };
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -109,7 +114,8 @@ namespace Parrot.Tests
             object model = null;
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -122,7 +128,8 @@ namespace Parrot.Tests
             object model = new { Name = "Ben" };
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual(model, result);
         }
@@ -135,7 +142,8 @@ namespace Parrot.Tests
             object model = null;
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -150,7 +158,8 @@ namespace Parrot.Tests
             model.Name = "Ben";
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -166,7 +175,8 @@ namespace Parrot.Tests
             model.Name.LastName = "Dornis";
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
-            object result = modelValueProvider.GetValue(model, valueType, property);
+            object result;
+            modelValueProvider.GetValue(model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }

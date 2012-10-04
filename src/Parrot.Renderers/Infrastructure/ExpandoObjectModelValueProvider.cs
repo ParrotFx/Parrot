@@ -6,15 +6,17 @@ namespace Parrot.Renderers.Infrastructure
 
     public class ExpandoObjectModelValueProvider : IModelValueProvider
     {
-        public object GetValue(object model, ValueType valueType, object property)
+        public bool GetValue(object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
             {
                 case Parrot.Infrastructure.ValueType.StringLiteral:
                 case Parrot.Infrastructure.ValueType.Keyword:
-                    return property;
+                    value = property;
+                    return true;
                 case Parrot.Infrastructure.ValueType.Local:
-                    return model;
+                    value = model;
+                    return true;
                 case Parrot.Infrastructure.ValueType.Property:
                     if (model == null)
                     {
@@ -32,10 +34,12 @@ namespace Parrot.Renderers.Infrastructure
                         propertyValues = result as IDictionary<string, object>;
                     }
 
-                    return result;
+                    value = result;
+                    return true;
             }
 
-            throw new InvalidOperationException("ValueType");
+            value = null;
+            return false;
         }
 
     }

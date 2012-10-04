@@ -40,30 +40,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConditionalRenderer.cs" />
-    <Compile Include="LiteralRenderer.cs" />
-    <Compile Include="DocTypeRenderer.cs" />
-    <Compile Include="DocumentRenderer.cs" />
-    <Compile Include="ForeachRenderer.cs" />
-    <Compile Include="FuncRenderer.cs" />
+    <Compile Include="DictionaryHelpers.cs" />
+    <Compile Include="DocTypeRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DocumentView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ForeachRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FuncRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="HtmlRenderer.cs" />
     <Compile Include="Infrastructure\ModelValueProviderFactory.cs" />
     <Compile Include="Infrastructure\ExpandoObjectModelValueProvider.cs" />
     <Compile Include="Infrastructure\IModelValueProvider.cs" />
     <Compile Include="Infrastructure\IModelValueProviderFactory.cs" />
     <Compile Include="Infrastructure\ObjectModelValueProvider.cs" />
-    <Compile Include="InputRenderer.cs" />
     <Compile Include="Infrastructure\IRenderer.cs" />
     <Compile Include="Infrastructure\IRendererFactory.cs" />
-    <Compile Include="OutputRenderer.cs" />
+    <Compile Include="ListRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawOutputRenderer.cs" />
     <Compile Include="Infrastructure\RendererFactory.cs" />
-    <Compile Include="SelfClosingRenderer.cs" />
-    <Compile Include="StringLiteralRenderer.cs" />
-    <Compile Include="TagBuilder.cs" />
-    <Compile Include="ListRenderer.cs" />
-    <Compile Include="ThisRenderer.cs" />
+    <Compile Include="RawOutputRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SelfClosingRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringLiteralRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parrot\Parrot.csproj">

@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
@@ -14,7 +16,7 @@ namespace Parrot.Renderers
     /// </summary>
     public class ListRenderer : HtmlRenderer
     {
-        public ListRenderer(IHost host) : base(host) {}
+        public ListRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
         public override string DefaultChildTag
         {

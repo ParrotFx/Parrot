@@ -38,11 +38,11 @@ html {
 						            textarea[
 								            name='model' 
 								            style='width:95%; height:300px;'
-						            ](Item2)
+						            ] > =Item2
 					            }
 					            td[style='width:45%'] {
 						            h3('Template')
-						            textarea[name='template' style='width:95%; height:300px;'](Item1)
+						            textarea[name='template' style='width:95%; height:300px;'] > =Item1
 					            }
 				            }
 			            }
@@ -50,15 +50,15 @@ html {
 		            }
 		            table[style='width:100%; text-align:left;'] {
 			            tr {
-				            td[style='width:50%; vertical-align:top; text-align:left;'] {
-					            h2 > |Output
+				            td[style='width:50%; vertical-align:top; text-align:left; max-width:50%;'] {
+					            h2 > "Output"
 					            pre {
 						            :Item3
 					            }
 				            }
 				            td[style='width:50%; vertical-align:top; text-align:left;'] {
-					            h2 > |Render
-					            =Item3
+					            h2 > "Render"   
+                                =Item3
 				            }
 			            }
 		            }

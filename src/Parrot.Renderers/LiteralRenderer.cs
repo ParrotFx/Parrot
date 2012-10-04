@@ -27,13 +27,13 @@ namespace Parrot.Renderers
             _host = host;
         }
 
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, object documentHost)
         {
-            if (model != null)
+            if (documentHost != null)
             {
                 var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 
-                var value = modelValueProviderFactory.Get(model.GetType()).GetValue(model, Parrot.Infrastructure.ValueType.Property, (node as Statement).Name);
+                var value = modelValueProviderFactory.Get(documentHost.GetType()).GetValue(documentHost, Parrot.Infrastructure.ValueType.Property, (node as Statement).Name);
 
                 return value.ToString();
             }

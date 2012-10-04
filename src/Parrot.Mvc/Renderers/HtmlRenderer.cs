@@ -5,12 +5,13 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Parrot.Infrastructure;
+using Parrot.Renderers.Infrastructure;
 
 namespace Parrot.Mvc.Renderers
 {
     public class HtmlRenderer : Parrot.Renderers.HtmlRenderer
     {
-        public HtmlRenderer(IHost host) : base(host)
+        public HtmlRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory)
         {
             PreRenderAttribute = (key, value) => GenerateContentUrl(value);
         }

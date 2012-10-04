@@ -4,18 +4,15 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Web.Mvc;
-using Parrot.Infrastructure;
-using Parrot.Mvc.Renderers;
-using DependencyResolver = Parrot.Infrastructure.DependencyResolver;
+using System.Collections.Generic;
+using Parrot.Renderers;
 
 namespace Parrot.Mvc
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Parrot.Renderers;
+    using System.Web.Mvc;
+
+    using Infrastructure;
+    using Renderers;
     using Parrot.Renderers.Infrastructure;
 
     /// <summary>
@@ -23,26 +20,34 @@ namespace Parrot.Mvc
     /// </summary>
     public class AspNetHost : Host
     {
-        public AspNetHost() : base(new DependencyResolver())
+        public AspNetHost() : base(new Infrastructure.DependencyResolver())
         {
             InitializeRendererFactory();
             DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
-            DependencyResolver.Register(typeof(Renderers.DocumentRenderer), () => new Renderers.DocumentRenderer(this));
+            //DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
             DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
+
+
             DependencyResolver.Register(typeof(IViewEngine), () => new ParrotViewEngine(this));
         }
 
         private void InitializeRendererFactory()
         {
-            var factory = new RendererFactory(this);
+            DependencyResolver.Register(typeof(IRendererFactory), () =>
+            {
+                var rendererFactory = new RendererFactory(this);
+                rendererFactory.RegisterFactory("*", new Parrot.Renderers.HtmlRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("string", new StringLiteralRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(this));
+                rendererFactory.RegisterFactory("foreach", new ForeachRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory(
+                    new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
+                    new SelfClosingRenderer(this, rendererFactory)
+                );
 
-            factory.RegisterFactory("layout", new LayoutRenderer(this));
-            factory.RegisterFactory("partial", new PartialRenderer(this));
-            factory.RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new Renderers.SelfClosingRenderer(this));
-
-            factory.RegisterFactory("*", new Renderers.HtmlRenderer(this));
-
-            DependencyResolver.Register(typeof(IRendererFactory), () => factory);
+                return rendererFactory;
+            });
         }
     }
 }

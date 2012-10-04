@@ -67,6 +67,8 @@ namespace Parrot.Parser
                     case TokenType.Identifier:
                     case TokenType.OpenBracket:
                     case TokenType.OpenParenthesis:
+                    case TokenType.Equal:
+                    case TokenType.Colon:
                         var statement = ParseStatement(stream);
                         yield return statement;
                         break;
@@ -108,6 +110,10 @@ namespace Parrot.Parser
                     stream.GetNextNoReturn();
                     identifier = stream.Next();
                     break;
+                case TokenType.Equal:
+                    stream.GetNextNoReturn();
+                    identifier = stream.Next();
+                    break;
                 default:
                     throw new ParserException(stream.Peek());
             }
@@ -138,18 +144,18 @@ namespace Parrot.Parser
                         //might be a single child or a statement list of siblings
                         tail = ParseSingleStatementTail(stream);
                         break;
-                    case TokenType.Colon:
-                        //next thing must be an identifier
-                        var colon = stream.Next();
-                        identifier = stream.Next();
-                        statement = new EncodedOutput(_host, identifier.Content);
-                        goto checkForSiblings;
-                    case TokenType.Equal:
-                        //next thing must be an identifier
-                        var equal = stream.Next();
-                        identifier = stream.Next();
-                        statement = new RawOutput(_host, identifier.Content);
-                        goto checkForSiblings;
+                    //case TokenType.Colon:
+                    //    //next thing must be an identifier
+                    //    var colon = stream.Next();
+                    //    identifier = stream.Next();
+                    //    statement = new EncodedOutput(_host, identifier.Content);
+                    //    goto checkForSiblings;
+                    //case TokenType.Equal:
+                    //    //next thing must be an identifier
+                    //    var equal = stream.Next();
+                    //    identifier = stream.Next();
+                    //    statement = new RawOutput(_host, identifier.Content);
+                    //    goto checkForSiblings;
 
                     default:
                         statement = GetStatementFromToken(identifier, tail);
@@ -206,10 +212,12 @@ namespace Parrot.Parser
 
             if (previousToken != null)
             {
-                switch(previousToken.Type)
+                switch (previousToken.Type)
                 {
                     case TokenType.Colon:
                         return new EncodedOutput(_host, value);
+                    case TokenType.Equal:
+                        return new RawOutput(_host, value);
                 }
             }
 

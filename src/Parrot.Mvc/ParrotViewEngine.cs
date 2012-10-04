@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using Parrot.Infrastructure;
 
 namespace Parrot.Mvc
@@ -16,8 +17,7 @@ namespace Parrot.Mvc
     {
         #region IViewEngine Members
 
-        public static IRendererFactory Factory;
-        private IHost _host;
+        private readonly IHost _host;
 
         public ParrotViewEngine(IHost host)
         {
@@ -114,7 +114,7 @@ namespace Parrot.Mvc
         readonly string _viewPath;
         private readonly IHost _host;
 
-        public ParrotView(IHost host, string viewPath)
+        public ParrotView(IHost host,  string viewPath)
         {
             this._viewPath = viewPath;
             _host = host;
@@ -155,34 +155,37 @@ namespace Parrot.Mvc
 
             throw new Exception("Unable to parse: ");
         }
-        
+
         string Parse(ViewContext viewContext, string template)
         {
             string result;
 
             Stopwatch watch = Stopwatch.StartNew();
-            //try
-            //{
-                Document document = LoadDocument(template);
 
-                object model = null;
-                if (viewContext != null)
-                {
-                    model = viewContext.ViewData.Model;
-                }
+            Document document = LoadDocument(template);
 
-                result = _host.DependencyResolver.Resolve<Parrot.Mvc.Renderers.DocumentRenderer>().Render(document, model);
-            //}
-            //catch (Exception e)
-            //{
-            //    result = e.Message;
-            //}
+            object model = null;
+            if (viewContext != null)
+            {
+                model = viewContext.ViewData.Model;
+            }
+
+            var documentHost = new Dictionary<string, object>();
+            documentHost.Add("Model", model);
+
+            //need to create a custom viewhost
+            var rendererFactory = _host.DependencyResolver.Resolve<IRendererFactory>();
+            DocumentView view = new DocumentView(_host, rendererFactory, documentHost, document);
+
+            StringBuilder sb = new StringBuilder();
+            StringWriter writer = new StringWriter(sb);
+            view.Render(writer);
 
             watch.Stop();
 
-            return result;
-                //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
-                //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
+            return sb.ToString();
+            //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
+            //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
         }
 
         #endregion

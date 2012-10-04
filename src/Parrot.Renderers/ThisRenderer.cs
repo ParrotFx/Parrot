@@ -27,9 +27,9 @@ namespace Parrot.Renderers
             _host = host;
         }
 
-        public string Render(AbstractNode node, object model)
+        public string Render(AbstractNode node, object documentHost)
         {
-            return model.ToString();
+            return documentHost.ToString();
         }
 
         public string Render(AbstractNode node)

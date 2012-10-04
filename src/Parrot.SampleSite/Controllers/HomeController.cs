@@ -26,28 +26,28 @@ namespace Parrot.SampleSite.Controllers
 
         public const string DefaultHtmlTemplate = @"div#firstname.nameInfo {
     label { 'First name' }
-    span(FirstName)
+    span > :FirstName
 }
 div#lastname.nameInfo {
     label { 'Last name' }
-    span(LastName)
+    span > :LastName
 }
 div#age.nameInfo {
     label { 'Age' }
-    span(Age)
+    span > :Age
 }
 div#address.addressInfo {
     div(Address) {
-        div(StreetAddress)
-        div(City)
-        div(State)
-        div(PostalCode)
+        div > :StreetAddress
+        div > :City
+        div > :State
+        div > :PostalCode
     }
 }
 ul#phoneNumbers.phone(PhoneNumber) {
     li {
-        span(Type)
-        span(Number)
+        span > :Type
+        span > :Number
     }
 }";
         private const string DefaultModelTemplate = @"{
@@ -98,12 +98,13 @@ ul#phoneNumbers.phone(PhoneNumber) {
             if (parser.Parse(template, out document))
             {
                 StringBuilder sb = new StringBuilder();
+                StringWriter writer = new StringWriter(sb);
                 foreach (var element in document.Children)
                 {
                     if (element != null)
                     {
                         var renderer = _host.DependencyResolver.Resolve<IRendererFactory>().GetRenderer(element.Name);
-                        sb.AppendLine(renderer.Render(element, modelObject));
+                        renderer.Render(writer, element, new Dictionary<string, object>(), modelObject);
                     }
                 }
 

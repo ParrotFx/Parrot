@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Parrot.Nodes;
 
 namespace Parrot.Renderers.Infrastructure
@@ -15,24 +16,24 @@ namespace Parrot.Renderers.Infrastructure
             _renderers = new Dictionary<string, IRenderer>();
 
             //register default renderers
-            RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new SelfClosingRenderer(host));
-            RegisterFactory("doctype", new DocTypeRenderer());
-            RegisterFactory("rawoutput", new RawOutputRenderer(host));
-            RegisterFactory("output", new OutputRenderer(host));
-            RegisterFactory("input", new InputRenderer(host));
-            RegisterFactory("string", new StringLiteralRenderer(host));
-            RegisterFactory("literal", new LiteralRenderer(host));
-            RegisterFactory("attribute", new LiteralRenderer(host));
-            RegisterFactory("foreach", new ForeachRenderer(host));
-            RegisterFactory("conditional", new ConditionalRenderer(host));
-            //RegisterFactory("this", new ThisRenderer(host));
-            RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
+            //RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new SelfClosingRenderer(host));
+            //RegisterFactory("doctype", new DocTypeRenderer());
+            //RegisterFactory("rawoutput", new RawOutputRenderer(host));
+            //RegisterFactory("output", new OutputRenderer(host));
+            //RegisterFactory("input", new InputRenderer(host));
+            //RegisterFactory("string", new StringLiteralRenderer(host));
+            //RegisterFactory("literal", new LiteralRenderer(host));
+            //RegisterFactory("attribute", new LiteralRenderer(host));
+            //RegisterFactory("foreach", new ForeachRenderer(host));
+            //RegisterFactory("conditional", new ConditionalRenderer(host));
+            ////RegisterFactory("this", new ThisRenderer(host));
+            //RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
 
             //default renderer
-            RegisterFactory("*", new HtmlRenderer(host));
+            //RegisterFactory("*", new HtmlRenderer(host));
         }
 
-        public void RegisterFactory(string[] blocks, Func<AbstractNode, object, string> renderer)
+        public void RegisterFactory(string[] blocks, Func<Statement, StringWriter, object, object, IRenderer> renderer)
         {
             foreach (var block in blocks)
             {
@@ -40,7 +41,7 @@ namespace Parrot.Renderers.Infrastructure
             }
         }
 
-        public void RegisterFactory(string blockName, Func<AbstractNode, object, string> renderer)
+        public void RegisterFactory(string blockName, Func<Statement, StringWriter, object, object, IRenderer> renderer)
         {
             if (_renderers.ContainsKey(blockName))
             {

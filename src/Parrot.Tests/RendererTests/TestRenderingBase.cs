@@ -6,8 +6,8 @@
 
 using System.IO;
 using Parrot.Infrastructure;
-using Parrot.Mvc.Renderers;
 using Parrot.Nodes;
+using Parrot.Renderers.Infrastructure;
 
 namespace Parrot.Tests
 {
@@ -22,27 +22,47 @@ namespace Parrot.Tests
     /// </summary>
     public class TestRenderingBase
     {
-        protected string Render(string parrot, object model, IHost host)
+        protected string Render(string parrot, IDictionary<string, object> documentHost, IHost host)
         {
             Parser.Parser parser = new Parser.Parser(host);
             Document document;
 
             parser.Parse(parrot, out document);
 
-            DocumentRenderer renderer = new DocumentRenderer(new MemoryHost());
+            var rendererFactory = new RendererFactory(host);
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory(
+                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, 
+                new SelfClosingRenderer(host, rendererFactory)
+            );
+
+            DocumentView documentView = new DocumentView(new MemoryHost(), rendererFactory, documentHost, document);
 
             StringBuilder sb = new StringBuilder();
-            return renderer.Render(document, model);
+            StringWriter writer = new StringWriter(sb);
+            documentView.Render(writer);
+
+            return sb.ToString();
+            //return renderer.Render(document, model);
         }
 
-        protected string Render(string parrot, object model)
+        protected string Render(string parrot, object documentHost)
         {
-            return Render(parrot, model, new MemoryHost());
+            return Render(parrot, new Dictionary<string, object> { {"Model", documentHost }});
+        }
+
+        protected string Render(string parrot, IDictionary<string, object> documentHost)
+        {
+            return Render(parrot, documentHost, new MemoryHost());
         }
 
         protected string Render(string parrot)
         {
-            return Render(parrot, null, new MemoryHost());
+            return Render(parrot, new Dictionary<string, object>(), new MemoryHost());
         }
 
     }

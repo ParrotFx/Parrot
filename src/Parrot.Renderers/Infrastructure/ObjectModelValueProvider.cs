@@ -5,55 +5,58 @@ namespace Parrot.Renderers.Infrastructure
 
     public class ObjectModelValueProvider : IModelValueProvider
     {
-        public object GetValue(object model, Parrot.Infrastructure.ValueType valueType, object property)
+        public bool GetValue(object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
             {
                 case Parrot.Infrastructure.ValueType.StringLiteral:
                 case Parrot.Infrastructure.ValueType.Keyword:
-                    return property;
+                    value = property;
+                    return true;
                 case Parrot.Infrastructure.ValueType.Local:
-                    return model;
+                    value = model;
+                    return true;
                 case Parrot.Infrastructure.ValueType.Property:
                     if (model == null)
                     {
-                        throw new NullReferenceException("model");
+                        value = null;
+                        return false;
                     }
 
-                    return GetModelProperty(model, property);
+                    return GetModelProperty(model, property, out value);
             }
 
-            throw new InvalidOperationException("ValueType");
+            value = model;
+            return false;
         }
 
-        private object GetModelProperty(object model, object property)
+        private bool GetModelProperty(object model, object property, out object value)
         {
-            if (property == null)
+            if (property != null)
             {
-                throw new NullReferenceException("property");
-            }
+                var stringProperty = property.ToString();
+                string[] parameters = stringProperty.Split(".".ToCharArray());
 
-            var stringProperty = property.ToString();
-            string[] parameters = stringProperty.Split(".".ToCharArray());
-
-            if (model == null && parameters.Length != 1)
-            {
-                throw new NullReferenceException(parameters[0]);
-            }
-
-            var pi = model.GetType().GetProperty(parameters[0]);
-            if (pi != null)
-            {
-                var tempObject = pi.GetValue(model, null);
-                if (parameters.Length == 1)
+                if (model == null && parameters.Length != 1)
                 {
-                    return tempObject;
+                    throw new NullReferenceException(parameters[0]);
                 }
 
-                return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)));
-            }
+                var pi = model.GetType().GetProperty(parameters[0]);
+                if (pi != null)
+                {
+                    var tempObject = pi.GetValue(model, null);
+                    if (parameters.Length == 1)
+                    {
+                        value = tempObject;
+                        return true;
+                    }
 
-            return null;
+                    return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)), out value);
+                }
+            }
+            value = null;
+            return false;
         }
     }
 }

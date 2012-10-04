@@ -1,25 +1,23 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Parrot.Nodes;
+using Parrot.Renderers.Infrastructure;
 
-namespace Parrot.Renderers.Infrastructure
+namespace Parrot.Renderers
 {
     public class FuncRenderer : IRenderer
     {
-        readonly Func<AbstractNode, object, string> _renderer;
+        readonly Func<Statement, StringWriter, object, object, IRenderer> _renderer;
 
-        public FuncRenderer(Func<AbstractNode, object, string> renderer)
+        public FuncRenderer(Func<Statement, StringWriter, object, object, IRenderer> renderer)
         {
             _renderer = renderer;
         }
 
-        public string Render(AbstractNode node, object model)
+        public void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            return _renderer(null, model);
-        }
-
-        public string Render(AbstractNode node)
-        {
-            return Render(node, null);
+            _renderer(statement, writer, documentHost, model);
         }
     }
 }
