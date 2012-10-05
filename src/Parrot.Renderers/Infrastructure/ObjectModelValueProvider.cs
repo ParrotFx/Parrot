@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Parrot.Renderers.Infrastructure
 {
     using System;
@@ -5,7 +8,7 @@ namespace Parrot.Renderers.Infrastructure
 
     public class ObjectModelValueProvider : IModelValueProvider
     {
-        public bool GetValue(object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
+        public bool GetValue(IDictionary<string, object> documentHost, object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
             {
@@ -17,13 +20,18 @@ namespace Parrot.Renderers.Infrastructure
                     value = model;
                     return true;
                 case Parrot.Infrastructure.ValueType.Property:
-                    if (model == null)
+                    if (model != null)
                     {
-                        value = null;
-                        return false;
+                        return GetModelProperty(model, property, out value);
                     }
 
-                    return GetModelProperty(model, property, out value);
+                    if (documentHost != null)
+                    {
+                        return GetModelProperty(documentHost, property, out value);
+                    }
+
+                    value = null;
+                    return false;
             }
 
             value = model;
@@ -42,17 +50,38 @@ namespace Parrot.Renderers.Infrastructure
                     throw new NullReferenceException(parameters[0]);
                 }
 
-                var pi = model.GetType().GetProperty(parameters[0]);
-                if (pi != null)
+                if (model is IDictionary<string, object>)
                 {
-                    var tempObject = pi.GetValue(model, null);
-                    if (parameters.Length == 1)
+                    var host = (model as IDictionary<string, object>);
+                    if (host.ContainsKey(parameters[0]))
                     {
-                        value = tempObject;
+                        var tempObject = host[parameters[0]];
+                        return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)), out value);
+                    }
+                }
+                else
+                {
+                    if (parameters[0].Length > 0)
+                    {
+
+                        var pi = model.GetType().GetProperty(parameters[0]);
+                        if (pi != null)
+                        {
+                            var tempObject = pi.GetValue(model, null);
+                            if (parameters.Length == 1)
+                            {
+                                value = tempObject;
+                                return true;
+                            }
+
+                            return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)), out value);
+                        }
+                    }
+                    else
+                    {
+                        value = model;
                         return true;
                     }
-
-                    return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)), out value);
                 }
             }
             value = null;

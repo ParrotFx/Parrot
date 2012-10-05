@@ -37,10 +37,11 @@ namespace Parrot.Tests
             var valueType = ValueType.StringLiteral;
             object property = "this is a string literal";
             object model = null;
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -51,10 +52,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Local;
             object property = "this";
             object model = new { Name = "Ben" };
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual(model, result);
         }
@@ -65,10 +67,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Keyword;
             object property = false;
             object model = null;
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -79,10 +82,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Property;
             object property = "Name";
             object model = new { Name = "Ben" };
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -93,10 +97,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Property;
             object property = "Name.FirstName";
             object model = new { Name = new { FirstName = "Ben", LastName = "Dornis" } };
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -112,10 +117,11 @@ namespace Parrot.Tests
             var valueType = ValueType.StringLiteral;
             dynamic property = "this is a string literal";
             object model = null;
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -126,10 +132,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Local;
             object property = "this";
             object model = new { Name = "Ben" };
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual(model, result);
         }
@@ -140,10 +147,11 @@ namespace Parrot.Tests
             var valueType = ValueType.Keyword;
             object property = false;
             object model = null;
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -156,10 +164,11 @@ namespace Parrot.Tests
             dynamic model = new ExpandoObject();
             model.Name = new ExpandoObject();
             model.Name = "Ben";
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
@@ -173,10 +182,11 @@ namespace Parrot.Tests
             model.Name = new ExpandoObject();
             model.Name.FirstName = "Ben";
             model.Name.LastName = "Dornis";
+            var documentHost = new Dictionary<string, object>();
 
             IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
             object result;
-            modelValueProvider.GetValue(model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }

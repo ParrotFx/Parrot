@@ -153,7 +153,7 @@ namespace Parrot.Renderers
             if (statement.Parameters.Count > 0)
             {
                 //check here first
-                if (modelValueProvider.GetValue(model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
+                if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
                 {
                     return value;
                 }
@@ -162,7 +162,7 @@ namespace Parrot.Renderers
             if (model != null)
             {
                 //check DocumentHost next
-                if (modelValueProvider.GetValue(documentHost.GetValueOrDefault("DOCUMENTHOST"), Parrot.Infrastructure.ValueType.Property, null, out value))
+                if (modelValueProvider.GetValue(documentHost, model, Parrot.Infrastructure.ValueType.Property, null, out value))
                 {
                     return value;
                 }

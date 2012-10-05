@@ -20,7 +20,7 @@ namespace Parrot.Renderers
             _rendererFactory = rendererFactory;
         }
 
-        private string GetModelValue(IModelValueProviderFactory factory, object model, StringLiteralPartType type, string data)
+        private string GetModelValue(IModelValueProviderFactory factory, IDictionary<string, object> documentHost, object model, StringLiteralPartType type, string data)
         {
             IValueTypeProvider valueTypeProvider = _host.DependencyResolver.Resolve<IValueTypeProvider>();
             var valueType = valueTypeProvider.GetValue(data);
@@ -30,13 +30,13 @@ namespace Parrot.Renderers
             {
                 case StringLiteralPartType.Encoded:
                     //get the valuetype
-                    if (factory.Get(model.GetType()).GetValue(model, valueType.Type, data, out value))
+                    if (factory.Get(model.GetType()).GetValue(documentHost, model, valueType.Type, data, out value))
                     {
                         return System.Net.WebUtility.HtmlEncode(value.ToString());
                     }
                     break;
                 case StringLiteralPartType.Raw:
-                    if (factory.Get(model.GetType()).GetValue(model, valueType.Type, data, out value))
+                    if (factory.Get(model.GetType()).GetValue(documentHost, model, valueType.Type, data, out value))
                     {
                         return value.ToString();
                     }
@@ -56,12 +56,18 @@ namespace Parrot.Renderers
             {
                 foreach (var value in (statement as StringLiteral).Values)
                 {
-                    result += GetModelValue(modelValueProviderFactory, model, value.Type, value.Data);
+                    result += GetModelValue(
+                        modelValueProviderFactory, 
+                        documentHost, 
+                        model, 
+                        value.Type, 
+                        value.Data
+                    );
                 }
             }
             else
             {
-                result = GetModelValue(modelValueProviderFactory, model, StringLiteralPartType.Encoded, statement.Name);
+                result = GetModelValue(modelValueProviderFactory, documentHost, model, StringLiteralPartType.Encoded, statement.Name);
             }
 
             writer.Write(result);

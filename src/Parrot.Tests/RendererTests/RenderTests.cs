@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Dynamic;
 using System.Web.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -31,24 +32,42 @@ namespace Parrot.Tests
     public class RenderTests : TestRenderingBase
     {
         //https://github.com/visionmedia/jade/blob/master/test/jade.test.js
-        
+
         [Test]
         public void ThisKeywordHandling()
         {
             var text = "div(Model) > :this";
-            Assert.AreEqual("<div>testing this</div>", Render(text, new { Model = "testing this"}));
+            Assert.AreEqual("<div>testing this</div>", Render(text, new { Model = "testing this" }));
+        }
+
+        [Test]
+        public void DocumentHostWithAlternateProeprtyName()
+        {
+            var text = "div(Request.IsAuthenticated) > :this";
+
+            Assert.AreEqual("<div>True</div>", Render(text, new Dictionary<string, object> { {"Request", new { IsAuthenticated = true }}}));
+        }
+
+        [Test]
+        public void ViewBagTest()
+        {
+            var text = "div(ViewBag.Value) > :this";
+            dynamic viewBag = new ExpandoObject();
+            viewBag.Value = true;
+
+            Assert.AreEqual("<div>True</div>", Render(text, new Dictionary<string, object> { { "ViewBag", viewBag }}));
         }
 
         [Test]
         public void ForeachRendererTests()
         {
-            object model = new[] {1, 2};
+            object model = new[] { 1, 2 };
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
             Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(Model) { div(this) }", new { Model = new { Item = 1 } }));
         }
-        
+
         [Test]
         public void StandardSingleFileSimpleRenderingLayout()
         {
@@ -122,7 +141,7 @@ namespace Parrot.Tests
                 new SelfClosingRenderer(host, rendererFactory)
             );
 
-            host.DependencyResolver.Register(typeof (IRendererFactory), () => rendererFactory);
+            host.DependencyResolver.Register(typeof(IRendererFactory), () => rendererFactory);
 
             ////TODO: Figure this out later...
             var view = new ParrotView(host, "index.parrot");
@@ -142,7 +161,7 @@ namespace Parrot.Tests
         public void RenderATagWithModel()
         {
             var block = "a(Model)[href=:FirstName] > :FirstName";
-            var result = Render(block, new { Model = new { FirstName = "Ben"} });
+            var result = Render(block, new { Model = new { FirstName = "Ben" } });
             Assert.AreEqual("<a href=\"Ben\">Ben</a>", result);
         }
 
@@ -197,7 +216,7 @@ namespace Parrot.Tests
             Assert.AreEqual("<p id=\"tj\"></p>", Render("p(Model)[id= name]", new { name = "tj" }));
             Assert.AreEqual("<p id=\"something\"></p>", Render("p(Model)[id='something']", new { name = "" }));
         }
-    
+
         [Test]
         public void TagOverrideRendering()
         {

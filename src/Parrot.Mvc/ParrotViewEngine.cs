@@ -172,6 +172,10 @@ namespace Parrot.Mvc
 
             var documentHost = new Dictionary<string, object>();
             documentHost.Add("Model", model);
+            if (viewContext != null)
+            {
+                documentHost.Add("Request", viewContext.RequestContext.HttpContext.Request);
+            }
 
             //need to create a custom viewhost
             var rendererFactory = _host.DependencyResolver.Resolve<IRendererFactory>();

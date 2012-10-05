@@ -2,11 +2,10 @@ namespace Parrot.Renderers.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using ValueType = Parrot.Infrastructure.ValueType;
 
     public class ExpandoObjectModelValueProvider : IModelValueProvider
     {
-        public bool GetValue(object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
+        public bool GetValue(IDictionary<string, object> documentHost, object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
             {
