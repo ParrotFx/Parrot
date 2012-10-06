@@ -175,6 +175,7 @@ namespace Parrot.Mvc
             if (viewContext != null)
             {
                 documentHost.Add("Request", viewContext.RequestContext.HttpContext.Request);
+                documentHost.Add("User", viewContext.RequestContext.HttpContext.User);
             }
 
             //need to create a custom viewhost

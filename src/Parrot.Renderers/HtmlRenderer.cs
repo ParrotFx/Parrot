@@ -14,12 +14,12 @@ namespace Parrot.Renderers
     public class HtmlRenderer : BaseRenderer, IRenderer
     {
         protected IRendererFactory RendererFactory;
-        protected Func<string, object, string> PreRenderAttribute;
+        private IAttributeRenderer _attributeRenderer;
 
-        public HtmlRenderer(IHost host, IRendererFactory rendererFactory)
-            : base(host)
+        public HtmlRenderer(IHost host, IRendererFactory rendererFactory) : base(host)
         {
             RendererFactory = rendererFactory;
+            _attributeRenderer = host.DependencyResolver.Resolve<IAttributeRenderer>();
         }
 
         public virtual string DefaultChildTag
@@ -118,9 +118,9 @@ namespace Parrot.Renderers
 
                     attributeValue = sb.ToString();
 
-                    if (PreRenderAttribute != null)
+                    if (_attributeRenderer != null)
                     {
-                        attributeValue = PreRenderAttribute(attribute.Key, attributeValue);
+                        attributeValue = _attributeRenderer.PostRender(attribute.Key, attributeValue);
                     }
 
                     if (attribute.Key == "class")

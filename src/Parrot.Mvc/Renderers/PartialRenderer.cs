@@ -20,6 +20,46 @@ namespace Parrot.Mvc.Renderers
             
         }
 
+        public override void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        {
+            object localModel = documentHost;
+
+            //if (blockNode.Parameters != null && blockNode.Parameters.Any())
+            //{
+            //    localModel = modelValueProviderFactory.Get(model.GetType()).GetValue(model, blockNode.Parameters.First().ValueType,
+            //                                               blockNode.Parameters.First().Value);
+            //}
+
+            //get the parameter
+            string layout = "";
+            if (statement.Parameters != null && statement.Parameters.Any())
+            {
+                //assume only the first is the path
+                //second is the argument (model)
+                layout = statement.Parameters[0].Value;
+            }
+
+            //ok...we need to load the layoutpage
+            //then pass the node's children into the layout page
+            //then return the result
+            var engine = Host.DependencyResolver.Resolve<IViewEngine>();
+            var result = engine.FindView(null, layout, null, false);
+            if (result != null)
+            {
+                var parrotView = (result.View as ParrotView);
+                using (var stream = parrotView.LoadStream())
+                {
+                    string contents = new StreamReader(stream).ReadToEnd();
+
+                    var document = parrotView.LoadDocument(contents);
+
+                    DocumentView view = new DocumentView(Host, RendererFactory, documentHost, document);
+
+                    view.Render(writer);
+                }
+            }
+        }
+
         //public override string Render(AbstractNode node, object documentHost)
         //{
         //    if (_engine == null)

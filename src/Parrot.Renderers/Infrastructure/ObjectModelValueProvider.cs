@@ -20,14 +20,14 @@ namespace Parrot.Renderers.Infrastructure
                     value = model;
                     return true;
                 case Parrot.Infrastructure.ValueType.Property:
-                    if (model != null)
+                    if (model != null && GetModelProperty(model, property, out value))
                     {
-                        return GetModelProperty(model, property, out value);
+                        return true;
                     }
 
-                    if (documentHost != null)
+                    if (documentHost != null && GetModelProperty(documentHost, property, out value))
                     {
-                        return GetModelProperty(documentHost, property, out value);
+                        return true;
                     }
 
                     value = null;

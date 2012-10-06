@@ -20,12 +20,12 @@ namespace Parrot.Mvc.Renderers
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class LayoutRenderer : BaseRenderer, IRenderer
+    public class LayoutRenderer : HtmlRenderer, IRenderer
     {
         private readonly IHost _host;
         private readonly IRendererFactory _rendererFactory;
 
-        public LayoutRenderer(IHost host, IRendererFactory rendererFactory) : base(host)
+        public LayoutRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory)
         {
             _host = host;
             _rendererFactory = rendererFactory;

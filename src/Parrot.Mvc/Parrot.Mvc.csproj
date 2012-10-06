@@ -48,8 +48,8 @@
     <Compile Include="DefaultViewCache.cs" />
     <Compile Include="PathLocationResult.cs" />
     <Compile Include="PathResolver.cs" />
+    <Compile Include="Renderers\AttributeRenderer.cs" />
     <Compile Include="Renderers\ContentRenderer.cs" />
-    <Compile Include="Renderers\HtmlRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="ParrotViewEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

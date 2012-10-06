@@ -55,6 +55,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HtmlRenderer.cs" />
+    <Compile Include="Infrastructure\IAttributeRenderer.cs" />
     <Compile Include="Infrastructure\ModelValueProviderFactory.cs" />
     <Compile Include="Infrastructure\ExpandoObjectModelValueProvider.cs" />
     <Compile Include="Infrastructure\IModelValueProvider.cs" />

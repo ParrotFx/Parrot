@@ -27,7 +27,7 @@ namespace Parrot.Mvc
             //DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
             DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
 
-
+            DependencyResolver.Register(typeof(IAttributeRenderer), () => new AttributeRenderer());
             DependencyResolver.Register(typeof(IViewEngine), () => new ParrotViewEngine(this));
         }
 
@@ -36,10 +36,15 @@ namespace Parrot.Mvc
             DependencyResolver.Register(typeof(IRendererFactory), () =>
             {
                 var rendererFactory = new RendererFactory(this);
-                rendererFactory.RegisterFactory("*", new Parrot.Renderers.HtmlRenderer(this, rendererFactory));
+
+                rendererFactory.RegisterFactory("*", new HtmlRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("string", new StringLiteralRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(this));
+                rendererFactory.RegisterFactory("layout", new LayoutRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("partial", new PartialRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("content", new ContentRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("foreach", new ForeachRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory(
                     new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
