@@ -9,8 +9,7 @@ namespace Parrot.SampleSite.Controllers
     using System.IO;
     using System.Text;
     using System.Web.Mvc;
-    using Parrot;
-    using Parrot.Nodes;
+    using Nodes;
     using Renderers.Infrastructure;
 
     public class HomeController : Controller

@@ -158,8 +158,6 @@ namespace Parrot.Mvc
 
         string Parse(ViewContext viewContext, string template)
         {
-            string result;
-
             Stopwatch watch = Stopwatch.StartNew();
 
             Document document = LoadDocument(template);

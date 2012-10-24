@@ -313,7 +313,6 @@ namespace Parrot.Parser
         {
             StatementList statement = new StatementList(_host);
             var open = stream.Next();
-            CloseBracesToken close = null;
 
             while (stream.Peek() != null)
             {

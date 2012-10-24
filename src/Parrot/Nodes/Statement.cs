@@ -160,7 +160,6 @@ namespace Parrot.Nodes
         private IEnumerable<Identifier> GetIdentifierParts(string source)
         {
             int index = 0;
-            int partLocation = 0;
 
             var partType = IdentifierType.Literal;
             IdentifierType nextType = IdentifierType.None;

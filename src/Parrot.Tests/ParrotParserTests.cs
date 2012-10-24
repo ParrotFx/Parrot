@@ -436,8 +436,6 @@ namespace Parrot.Tests
             {
                 int index = 0;
 
-                string previousCharacter = "";
-
                 var partType = IdentifierType.Literal;
 
                 for (int i = 0; i < source.Length; i++)

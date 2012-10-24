@@ -11,10 +11,8 @@ namespace Parrot.Mvc.Renderers
     using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
-    public class PartialRenderer : Parrot.Renderers.HtmlRenderer
+    public class PartialRenderer : HtmlRenderer
     {
-        private IViewEngine _engine;
-
         public PartialRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory)
         {
             
