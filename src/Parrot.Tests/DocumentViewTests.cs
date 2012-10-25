@@ -6,6 +6,7 @@
 
 using System.IO;
 using NUnit.Framework;
+using Parrot.Infrastructure;
 using Parrot.Nodes;
 using Parrot.Renderers;
 using Parrot.Renderers.Infrastructure;
@@ -48,12 +49,11 @@ namespace Parrot.Tests
                 document
             );
 
-            var sb = new StringBuilder();
-            var writer = new StringWriter(sb);
+            var writer = host.DependencyResolver.Resolve<IParrotWriter>();
 
             documentView.Render(writer);
 
-            string result = sb.ToString();
+            string result = writer.Result();
 
             Assert.AreEqual("<div attr1=\"test\">This is a test</div>", result);
         }

@@ -45,6 +45,8 @@
     <Compile Include="Debugger\Debug.cs" />
     <Compile Include="Infrastructure\DependencyResolver.cs" />
     <Compile Include="Infrastructure\Host.cs" />
+    <Compile Include="Infrastructure\IParrotWriter.cs" />
+    <Compile Include="Infrastructure\StandardWriter.cs" />
     <Compile Include="Infrastructure\ValueTypeProvider.cs" />
     <Compile Include="Infrastructure\ValueTypeResult.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />

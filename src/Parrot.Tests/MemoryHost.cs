@@ -27,6 +27,7 @@ namespace Parrot.Tests
             //DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
             //DependencyResolver.Register(typeof(IViewEngine), () => new ParrotViewEngine(this));
             DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
+            DependencyResolver.Register(typeof(IParrotWriter), () => new StandardWriter());
         }
 
         private void InitializeRendererFactory()

@@ -8,6 +8,7 @@ using System.Dynamic;
 using System.Web.Mvc;
 using Moq;
 using NUnit.Framework;
+using Parrot.Infrastructure;
 using Parrot.Mvc;
 using Parrot.Mvc.Renderers;
 using Parrot.Renderers;
@@ -97,9 +98,9 @@ namespace Parrot.Tests
 
             ////TODO: Figure this out later...
             var view = new ParrotView(host, "index.parrot");
-            StringBuilder sb = new StringBuilder();
-            view.Render(null, new StringWriter(sb));
-            Assert.AreEqual("<div>testing</div>", sb.ToString());
+            var writer = host.DependencyResolver.Resolve<IParrotWriter>();
+            view.Render(null, writer);
+            Assert.AreEqual("<div>testing</div>", writer.Result());
         }
 
         [Test]
@@ -141,9 +142,9 @@ namespace Parrot.Tests
 
             ////TODO: Figure this out later...
             var view = new ParrotView(host, "index.parrot");
-            StringBuilder sb = new StringBuilder();
-            view.Render(null, new StringWriter(sb));
-            Assert.AreEqual("<html><body><div>testing</div></body></html>", sb.ToString());
+            var writer = host.DependencyResolver.Resolve<IParrotWriter>();
+            view.Render(null, writer);
+            Assert.AreEqual("<html><body><div>testing</div></body></html>", writer.Result());
         }
 
         [Test]

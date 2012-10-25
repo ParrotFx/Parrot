@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Parrot.Infrastructure;
-using Parrot.Nodes;
-using Parrot.Renderers.Infrastructure;
-
+﻿
 namespace Parrot.Renderers
 {
-    using System.IO;
-    using System.Text;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Parrot.Infrastructure;
+    using Nodes;
+    using Infrastructure;
 
     public class ConditionalRenderer : HtmlRenderer
     {
         public ConditionalRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override void Render(System.IO.StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
@@ -33,15 +31,14 @@ namespace Parrot.Renderers
             foreach (var child in statement.Children)
             {
                 string value = null;
-                StringBuilder sb = new StringBuilder();
-                StringWriter valueWriter = new StringWriter(sb);
+                var valueWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
 
                 //get string value
                 var renderer = RendererFactory.GetRenderer(child.Name);
                 if (renderer is StringLiteralRenderer)
                 {
                     renderer.Render(valueWriter, child, documentHost, localModel);
-                    value = sb.ToString();
+                    value = valueWriter.Result();
                 }
                 else
                 {

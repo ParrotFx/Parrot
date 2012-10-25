@@ -128,7 +128,7 @@ namespace Parrot.Mvc
             return pathResolver.OpenFile(_viewPath);
         }
 
-        public void Render(ViewContext viewContext, TextWriter writer)
+        public void Render(ViewContext viewContext, IParrotWriter writer)
         {
             //View contents
             using (var stream = LoadStream())
@@ -141,6 +141,15 @@ namespace Parrot.Mvc
 
                 writer.Write(output);
             }
+        }
+
+        public void Render(ViewContext viewContext, TextWriter writer)
+        {
+            var parrotWriter = _host.DependencyResolver.Resolve<IParrotWriter>();
+
+            Render(viewContext, parrotWriter);
+
+            writer.Write(parrotWriter.Result());
         }
 
         internal Document LoadDocument(string template)
@@ -180,13 +189,12 @@ namespace Parrot.Mvc
             var rendererFactory = _host.DependencyResolver.Resolve<IRendererFactory>();
             DocumentView view = new DocumentView(_host, rendererFactory, documentHost, document);
 
-            StringBuilder sb = new StringBuilder();
-            StringWriter writer = new StringWriter(sb);
+            IParrotWriter writer = _host.DependencyResolver.Resolve<IParrotWriter>();
             view.Render(writer);
 
             watch.Stop();
 
-            return sb.ToString();
+            return writer.Result();
             //+ "\r\n\r\n<!--\r\n" + template + "\r\n-->"
             //+ "\r\n\r\n<!--\r\n" + watch.Elapsed + "\r\n-->";
         }

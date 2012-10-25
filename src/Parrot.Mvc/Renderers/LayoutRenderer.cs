@@ -31,7 +31,7 @@ namespace Parrot.Mvc.Renderers
             _rendererFactory = rendererFactory;
         }
 
-        public void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             string layout = "";
             if (statement.Parameters != null && statement.Parameters.Any())

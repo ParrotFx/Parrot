@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace Parrot.Renderers
 {
     using Parrot.Infrastructure;
     using System;
-    using Parrot.Renderers.Infrastructure;
-    using Parrot.Nodes;
+    using Infrastructure;
+    using Nodes;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class HtmlRenderer : BaseRenderer, IRenderer
     {
-        protected IRendererFactory RendererFactory;
+        protected readonly IRendererFactory RendererFactory;
         private IAttributeRenderer _attributeRenderer;
 
         public HtmlRenderer(IHost host, IRendererFactory rendererFactory) : base(host)
@@ -27,7 +25,7 @@ namespace Parrot.Renderers
             get { return "div"; }
         }
 
-        public virtual void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public virtual void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
@@ -37,7 +35,7 @@ namespace Parrot.Renderers
             CreateTag(writer, documentHost, localModel, statement, modelValueProvider);
         }
 
-        protected virtual void CreateTag(StringWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        protected virtual void CreateTag(IParrotWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
         {
             string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
 
@@ -57,7 +55,7 @@ namespace Parrot.Renderers
             writer.Write(builder.ToString(TagRenderMode.EndTag));
         }
 
-        public virtual void RenderChildren(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model, string defaultTag = null)
+        public virtual void RenderChildren(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model, string defaultTag = null)
         {
             if (string.IsNullOrEmpty(defaultTag))
             {
@@ -80,7 +78,7 @@ namespace Parrot.Renderers
             }
         }
 
-        protected void RenderChildren(StringWriter writer, StatementList children, IDictionary<string, object> documentHost, string defaultTag, object model)
+        protected void RenderChildren(IParrotWriter writer, StatementList children, IDictionary<string, object> documentHost, string defaultTag, object model)
         {
             Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
 
@@ -104,11 +102,10 @@ namespace Parrot.Renderers
 
             //render attribute
             var attributeRenderer = Host.DependencyResolver.Resolve<IAttributeRenderer>();
-            StringBuilder sb = new StringBuilder();
-            var tempWriter = new StringWriter(sb);
+            var tempWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
             renderer.Render(tempWriter, attribute.Value, documentHost, model);
 
-            var attributeValue = sb.ToString();
+            var attributeValue = tempWriter.Result();
 
             if (attributeRenderer != null)
             {

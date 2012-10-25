@@ -43,7 +43,7 @@ namespace Parrot.Mvc.Renderers
 
         public ContentRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var childrenQueue = documentHost.GetValueOrDefault("_LayoutChildren_") as Queue<StatementList>;
             if (childrenQueue == null)

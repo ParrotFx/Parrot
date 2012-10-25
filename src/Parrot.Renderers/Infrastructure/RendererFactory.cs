@@ -33,7 +33,7 @@ namespace Parrot.Renderers.Infrastructure
             //RegisterFactory("*", new HtmlRenderer(host));
         }
 
-        public void RegisterFactory(string[] blocks, Func<Statement, StringWriter, object, object, IRenderer> renderer)
+        public void RegisterFactory(string[] blocks, Func<Statement, IParrotWriter, object, object, IRenderer> renderer)
         {
             foreach (var block in blocks)
             {
@@ -41,7 +41,7 @@ namespace Parrot.Renderers.Infrastructure
             }
         }
 
-        public void RegisterFactory(string blockName, Func<Statement, StringWriter, object, object, IRenderer> renderer)
+        public void RegisterFactory(string blockName, Func<Statement, IParrotWriter, object, object, IRenderer> renderer)
         {
             if (_renderers.ContainsKey(blockName))
             {

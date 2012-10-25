@@ -32,9 +32,9 @@ namespace Parrot.Renderers
             _host = host;
             _rendererFactory = rendererFactory;
             _document = document;
-        } 
+        }
 
-        public void Render(StringWriter writer)
+        public void Render(IParrotWriter writer)
         {
             foreach (var element in _document.Children)
             {

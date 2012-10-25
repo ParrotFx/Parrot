@@ -96,8 +96,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
             string result = null;
             if (parser.Parse(template, out document))
             {
-                StringBuilder sb = new StringBuilder();
-                StringWriter writer = new StringWriter(sb);
+                IParrotWriter writer = _host.DependencyResolver.Resolve<IParrotWriter>();
                 foreach (var element in document.Children)
                 {
                     if (element != null)
@@ -107,7 +106,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                     }
                 }
 
-                result = sb.ToString();
+                result = writer.Result();
             }
             else
             {

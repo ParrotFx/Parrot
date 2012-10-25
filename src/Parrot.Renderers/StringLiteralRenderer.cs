@@ -47,7 +47,7 @@ namespace Parrot.Renderers
             return data;
         }
 
-        public void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 

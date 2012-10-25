@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="RendererTests\ConditionalRendererTests.cs" />
     <Compile Include="RendererTests\InputRendererTests.cs" />
+    <Compile Include="RendererTests\PrettyRenderingTests.cs" />
     <Compile Include="RendererTests\RenderTests.cs">
       <SubType>Code</SubType>
     </Compile>

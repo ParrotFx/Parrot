@@ -41,23 +41,22 @@ namespace Parrot.Tests
             rendererFactory.RegisterFactory("input", new InputRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(
-                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, 
+                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
                 new SelfClosingRenderer(host, rendererFactory)
             );
 
             DocumentView documentView = new DocumentView(new MemoryHost(), rendererFactory, documentHost, document);
 
-            StringBuilder sb = new StringBuilder();
-            StringWriter writer = new StringWriter(sb);
+            var writer = host.DependencyResolver.Resolve<IParrotWriter>();
             documentView.Render(writer);
 
-            return sb.ToString();
+            return writer.Result();
             //return renderer.Render(document, model);
         }
 
         protected string Render(string parrot, object documentHost)
         {
-            return Render(parrot, new Dictionary<string, object> { {"Model", documentHost }});
+            return Render(parrot, new Dictionary<string, object> { { "Model", documentHost } });
         }
 
         protected string Render(string parrot, IDictionary<string, object> documentHost)
@@ -70,5 +69,9 @@ namespace Parrot.Tests
             return Render(parrot, new Dictionary<string, object>(), new MemoryHost());
         }
 
+        protected string Render(string parrot, IHost host)
+        {
+            return Render(parrot, new Dictionary<string, object>(), host);
+        }
     }
 }

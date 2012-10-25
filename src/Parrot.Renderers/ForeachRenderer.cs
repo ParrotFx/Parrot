@@ -23,7 +23,7 @@ namespace Parrot.Renderers
     {
         public ForeachRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override void Render(System.IO.StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);

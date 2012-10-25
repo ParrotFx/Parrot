@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Parrot.Infrastructure;
 
 namespace Parrot.Renderers.Infrastructure
 {
@@ -7,6 +8,6 @@ namespace Parrot.Renderers.Infrastructure
 
     public interface IRenderer
     {
-        void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model);
+        void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model);
     }
 }

@@ -11,7 +11,7 @@ namespace Parrot.Renderers
     {
         public SelfClosingRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
 
-        public override void Render(System.IO.StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
@@ -21,7 +21,7 @@ namespace Parrot.Renderers
             CreateTag(writer, documentHost, localModel, statement, modelValueProvider);
         }
 
-        protected override void CreateTag(System.IO.StringWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        protected override void CreateTag(IParrotWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
         {
             string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
 

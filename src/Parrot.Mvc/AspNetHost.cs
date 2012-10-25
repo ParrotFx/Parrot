@@ -28,6 +28,7 @@ namespace Parrot.Mvc
 
             DependencyResolver.Register(typeof(IAttributeRenderer), () => new AttributeRenderer());
             DependencyResolver.Register(typeof(IViewEngine), () => new ParrotViewEngine(this));
+            DependencyResolver.Register(typeof(IParrotWriter), () => new StandardWriter());
         }
 
         private void InitializeRendererFactory()

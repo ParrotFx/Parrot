@@ -28,7 +28,7 @@ namespace Parrot.Renderers
             return "hidden";
         }
 
-        public new void Render(StringWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public new void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             //get the input type
             string type = GetType(statement, documentHost, model);
