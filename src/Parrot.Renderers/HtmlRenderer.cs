@@ -93,7 +93,7 @@ namespace Parrot.Renderers
             }
         }
 
-        protected void RenderAttributes(IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
+        protected virtual void RenderAttributes(IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
         {
             foreach (var attribute in statement.Attributes)
             {

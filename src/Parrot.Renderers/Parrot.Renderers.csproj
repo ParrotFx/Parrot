@@ -63,6 +63,7 @@
     <Compile Include="Infrastructure\ObjectModelValueProvider.cs" />
     <Compile Include="Infrastructure\IRenderer.cs" />
     <Compile Include="Infrastructure\IRendererFactory.cs" />
+    <Compile Include="InputRenderer.cs" />
     <Compile Include="ListRenderer.cs">
       <SubType>Code</SubType>
     </Compile>

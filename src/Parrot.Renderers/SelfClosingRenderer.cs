@@ -31,5 +31,6 @@ namespace Parrot.Renderers
 
             writer.Write(builder.ToString(TagRenderMode.SelfClosing));
         }
+
     }
 }

@@ -38,6 +38,7 @@ namespace Parrot.Tests
             rendererFactory.RegisterFactory("content", new ContentRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("input", new InputRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
             rendererFactory.RegisterFactory(
                 new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, 

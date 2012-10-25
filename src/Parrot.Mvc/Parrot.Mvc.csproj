@@ -54,7 +54,6 @@
     <Compile Include="ParrotViewEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\PartialRenderer.cs" />
-    <Compile Include="Renderers\SelfClosingRenderer.cs" />
     <Compile Include="TagBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

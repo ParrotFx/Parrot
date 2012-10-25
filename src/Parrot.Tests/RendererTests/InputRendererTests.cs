@@ -30,31 +30,27 @@ namespace Parrot.Tests
         [Test]
         public void InputWithoutAnythingSpecialReturnsBasicInputElement()
         {
-            var host = new MemoryHost();
+            var host = new AspNetHost();
 
             string block = "input";
             var nodes = Parse(block, host);
 
-            IRendererFactory factory = new RendererFactory(host);
+            Assert.AreEqual("<input />", Render(block, host));
 
-            factory.RegisterFactory("input", new InputRenderer(host));
-            var renderer = factory.GetRenderer(nodes.Children.First().Name);
+            //var result = renderer.Render(nodes.Children.First(), null);
 
-            var result = renderer.Render(nodes.Children.First(), null);
-
-            Assert.AreEqual("<input />", result);
+            //Assert.AreEqual("<input />", result);
         }
 
         [Test]
         public void InputAttributes()
         {
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]"));
+            //Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked]", new AspNetHost()));
 
             //input stuff needs special overrides for checked
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]"));
-            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]"));
-            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]"));
-            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[checked type=\"checkbox\"]"));
+            Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]", new AspNetHost()));
+            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]", new AspNetHost()));
+            Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]", new AspNetHost()));
         }
 
         [Test]
@@ -63,16 +59,10 @@ namespace Parrot.Tests
             var host = new MemoryHost();
             string block = "input[attr=\"value\"]";
 
-            var nodes = Parse(block, host);
+            Assert.AreEqual("<input attr=\"value\" />", Render(block, host));
+            //var result = renderer.Render(nodes.Children.First(), null);
 
-            IRendererFactory factory = new RendererFactory(host);
-
-            factory.RegisterFactory("input", new InputRenderer(host));
-            var renderer = factory.GetRenderer(nodes.Children.First().Name);
-
-            var result = renderer.Render(nodes.Children.First(), null);
-
-            Assert.AreEqual("<input attr=\"value\" />", result);
+            //Assert.AreEqual("<input attr=\"value\" />", result);
         }
 
         [Test]

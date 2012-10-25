@@ -16,7 +16,7 @@ namespace Parrot.Mvc
     using Parrot.Renderers.Infrastructure;
 
     /// <summary>
-    /// TODO: Update summary.
+    /// Asp.Net host for Parrot
     /// </summary>
     public class AspNetHost : Host
     {
@@ -24,7 +24,6 @@ namespace Parrot.Mvc
         {
             InitializeRendererFactory();
             DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
-            //DependencyResolver.Register(typeof(DocumentRenderer), () => new DocumentRenderer(this));
             DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
 
             DependencyResolver.Register(typeof(IAttributeRenderer), () => new AttributeRenderer());
@@ -44,6 +43,7 @@ namespace Parrot.Mvc
                 rendererFactory.RegisterFactory("partial", new PartialRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("content", new ContentRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("foreach", new ForeachRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("input", new InputRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(this, rendererFactory));
                 rendererFactory.RegisterFactory(
