@@ -8,21 +8,17 @@ using System.Dynamic;
 using System.Web.Mvc;
 using Moq;
 using NUnit.Framework;
-using Parrot.Infrastructure;
 using Parrot.Mvc;
 using Parrot.Mvc.Renderers;
-using Parrot.Nodes;
 using Parrot.Renderers;
 using Parrot.Renderers.Infrastructure;
 using HtmlRenderer = Parrot.Renderers.HtmlRenderer;
-using IDependencyResolver = Parrot.Infrastructure.IDependencyResolver;
 
 namespace Parrot.Tests
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Text;
 
     /// <summary>
