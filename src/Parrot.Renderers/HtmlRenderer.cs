@@ -93,6 +93,31 @@ namespace Parrot.Renderers
             }
         }
 
+        protected virtual string RenderAttribute(Nodes.Attribute attribute, IDictionary<string, object> documentHost, object model)
+        {
+            var renderer = RendererFactory.GetRenderer(attribute.Value.Name);
+
+            if (renderer is HtmlRenderer)
+            {
+                renderer = RendererFactory.GetRenderer("string");
+            }
+
+            //render attribute
+            var attributeRenderer = Host.DependencyResolver.Resolve<IAttributeRenderer>();
+            StringBuilder sb = new StringBuilder();
+            var tempWriter = new StringWriter(sb);
+            renderer.Render(tempWriter, attribute.Value, documentHost, model);
+
+            var attributeValue = sb.ToString();
+
+            if (attributeRenderer != null)
+            {
+                attributeValue = attributeRenderer.PostRender(attribute.Key, attributeValue);
+            }
+
+            return attributeValue;
+        }
+
         protected virtual void RenderAttributes(IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
         {
             foreach (var attribute in statement.Attributes)
@@ -105,23 +130,7 @@ namespace Parrot.Renderers
                 }
                 else
                 {
-                    var renderer = RendererFactory.GetRenderer(attribute.Value.Name);
-
-                    if (renderer is HtmlRenderer)
-                    {
-                        renderer = RendererFactory.GetRenderer("string");
-                    }
-
-                    StringBuilder sb = new StringBuilder();
-                    var tempWriter = new StringWriter(sb);
-                    renderer.Render(tempWriter, attribute.Value, documentHost, model);
-
-                    attributeValue = sb.ToString();
-
-                    if (_attributeRenderer != null)
-                    {
-                        attributeValue = _attributeRenderer.PostRender(attribute.Key, attributeValue);
-                    }
+                    attributeValue = RenderAttribute(attribute, documentHost, model);
 
                     if (attribute.Key == "class")
                     {
