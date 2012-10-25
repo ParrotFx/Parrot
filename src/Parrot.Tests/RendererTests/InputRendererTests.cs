@@ -51,6 +51,10 @@ namespace Parrot.Tests
             Assert.AreEqual("<input checked=\"checked\" type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=true]", new AspNetHost()));
             Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=false]", new AspNetHost()));
             Assert.AreEqual("<input type=\"checkbox\" />", Render("input[type=\"checkbox\" checked=null]", new AspNetHost()));
+
+            Assert.AreEqual("<input checked=\"checked\" type=\"radio\" />", Render("input[type=\"radio\" checked=true]", new AspNetHost()));
+            Assert.AreEqual("<input type=\"radio\" />", Render("input[type=\"radio\" checked=false]", new AspNetHost()));
+            Assert.AreEqual("<input type=\"radio\" />", Render("input[type=\"radio\" checked=null]", new AspNetHost()));
         }
 
         [Test]

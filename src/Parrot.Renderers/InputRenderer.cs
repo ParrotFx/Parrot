@@ -35,6 +35,7 @@ namespace Parrot.Renderers
             switch (type)
             {
                 case "checkbox":
+                case "radio":
                     //special handling for "checked"
                     //is there a checked attribute
                     for (int i = 0; i < statement.Attributes.Count; i++)
