@@ -37,6 +37,12 @@ namespace Parrot.Tests.RendererTests
             Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html { div { :\"1\" } div { :\"1\" } }", GetHost()));
         }
 
+        [Test]
+        public void Tests()
+        {
+            
+        }
+
     }
 
     public class PrettyStringWriter : StandardWriter
