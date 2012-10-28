@@ -33,14 +33,14 @@ namespace Parrot.Tests
         [Test]
         public void ThisKeywordHandling()
         {
-            var text = "div(Model) > :this";
+            var text = "div(Model) > @this";
             Assert.AreEqual("<div>testing this</div>", Render(text, new { Model = "testing this" }));
         }
 
         [Test]
         public void DocumentHostWithAlternateProeprtyName()
         {
-            var text = "div(Request.IsAuthenticated) > :this";
+            var text = "div(Request.IsAuthenticated) > @this";
 
             Assert.AreEqual("<div>True</div>", Render(text, new Dictionary<string, object> { {"Request", new { IsAuthenticated = true }}}));
         }
@@ -48,7 +48,7 @@ namespace Parrot.Tests
         [Test]
         public void ViewBagTest()
         {
-            var text = "div(ViewBag.Value) > :this";
+            var text = "div(ViewBag.Value) > @this";
             dynamic viewBag = new ExpandoObject();
             viewBag.Value = true;
 
@@ -59,8 +59,8 @@ namespace Parrot.Tests
         public void ForeachRendererTests()
         {
             object model = new[] { 1, 2 };
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > :this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > @this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > @this }", model));
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(Model) { div(this) }", new { Model = new { Item = 1 } }));
         }
@@ -157,7 +157,7 @@ namespace Parrot.Tests
         [Test]
         public void RenderATagWithModel()
         {
-            var block = "a(Model)[href=:FirstName] > :FirstName";
+            var block = "a(Model)[href=@FirstName] > @FirstName";
             var result = Render(block, new { Model = new { FirstName = "Ben" } });
             Assert.AreEqual("<a href=\"Ben\">Ben</a>", result);
         }
@@ -188,7 +188,7 @@ namespace Parrot.Tests
             Assert.AreEqual("<label for=\"name\"></label>", Render("label[for=\"name\"]"));
             Assert.AreEqual("<meta content=\"width=device-width\" name=\"viewport\" />", Render("meta[name=\"viewport\" content=\"width==device-width\"]"));
             Assert.AreEqual("<div style=\"color= white\"></div>", Render("div[style=\"color= white\"]"));
-            Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color::white\"]"));
+            Assert.AreEqual("<div style=\"color:white\"></div>", Render("div[style=\"color:white\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
             Assert.AreEqual("<p class=\"foo\"></p>", Render("p[class=\"foo\"]"));
             Assert.AreEqual("<p class=\"baz bar foo\"></p>", Render("p.bar.baz[class=\"foo\"]"));

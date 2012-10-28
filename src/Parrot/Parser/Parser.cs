@@ -61,14 +61,13 @@ namespace Parrot.Parser
                 switch (token.Type)
                 {
                     case TokenType.StringLiteral:
-                    case TokenType.MultiLineStringLiteral:
                     case TokenType.StringLiteralPipe:
                     case TokenType.QuotedStringLiteral:
                     case TokenType.Identifier:
                     case TokenType.OpenBracket:
                     case TokenType.OpenParenthesis:
                     case TokenType.Equal:
-                    case TokenType.Colon:
+                    case TokenType.At:
                         var statement = ParseStatement(stream);
                         yield return statement;
                         break;
@@ -100,13 +99,12 @@ namespace Parrot.Parser
                     //ignore these
                     break;
                 case TokenType.StringLiteral:
-                case TokenType.MultiLineStringLiteral:
                 case TokenType.StringLiteralPipe:
                 case TokenType.QuotedStringLiteral:
                     //string statement
                     identifier = stream.Next();
                     break;
-                case TokenType.Colon:
+                case TokenType.At:
                     stream.GetNextNoReturn();
                     identifier = stream.Next();
                     break;
@@ -201,7 +199,6 @@ namespace Parrot.Parser
                 switch (identifier.Type)
                 {
                     case TokenType.StringLiteral:
-                    case TokenType.MultiLineStringLiteral:
                     case TokenType.QuotedStringLiteral:
                         return new StringLiteral(_host, value, tail);
 
@@ -214,7 +211,7 @@ namespace Parrot.Parser
             {
                 switch (previousToken.Type)
                 {
-                    case TokenType.Colon:
+                    case TokenType.At:
                         return new EncodedOutput(_host, value);
                     case TokenType.Equal:
                         return new RawOutput(_host, value);
@@ -366,7 +363,6 @@ namespace Parrot.Parser
                     case TokenType.Identifier:
                     case TokenType.QuotedStringLiteral:
                     case TokenType.StringLiteralPipe:
-                    case TokenType.MultiLineStringLiteral:
                         parameterList.Add(ParseParameter(stream));
                         break;
                     case TokenType.Comma:
@@ -392,7 +388,6 @@ namespace Parrot.Parser
             switch (identifier.Type)
             {
                 case TokenType.StringLiteralPipe:
-                case TokenType.MultiLineStringLiteral:
                 case TokenType.QuotedStringLiteral:
                 case TokenType.StringLiteral:
                 case TokenType.Identifier:

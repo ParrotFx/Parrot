@@ -26,7 +26,7 @@ namespace Parrot.Tests
         [Test]
         public void Blah()
         {
-            var text = "div[attr1='test'](Model) > :Value";
+            var text = "div[attr1='test'](Model) > @Value";
             var host = new MemoryHost();
 
             var parser = new Parser.Parser(host);

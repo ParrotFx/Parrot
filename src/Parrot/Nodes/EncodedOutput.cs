@@ -3,7 +3,7 @@ using Parrot.Infrastructure;
 
 namespace Parrot.Nodes
 {
-    [Description("Encoded output is for : identifier")]
+    [Description("Encoded output is for @ identifier")]
     public class EncodedOutput : StringLiteral 
     {
         public string VariableName { get; private set; }
@@ -13,7 +13,7 @@ namespace Parrot.Nodes
         {
         }
 
-        public EncodedOutput(IHost host, string variableName, StatementTail tail) : base(host, "\":" + variableName + "\"", tail)
+        public EncodedOutput(IHost host, string variableName, StatementTail tail) : base(host, "\"@" + variableName + "\"", tail)
         {
         }
 

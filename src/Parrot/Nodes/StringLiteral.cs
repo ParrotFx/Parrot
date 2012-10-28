@@ -28,7 +28,7 @@ namespace Parrot.Nodes
                 ValueType = ValueType.StringLiteral;
                 //strip quotes
 
-                int offset = StartsWith(value, '@') ? 2 : 1;
+                int offset = 1;
                 value = new string(value.ToArray(), offset, value.Length - (offset + 1));
             }
             else if (value == "this")
@@ -79,10 +79,10 @@ namespace Parrot.Nodes
 
             for (int i = 0; i < source.Length; i++)
             {
-                if (source[i] == ':' || source[i] == '=')
+                if (source[i] == '@' || source[i] == '=')
                 {
                     char comparer = source[i];
-                    StringLiteralPartType comparerType = comparer == ':'
+                    StringLiteralPartType comparerType = comparer == '@'
                                                              ? StringLiteralPartType.Encoded
                                                              : StringLiteralPartType.Raw;
 
@@ -90,7 +90,7 @@ namespace Parrot.Nodes
                     //look ahead by 10
                     if (source[Math.Min(source.Length - 1, i)] == comparer)
                     {
-                        //it's a single ":" escaped
+                        //it's a single "@" escaped
                         c[tempCounter++] = comparer;
                     }
                     else if (IsIdentifierHead(source[i]))

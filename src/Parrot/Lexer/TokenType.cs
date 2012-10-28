@@ -17,11 +17,9 @@ namespace Parrot.Lexer
         Plus,
         Whitespace,
         StringLiteralPipe,
-        MultiLineStringLiteral,
         CommentLine,
         CommentStart,
         CommentEnd,
-        Colon,
         Equal,
         At
     }

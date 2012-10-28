@@ -25,28 +25,28 @@ namespace Parrot.SampleSite.Controllers
 
         public const string DefaultHtmlTemplate = @"div#firstname.nameInfo {
     label { 'First name' }
-    span > :FirstName
+    span > @FirstName
 }
 div#lastname.nameInfo {
     label { 'Last name' }
-    span > :LastName
+    span > @LastName
 }
 div#age.nameInfo {
     label { 'Age' }
-    span > :Age
+    span > @Age
 }
 div#address.addressInfo {
     div(Address) {
-        div > :StreetAddress
-        div > :City
-        div > :State
-        div > :PostalCode
+        div > @StreetAddress
+        div > @City
+        div > @State
+        div > @PostalCode
     }
 }
 ul#phoneNumbers.phone(PhoneNumber) {
     li {
-        span > :Type
-        span > :Number
+        span > @Type
+        span > @Number
     }
 }";
         private const string DefaultModelTemplate = @"{

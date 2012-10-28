@@ -50,7 +50,6 @@
     <Compile Include="Infrastructure\StandardWriter.cs" />
     <Compile Include="Infrastructure\ValueTypeProvider.cs" />
     <Compile Include="Infrastructure\ValueTypeResult.cs" />
-    <Compile Include="Lexer\AtToken.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\AbstractNodeList.cs" />
     <Compile Include="Nodes\Attribute.cs" />
@@ -73,12 +72,11 @@
     <Compile Include="Lexer\CloseBracesToken.cs" />
     <Compile Include="Lexer\CloseBracketToken.cs" />
     <Compile Include="Lexer\CloseParenthesisToken.cs" />
-    <Compile Include="Lexer\ColonToken.cs" />
+    <Compile Include="Lexer\AtToken.cs" />
     <Compile Include="Lexer\CommaToken.cs" />
     <Compile Include="Lexer\EqualToken.cs" />
     <Compile Include="Lexer\GreaterThanToken.cs" />
     <Compile Include="Lexer\IdentifierToken.cs" />
-    <Compile Include="Lexer\MultilineStringLiteralToken.cs" />
     <Compile Include="Lexer\OpenBracesToken.cs" />
     <Compile Include="Lexer\OpenBracketToken.cs" />
     <Compile Include="Lexer\OpenParenthesisToken.cs" />

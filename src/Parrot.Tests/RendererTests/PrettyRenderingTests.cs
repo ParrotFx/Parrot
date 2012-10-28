@@ -32,9 +32,9 @@ namespace Parrot.Tests.RendererTests
         [Test]
         public void SingleIndentation()
         {
-            Assert.AreEqual("<div>\r\n\tthis is a test\r\n</div>\r\n", Render("div > :\"this is a test\"", GetHost()));
-            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html > div > :\"1\"", GetHost()));
-            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html { div { :\"1\" } div { :\"1\" } }", GetHost()));
+            Assert.AreEqual("<div>\r\n\tthis is a test\r\n</div>\r\n", Render("div > @\"this is a test\"", GetHost()));
+            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html > div > @\"1\"", GetHost()));
+            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html { div { @\"1\" } div { @\"1\" } }", GetHost()));
         }
 
         [Test]

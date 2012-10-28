@@ -116,20 +116,9 @@ namespace Parrot.Lexer
                         Type = TokenType.QuotedStringLiteral,
                         Index = _currentIndex
                     };
-                case '@': //multilinestringliteral
-                    //read next token
+                case '@': //Encoded output
                     Consume();
-                    int nextCharacter = _reader.Peek();
-                    char quoteType = nextCharacter == -1 ? '\0' : (char)nextCharacter;
-                    return new MultilineStringLiteralToken
-                    {
-                        //Content = (char)Consume() + ReadUntil(c => IsNewLine(c) || c == nextCharacter) + (char)Consume(),
-                        Type = TokenType.StringLiteralPipe,
-                        Index = _currentIndex
-                    };
-                case ':': //Encoded output
-                    Consume();
-                    return new ColonToken { Index = _currentIndex };
+                    return new AtToken { Index = _currentIndex };
                 case '\0':
                     return null;
                 default:
@@ -196,7 +185,7 @@ namespace Parrot.Lexer
             int peek = _reader.Peek();
             var currentCharacter = peek == -1 ? '\0' : (char)peek;
 
-            while ((!IsNewLine(currentCharacter) && currentCharacter != quote))
+            while (currentCharacter != quote)
             {
                 Consume();
                 sb.Append(currentCharacter);
