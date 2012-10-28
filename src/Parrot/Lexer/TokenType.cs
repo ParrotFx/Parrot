@@ -22,6 +22,7 @@ namespace Parrot.Lexer
         CommentStart,
         CommentEnd,
         Colon,
-        Equal
+        Equal,
+        At
     }
 }

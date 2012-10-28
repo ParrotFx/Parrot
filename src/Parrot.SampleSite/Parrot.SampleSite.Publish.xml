@@ -1,31 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="M:\publish\parrot" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="Web.config" publishTime="08/22/2012 00:30:54" />
-    <file relUrl="bin/Ninject.Web.Common.dll" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Parrot.SampleSite.pdb" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="bin/Microsoft.Web.Infrastructure.dll" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Ninject.dll" publishTime="08/06/2012 20:29:41" />
-    <file relUrl="packages.config" publishTime="08/21/2012 19:30:58" />
-    <file relUrl="bin/Parrot.SampleSite.dll" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="bin/WebActivator.dll" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Newtonsoft.Json.xml" publishTime="08/05/2012 22:59:36" />
-    <file relUrl="bin/Ninject.xml" publishTime="08/06/2012 20:29:41" />
-    <file relUrl="Views/Home/hattan.parrot" publishTime="08/05/2012 22:50:29" />
-    <file relUrl="bin/Parrot.Mvc.dll" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="bin/Ninject.Web.Common.pdb" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Ninject.pdb" publishTime="08/06/2012 20:29:41" />
-    <file relUrl="Views/Web.config" publishTime="08/05/2012 22:50:29" />
-    <file relUrl="bin/Ninject.Web.Mvc.pdb" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="08/05/2012 22:59:36" />
-    <file relUrl="bin/Parrot.pdb" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="bin/Ninject.Web.Mvc.dll" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="Global.asax" publishTime="08/05/2012 22:50:29" />
-    <file relUrl="bin/Parrot.dll" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="bin/Ninject.Web.Mvc.xml" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="Content/Site.css" publishTime="08/05/2012 22:50:29" />
-    <file relUrl="bin/Ninject.Web.Common.xml" publishTime="08/17/2012 19:23:29" />
-    <file relUrl="bin/Parrot.Mvc.pdb" publishTime="08/22/2012 00:16:35" />
-    <file relUrl="Views/Home/Index.parrot" publishTime="08/21/2012 23:56:32" />
+    <file relUrl="bin/Parrot.Renderers.dll" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="bin/Ninject.Web.Mvc.xml" publishTime="09/13/2012 18:58:51" />
+    <file relUrl="Global.asax" publishTime="09/13/2012 18:25:11" />
+    <file relUrl="bin/Ninject.Web.Common.xml" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/WebActivator.dll" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Ninject.Web.Mvc.pdb" publishTime="09/13/2012 18:58:51" />
+    <file relUrl="bin/Newtonsoft.Json.xml" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Ninject.Web.Common.dll" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Ninject.Web.Mvc.dll" publishTime="09/13/2012 18:58:51" />
+    <file relUrl="bin/Parrot.dll" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="packages.config" publishTime="09/13/2012 18:25:11" />
+    <file relUrl="bin/Ninject.pdb" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Parrot.Mvc.pdb" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="bin/Parrot.SampleSite.dll" publishTime="10/25/2012 19:30:34" />
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="Views/Home/hattan.parrot" publishTime="09/13/2012 18:25:11" />
+    <file relUrl="Views/Home/Index.parrot" publishTime="10/25/2012 19:39:46" />
+    <file relUrl="bin/Parrot.Mvc.dll" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="Content/Site.css" publishTime="09/13/2012 18:25:11" />
+    <file relUrl="bin/Ninject.Web.Common.pdb" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Ninject.xml" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Microsoft.Web.Infrastructure.dll" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="Web.config" publishTime="10/25/2012 19:22:06" />
+    <file relUrl="bin/Parrot.pdb" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="bin/Ninject.dll" publishTime="09/13/2012 18:58:38" />
+    <file relUrl="bin/Parrot.SampleSite.pdb" publishTime="10/25/2012 19:30:34" />
+    <file relUrl="bin/Parrot.Renderers.pdb" publishTime="10/25/2012 19:30:33" />
+    <file relUrl="Views/Web.config" publishTime="09/13/2012 18:25:11" />
   </publishProfile>
 </publishData>

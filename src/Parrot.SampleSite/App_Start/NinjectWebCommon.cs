@@ -1,3 +1,4 @@
+using Parrot.Infrastructure;
 using Parrot.Mvc;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(Parrot.SampleSite.App_Start.NinjectWebCommon), "Start")]
@@ -55,7 +56,13 @@ namespace Parrot.SampleSite.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<AspNetHost>().ToMethod(c => new AspNetHost()).InSingletonScope();
+            kernel.Bind<AspNetHost>().ToMethod(c =>
+            {
+                var host = new AspNetHost();
+                host.DependencyResolver.Register(typeof (IParrotWriter), () => new PrettyStringWriter());
+
+                return host;
+            }).InSingletonScope();
         }
     }
 }

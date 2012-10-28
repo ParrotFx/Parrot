@@ -82,9 +82,12 @@ namespace Parrot.Nodes
                 if (source[i] == ':' || source[i] == '=')
                 {
                     char comparer = source[i];
+                    StringLiteralPartType comparerType = comparer == ':'
+                                                             ? StringLiteralPartType.Encoded
+                                                             : StringLiteralPartType.Raw;
 
                     i += 1;
-                    //look ahead by 1
+                    //look ahead by 10
                     if (source[Math.Min(source.Length - 1, i)] == comparer)
                     {
                         //it's a single ":" escaped
@@ -117,13 +120,13 @@ namespace Parrot.Nodes
                         if (word[word.Length - 1] == '.')
                         {
                             word.Length -= 1;
-                            parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
+                            parts.Add(new StringLiteralPart(comparerType, word.ToString(), i - tempCounter));
                             tempCounter = 0;
                             c[tempCounter++] = '.';
                         }
                         else
                         {
-                            parts.Add(new StringLiteralPart(comparer == ':' ? StringLiteralPartType.Encoded : StringLiteralPartType.Raw, word.ToString(), i - tempCounter));
+                            parts.Add(new StringLiteralPart(comparerType, word.ToString(), i - tempCounter));
                             tempCounter = 0;
                         }
 
