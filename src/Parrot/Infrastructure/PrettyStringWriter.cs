@@ -3,35 +3,35 @@ namespace Parrot.Infrastructure
     public class PrettyStringWriter : StandardWriter
     {
         private int _indentation;
-        private WriteType _lastWritten = WriteType.None;
+        private PrettyPrintWriteType _lastWritten = PrettyPrintWriteType.None;
 
         public PrettyStringWriter() : base()
         {
             _indentation = 0;
         }
 
-        private WriteType GetType(string value)
+        private PrettyPrintWriteType GetType(string value)
         {
             if (value.EndsWith("/>"))
             {
                 //closing
-                return WriteType.SelfClosingElement;
+                return PrettyPrintWriteType.SelfClosingElement;
             }
             
             if (value.StartsWith("</") && value.EndsWith(">"))
             {
-                return WriteType.ClosingElement;
+                return PrettyPrintWriteType.ClosingElement;
             }
             
             if (value.StartsWith("<") && value.EndsWith(">"))
             {
-                return WriteType.OpeningElement;
+                return PrettyPrintWriteType.OpeningElement;
             }
 
-            return WriteType.Literal;
+            return PrettyPrintWriteType.Literal;
         }
 
-        private enum WriteType
+        private enum PrettyPrintWriteType
         {
             None,
             SelfClosingElement,
@@ -43,7 +43,6 @@ namespace Parrot.Infrastructure
 
         public override void Write(string value)
         {
-            var elementType = 0;
             var incrementIndentation = 0;
             var addNewLineAfterWrite = false;
 
@@ -51,31 +50,31 @@ namespace Parrot.Infrastructure
             var type = GetType(value);
             switch (type)
             {
-                case WriteType.SelfClosingElement:
+                case PrettyPrintWriteType.SelfClosingElement:
                     incrementIndentation = 0;
                     addNewLineAfterWrite = true;
                     break;
-                case WriteType.ClosingElement:
-                    if (_lastWritten == WriteType.Literal)
+                case PrettyPrintWriteType.ClosingElement:
+                    if (_lastWritten == PrettyPrintWriteType.Literal)
                     {
                         base.Write("\r\n");
                     }
                     _indentation -=1;
                     addNewLineAfterWrite = true;
                     break;
-                case WriteType.OpeningElement:
+                case PrettyPrintWriteType.OpeningElement:
                     incrementIndentation = 1;
                     addNewLineAfterWrite = true;
                     break;
-                case WriteType.Literal:
-                    if (_lastWritten == WriteType.OpeningElement)
+                case PrettyPrintWriteType.Literal:
+                    if (_lastWritten == PrettyPrintWriteType.OpeningElement)
                     {
                         //incrementIndentation = 1;
                     }
                     break;
             }
 
-            if (_indentation > 0 && (_lastWritten != WriteType.Literal || (_lastWritten == WriteType.Literal && type == WriteType.ClosingElement)))
+            if (_indentation > 0 && (_lastWritten != PrettyPrintWriteType.Literal || (_lastWritten == PrettyPrintWriteType.Literal && type == PrettyPrintWriteType.ClosingElement)))
             {
                 base.Write(new string('\t', _indentation));
             }
