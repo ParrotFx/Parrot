@@ -8,14 +8,9 @@ namespace Parrot.Nodes
     {
         protected IHost Host { get; private set; }
 
-        public AbstractNode(IHost host)
+        protected AbstractNode(IHost host)
         {
             Host = host;
-        }
-
-        public abstract bool IsTerminal
-        {
-            get;
         }
     }
 }

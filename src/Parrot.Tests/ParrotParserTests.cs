@@ -432,6 +432,13 @@ namespace Parrot.Tests
                 Assert.AreEqual(IdentifierType.Class, results[3].Type);
             }
 
+            [Test]
+            public void StringWithAtFollowedByEquals()
+            {
+                var document = Parse("'s=@Name'");
+                Assert.IsNotNull(document);
+            }
+
             public IEnumerable<Identifier> GetIdentifierParts(string source)
             {
                 int index = 0;

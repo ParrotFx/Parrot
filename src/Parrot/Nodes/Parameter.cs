@@ -16,10 +16,5 @@ namespace Parrot.Nodes
             ValueType = result.Type;
             Value = result.Value.ToString();
         }
-
-        public override bool IsTerminal
-        {
-            get { return true; }
-        }
     }
 }

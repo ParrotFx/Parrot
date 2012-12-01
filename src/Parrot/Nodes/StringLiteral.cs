@@ -14,6 +14,9 @@ using ValueType = Parrot.Infrastructure.ValueType;
 
 namespace Parrot.Nodes
 {
+    /// <summary>
+    /// Parrot node that contains a string literal statement
+    /// </summary>
     public class StringLiteral : Statement
     {
         public List<StringLiteralPart> Values { get; private set; }
@@ -60,11 +63,6 @@ namespace Parrot.Nodes
             return (StartsWith(value, '"') || StartsWith(value, '\''));
         }
         
-        public override bool IsTerminal
-        {
-            get { return true; }
-        }
-
         public override string ToString()
         {
             return string.Join("", Values.Select(f => f.Data));
@@ -87,7 +85,7 @@ namespace Parrot.Nodes
                                                              : StringLiteralPartType.Raw;
 
                     i += 1;
-                    //look ahead by 10
+                    //look ahead by 1
                     if (source[Math.Min(source.Length - 1, i)] == comparer)
                     {
                         //it's a single "@" escaped
@@ -138,7 +136,7 @@ namespace Parrot.Nodes
                     else
                     {
                         c[tempCounter++] = comparer;
-                        c[tempCounter++] = source[i];
+                        i -= 1;
                     }
                 }
                 else

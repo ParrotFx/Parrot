@@ -16,21 +16,5 @@ namespace Parrot.Nodes
         public EncodedOutput(IHost host, string variableName, StatementTail tail) : base(host, "\"@" + variableName + "\"", tail)
         {
         }
-
-        private static bool StartsWith(string source, char value)
-        {
-            return source.Length > 0 && source[0] == value;
-        }
-
-        private bool IsWrappedInQuotes(string value)
-        {
-            return (StartsWith(value, '"') || StartsWith(value, '\''));
-        }
-        
-        public override bool IsTerminal
-        {
-            get { return true; }
-        }
-
     }
 }

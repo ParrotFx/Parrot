@@ -37,7 +37,7 @@ namespace Parrot.Renderers
                 var renderer = RendererFactory.GetRenderer(child.Name);
                 if (renderer is StringLiteralRenderer)
                 {
-                    renderer.Render(valueWriter, child, documentHost, localModel);
+                    renderer.Render(valueWriter, child, documentHost, model);
                     value = valueWriter.Result();
                 }
                 else
@@ -49,7 +49,7 @@ namespace Parrot.Renderers
                 {
                     var rendererFactory = Host.DependencyResolver.Resolve<IRendererFactory>();
                     //render only the child
-                    RenderChildren(writer, child, documentHost, localModel);
+                    RenderChildren(writer, child, documentHost, model);
                     return;
                 }
             }
@@ -57,7 +57,7 @@ namespace Parrot.Renderers
             var defaultChild = statement.Children.SingleOrDefault(s => s.Name.Equals("default", StringComparison.OrdinalIgnoreCase));
             if (defaultChild != null)
             {
-                RenderChildren(writer, defaultChild, documentHost, localModel);
+                RenderChildren(writer, defaultChild, documentHost, model);
             }
         }
     }

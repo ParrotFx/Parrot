@@ -82,11 +82,6 @@ namespace Parrot.Nodes
         {
             _list = new List<AbstractNode>(64);
         }
-
-        public override bool IsTerminal
-        {
-            get { return false; }
-        }
     }
 
 
@@ -165,11 +160,6 @@ namespace Parrot.Nodes
         public AbstractNodeList(IHost host) : base(host)
         {
             List = new List<T>();
-        }
-
-        public override bool IsTerminal
-        {
-            get { return false; }
         }
     }
 

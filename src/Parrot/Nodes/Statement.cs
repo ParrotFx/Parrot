@@ -136,11 +136,6 @@ namespace Parrot.Nodes
             Attributes.Add(node);
         }
 
-        public override bool IsTerminal
-        {
-            get { return false; }
-        }
-
         private void IdentifierTypeFromCharacter(char character, ref IdentifierType currentType)
         {
             switch (character)

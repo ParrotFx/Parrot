@@ -1,21 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot", "Parrot\Parrot.csproj", "{5101087D-966B-403B-911C-4F657AEBF623}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.Tests", "Parrot.Tests\Parrot.Tests.csproj", "{87DBF029-B276-4AD9-9EC5-2D140AF4C7EE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{332ABA2E-3B23-4E48-956A-157E7D9F4946}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\nuget.exe = .nuget\nuget.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.Renderers", "Parrot.Renderers\Parrot.Renderers.csproj", "{A7348907-BE1E-464D-907B-796A347B8034}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.Mvc", "Parrot.Mvc\Parrot.Mvc.csproj", "{90502FC0-81A5-46E3-B8C4-DFACC0F2D4EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.SampleSite", "Parrot.SampleSite\Parrot.SampleSite.csproj", "{9AC0D35D-89F5-4626-A8C1-E6481DE57174}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19C1E679-7170-4249-850F-AAE2527FE17F}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
