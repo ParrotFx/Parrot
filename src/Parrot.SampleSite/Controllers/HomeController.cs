@@ -101,8 +101,9 @@ ul#phoneNumbers.phone(PhoneNumber) {
                 {
                     if (element != null)
                     {
-                        var renderer = _host.DependencyResolver.Resolve<IRendererFactory>().GetRenderer(element.Name);
-                        renderer.Render(writer, element, new Dictionary<string, object>(), modelObject);
+                        var rendererFactory = _host.DependencyResolver.Resolve<IRendererFactory>();
+                        var renderer = rendererFactory.GetRenderer(element.Name);
+                        renderer.Render(writer, rendererFactory, element, new Dictionary<string, object>(), modelObject);
                     }
                 }
 

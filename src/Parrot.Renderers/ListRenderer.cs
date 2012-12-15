@@ -16,7 +16,7 @@ namespace Parrot.Renderers
     /// </summary>
     public class ListRenderer : HtmlRenderer
     {
-        public ListRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+        public ListRenderer(IHost host) : base(host) { }
 
         public override string DefaultChildTag
         {

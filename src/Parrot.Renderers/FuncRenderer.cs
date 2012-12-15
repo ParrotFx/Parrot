@@ -16,7 +16,7 @@ namespace Parrot.Renderers
             _renderer = renderer;
         }
 
-        public void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             _renderer(statement, writer, documentHost, model);
         }

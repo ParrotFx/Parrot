@@ -13,12 +13,12 @@ namespace Parrot.Mvc.Renderers
 
     public class PartialRenderer : HtmlRenderer
     {
-        public PartialRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory)
+        public PartialRenderer(IHost host) : base(host)
         {
             
         }
 
-        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             object localModel = documentHost;
 
@@ -51,7 +51,7 @@ namespace Parrot.Mvc.Renderers
 
                     var document = parrotView.LoadDocument(contents);
 
-                    DocumentView view = new DocumentView(Host, RendererFactory, documentHost, document);
+                    DocumentView view = new DocumentView(Host, rendererFactory, documentHost, document);
 
                     view.Render(writer);
                 }

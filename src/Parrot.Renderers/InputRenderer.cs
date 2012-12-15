@@ -13,25 +13,25 @@ namespace Parrot.Renderers
 
     public class InputRenderer : SelfClosingRenderer, IRenderer
     {
-        public InputRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+        public InputRenderer(IHost host) : base(host) { }
 
-        private string GetType(Statement statement, IDictionary<string, object> documentHost, object model)
+        private string GetType(Statement statement, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model)
         {
             for (int i = 0; i < statement.Attributes.Count; i++)
             {
                 if (statement.Attributes[i].Key.Equals("type", StringComparison.OrdinalIgnoreCase))
                 {
-                    return RenderAttribute(statement.Attributes[i], documentHost, model);
+                    return RenderAttribute(statement.Attributes[i], rendererFactory, documentHost, model);
                 }
             }
 
             return "hidden";
         }
 
-        public new void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             //get the input type
-            string type = GetType(statement, documentHost, model);
+            string type = GetType(statement, rendererFactory, documentHost, model);
             switch (type)
             {
                 case "checkbox":
@@ -42,7 +42,7 @@ namespace Parrot.Renderers
                     {
                         if (statement.Attributes[i].Key == "checked")
                         {
-                            string attributeValue = RenderAttribute(statement.Attributes[i], documentHost, model);
+                            string attributeValue = RenderAttribute(statement.Attributes[i], rendererFactory, documentHost, model);
 
                             switch (attributeValue)
                             {
@@ -63,7 +63,7 @@ namespace Parrot.Renderers
                     break;
             }
 
-            base.Render(writer, statement, documentHost, model);
+            base.Render(writer, rendererFactory, statement, documentHost, model);
         }
 
     }

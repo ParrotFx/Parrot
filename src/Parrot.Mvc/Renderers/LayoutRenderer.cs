@@ -23,15 +23,13 @@ namespace Parrot.Mvc.Renderers
     public class LayoutRenderer : HtmlRenderer, IRenderer
     {
         private readonly IHost _host;
-        private readonly IRendererFactory _rendererFactory;
 
-        public LayoutRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory)
+        public LayoutRenderer(IHost host) : base(host)
         {
             _host = host;
-            _rendererFactory = rendererFactory;
         }
 
-        public new void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             string layout = "";
             if (statement.Parameters != null && statement.Parameters.Any())
@@ -62,7 +60,7 @@ namespace Parrot.Mvc.Renderers
                     }
                     (documentHost["_LayoutChildren_"] as Queue<StatementList>).Enqueue(statement.Children);
 
-                    DocumentView view = new DocumentView(_host, _rendererFactory, documentHost, document);
+                    DocumentView view = new DocumentView(_host, rendererFactory, documentHost, document);
 
                     view.Render(writer);
                 }

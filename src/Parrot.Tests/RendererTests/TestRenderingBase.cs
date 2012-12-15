@@ -31,18 +31,18 @@ namespace Parrot.Tests
             parser.Parse(parrot, out document);
 
             var rendererFactory = new RendererFactory(host);
-            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host));
             rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
-            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("content", new ContentRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("input", new InputRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host));
+            rendererFactory.RegisterFactory("content", new ContentRenderer(host));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host));
+            rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(host));
+            rendererFactory.RegisterFactory("input", new InputRenderer(host));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
             rendererFactory.RegisterFactory(
                 new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
-                new SelfClosingRenderer(host, rendererFactory)
+                new SelfClosingRenderer(host)
             );
 
             DocumentView documentView = new DocumentView(new MemoryHost(), rendererFactory, documentHost, document);

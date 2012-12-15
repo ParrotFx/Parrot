@@ -10,9 +10,9 @@ namespace Parrot.Renderers
 
     public class ConditionalRenderer : HtmlRenderer
     {
-        public ConditionalRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+        public ConditionalRenderer(IHost host) : base(host) { }
 
-        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
@@ -34,10 +34,10 @@ namespace Parrot.Renderers
                 var valueWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
 
                 //get string value
-                var renderer = RendererFactory.GetRenderer(child.Name);
+                var renderer = rendererFactory.GetRenderer(child.Name);
                 if (renderer is StringLiteralRenderer)
                 {
-                    renderer.Render(valueWriter, child, documentHost, model);
+                    renderer.Render(valueWriter, rendererFactory, child, documentHost, model);
                     value = valueWriter.Result();
                 }
                 else
@@ -47,9 +47,8 @@ namespace Parrot.Renderers
 
                 if (value.Equals(statementToOutput, StringComparison.OrdinalIgnoreCase))
                 {
-                    var rendererFactory = Host.DependencyResolver.Resolve<IRendererFactory>();
                     //render only the child
-                    RenderChildren(writer, child, documentHost, model);
+                    RenderChildren(writer, child, rendererFactory, documentHost, model);
                     return;
                 }
             }
@@ -57,7 +56,7 @@ namespace Parrot.Renderers
             var defaultChild = statement.Children.SingleOrDefault(s => s.Name.Equals("default", StringComparison.OrdinalIgnoreCase));
             if (defaultChild != null)
             {
-                RenderChildren(writer, defaultChild, documentHost, model);
+                RenderChildren(writer, defaultChild, rendererFactory, documentHost, model);
             }
         }
     }

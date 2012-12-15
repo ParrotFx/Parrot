@@ -11,9 +11,9 @@ namespace Parrot.Mvc.Renderers
 
     public class ContentRenderer : HtmlRenderer
     {
-        public ContentRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+        public ContentRenderer(IHost host) : base(host) { }
 
-        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var childrenQueue = documentHost.GetValueOrDefault("_LayoutChildren_") as Queue<StatementList>;
             if (childrenQueue == null)
@@ -24,7 +24,7 @@ namespace Parrot.Mvc.Renderers
 
             var children = childrenQueue.Dequeue();
 
-            RenderChildren(writer, children, documentHost, DefaultChildTag, model);
+            RenderChildren(writer, children, rendererFactory, documentHost, DefaultChildTag, model);
         }
     }
 }

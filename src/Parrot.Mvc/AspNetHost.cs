@@ -37,19 +37,19 @@ namespace Parrot.Mvc
             {
                 var rendererFactory = new RendererFactory(this);
 
-                rendererFactory.RegisterFactory("*", new HtmlRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("string", new StringLiteralRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("*", new HtmlRenderer(this));
+                rendererFactory.RegisterFactory("string", new StringLiteralRenderer(this));
                 rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(this));
-                rendererFactory.RegisterFactory("layout", new LayoutRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("partial", new PartialRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("content", new ContentRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("foreach", new ForeachRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("input", new InputRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(this, rendererFactory));
-                rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(this, rendererFactory));
+                rendererFactory.RegisterFactory("layout", new LayoutRenderer(this));
+                rendererFactory.RegisterFactory("partial", new PartialRenderer(this));
+                rendererFactory.RegisterFactory("content", new ContentRenderer(this));
+                rendererFactory.RegisterFactory("foreach", new ForeachRenderer(this));
+                rendererFactory.RegisterFactory("input", new InputRenderer(this));
+                rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(this));
+                rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(this));
                 rendererFactory.RegisterFactory(
                     new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
-                    new SelfClosingRenderer(this, rendererFactory)
+                    new SelfClosingRenderer(this)
                 );
 
                 return rendererFactory;

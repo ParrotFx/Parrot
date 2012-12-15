@@ -84,14 +84,14 @@ namespace Parrot.Tests
 
             //default renderer
             var rendererFactory = new RendererFactory(host);
-            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host));
             rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
-            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
             rendererFactory.RegisterFactory(
                 new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
-                new SelfClosingRenderer(host, rendererFactory)
+                new SelfClosingRenderer(host)
             );
 
             host.DependencyResolver.Register(typeof(IRendererFactory), () => rendererFactory);
@@ -126,16 +126,16 @@ namespace Parrot.Tests
             host.DependencyResolver.Register(typeof(IPathResolver), () => pathResolver.Object);
 
             var rendererFactory = new RendererFactory(host);
-            rendererFactory.RegisterFactory("*", new HtmlRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("*", new HtmlRenderer(host));
+            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host));
             rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
-            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory("content", new ContentRenderer(host, rendererFactory));
-            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host, rendererFactory));
+            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host));
+            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host));
+            rendererFactory.RegisterFactory("content", new ContentRenderer(host));
+            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
             rendererFactory.RegisterFactory(
                 new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
-                new SelfClosingRenderer(host, rendererFactory)
+                new SelfClosingRenderer(host)
             );
 
             host.DependencyResolver.Register(typeof(IRendererFactory), () => rendererFactory);

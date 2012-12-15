@@ -11,12 +11,10 @@ namespace Parrot.Renderers
 
     public class HtmlRenderer : BaseRenderer, IRenderer
     {
-        protected readonly IRendererFactory RendererFactory;
         private IAttributeRenderer _attributeRenderer;
 
-        public HtmlRenderer(IHost host, IRendererFactory rendererFactory) : base(host)
+        public HtmlRenderer(IHost host) : base(host)
         {
-            RendererFactory = rendererFactory;
             _attributeRenderer = host.DependencyResolver.Resolve<IAttributeRenderer>();
         }
 
@@ -25,23 +23,23 @@ namespace Parrot.Renderers
             get { return "div"; }
         }
 
-        public virtual void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public virtual void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
 
             var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
-            CreateTag(writer, documentHost, localModel, statement, modelValueProvider);
+            CreateTag(writer, rendererFactory, documentHost, localModel, statement, modelValueProvider);
         }
 
-        protected virtual void CreateTag(IParrotWriter writer, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        protected virtual void CreateTag(IParrotWriter writer, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
         {
             string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
 
             TagBuilder builder = new TagBuilder(tagName);
             //add attributes
-            RenderAttributes(documentHost, model, statement, builder);
+            RenderAttributes(rendererFactory, documentHost, model, statement, builder);
             //AppendAttributes(builder, statement.Attributes, documentHost, modelValueProvider);
 
             writer.Write(builder.ToString(TagRenderMode.StartTag));
@@ -49,13 +47,13 @@ namespace Parrot.Renderers
 
             if (statement.Children.Count > 0)
             {
-                RenderChildren(writer, statement, documentHost, model);
+                RenderChildren(writer, statement, rendererFactory, documentHost, model);
             }
 
             writer.Write(builder.ToString(TagRenderMode.EndTag));
         }
 
-        public virtual void RenderChildren(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model, string defaultTag = null)
+        public virtual void RenderChildren(IParrotWriter writer, Statement statement, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, string defaultTag = null)
         {
             if (string.IsNullOrEmpty(defaultTag))
             {
@@ -69,41 +67,41 @@ namespace Parrot.Renderers
                 {
                     var localItem = item;
 
-                    RenderChildren(writer, statement.Children, documentHost, defaultTag, localItem);
+                    RenderChildren(writer, statement.Children, rendererFactory, documentHost, defaultTag, localItem);
                 }
             }
             else
             {
-                RenderChildren(writer, statement.Children, documentHost, defaultTag, model);
+                RenderChildren(writer, statement.Children, rendererFactory, documentHost, defaultTag, model);
             }
         }
 
-        protected void RenderChildren(IParrotWriter writer, StatementList children, IDictionary<string, object> documentHost, string defaultTag, object model)
+        protected void RenderChildren(IParrotWriter writer, StatementList children, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, string defaultTag, object model)
         {
             Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
 
             foreach (var child in children)
             {
                 child.Name = tagName(child.Name);
-                var renderer = RendererFactory.GetRenderer(child.Name);
+                var renderer = rendererFactory.GetRenderer(child.Name);
 
-                renderer.Render(writer, child, documentHost, model);
+                renderer.Render(writer, rendererFactory, child, documentHost, model);
             }
         }
 
-        protected virtual string RenderAttribute(Nodes.Attribute attribute, IDictionary<string, object> documentHost, object model)
+        protected virtual string RenderAttribute(Nodes.Attribute attribute, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model)
         {
-            var renderer = RendererFactory.GetRenderer(attribute.Value.Name);
+            var renderer = rendererFactory.GetRenderer(attribute.Value.Name);
 
             if (renderer is HtmlRenderer)
             {
-                renderer = RendererFactory.GetRenderer("string");
+                renderer = rendererFactory.GetRenderer("string");
             }
 
             //render attribute
             var attributeRenderer = Host.DependencyResolver.Resolve<IAttributeRenderer>();
             var tempWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
-            renderer.Render(tempWriter, attribute.Value, documentHost, model);
+            renderer.Render(tempWriter, rendererFactory, attribute.Value, documentHost, model);
 
             var attributeValue = tempWriter.Result();
 
@@ -115,7 +113,7 @@ namespace Parrot.Renderers
             return attributeValue;
         }
 
-        protected virtual void RenderAttributes(IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
+        protected virtual void RenderAttributes(IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Statement statement, TagBuilder builder)
         {
             foreach (var attribute in statement.Attributes)
             {
@@ -127,7 +125,7 @@ namespace Parrot.Renderers
                 }
                 else
                 {
-                    attributeValue = RenderAttribute(attribute, documentHost, model);
+                    attributeValue = RenderAttribute(attribute, rendererFactory, documentHost, model);
 
                     if (attribute.Key == "class")
                     {

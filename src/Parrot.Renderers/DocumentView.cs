@@ -39,7 +39,7 @@ namespace Parrot.Renderers
             foreach (var element in _document.Children)
             {
                 var renderer = _rendererFactory.GetRenderer(element.Name);
-                renderer.Render(writer, element, DocumentHost, DocumentHost.GetValueOrDefault("Model"));
+                renderer.Render(writer, _rendererFactory, element, DocumentHost, DocumentHost.GetValueOrDefault("Model"));
             }
         }
     }

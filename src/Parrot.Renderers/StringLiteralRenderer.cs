@@ -12,12 +12,10 @@ namespace Parrot.Renderers
     public class StringLiteralRenderer : IRenderer
     {
         private readonly IHost _host;
-        private readonly IRendererFactory _rendererFactory;
 
-        public StringLiteralRenderer(IHost host, IRendererFactory rendererFactory)
+        public StringLiteralRenderer(IHost host)
         {
             _host = host;
-            _rendererFactory = rendererFactory;
         }
 
         private string GetModelValue(IModelValueProviderFactory factory, IDictionary<string, object> documentHost, object model, StringLiteralPartType type, string data)
@@ -47,7 +45,7 @@ namespace Parrot.Renderers
             return data;
         }
 
-        public void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
 

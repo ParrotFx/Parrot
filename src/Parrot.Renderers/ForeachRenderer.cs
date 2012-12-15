@@ -21,9 +21,9 @@ namespace Parrot.Renderers
     /// </summary>
     public class ForeachRenderer : HtmlRenderer
     {
-        public ForeachRenderer(IHost host, IRendererFactory rendererFactory) : base(host, rendererFactory) { }
+        public ForeachRenderer(IHost host) : base(host) { }
 
-        public override void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
             var modelValueProvider = ModelValueProviderFactory.Get(modelType);
@@ -42,8 +42,8 @@ namespace Parrot.Renderers
 
                 foreach (var child in statement.Children)
                 {
-                    var renderer = RendererFactory.GetRenderer(child.Name);
-                    renderer.Render(writer, child, documentHost, item);
+                    var renderer = rendererFactory.GetRenderer(child.Name);
+                    renderer.Render(writer, rendererFactory, child, documentHost, item);
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace Parrot.Renderers
     {
         public DocTypeRenderer(IHost host) : base(host) { }
 
-        public void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model)
+        public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var value = "html"; //default value of "html"
 

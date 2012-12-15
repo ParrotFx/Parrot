@@ -8,6 +8,6 @@ namespace Parrot.Renderers.Infrastructure
 
     public interface IRenderer
     {
-        void Render(IParrotWriter writer, Statement statement, IDictionary<string, object> documentHost, object model);
+        void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model);
     }
 }
