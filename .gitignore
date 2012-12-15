@@ -39,6 +39,7 @@ _ReSharper*/
 *.ncrunchproject
 *.crunchsolution.cache
 _NCrunch*/
+ncrunch*
 
 #Project files
 [Bb]uild/
