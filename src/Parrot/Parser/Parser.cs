@@ -46,15 +46,7 @@ namespace Parrot.Parser
                 {
                     foreach (var s in statement)
                     {
-                        if (s.Errors.Any())
-                        {
-                            foreach (var error in s.Errors)
-                            {
-                                error.Index += s.Index;
-                                Errors.Add(error);
-                            }
-                        }
-
+                        ParseStatementErrors(s);
                         document.Children.Add(s);
                     }
                 }
@@ -67,6 +59,18 @@ namespace Parrot.Parser
             document.Errors = Errors;
 
             return true;
+        }
+
+        private void ParseStatementErrors(Statement s)
+        {
+            if (s.Errors.Any())
+            {
+                foreach (var error in s.Errors)
+                {
+                    error.Index += s.Index;
+                    Errors.Add(error);
+                }
+            }
         }
 
         public bool Parse(string text, out Document document)
