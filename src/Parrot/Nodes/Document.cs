@@ -4,7 +4,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using Parrot.Infrastructure;
+using Parrot.Lexer;
+using Parrot.Parser.ErrorTypes;
 
 namespace Parrot.Nodes
 {
@@ -15,11 +18,13 @@ namespace Parrot.Nodes
     /// </summary>
     public class Document
     {
-        public StatementList Children;
+        public IList<ParserError> Errors { get; set; }
+        public StatementList Children { get; set; }
 
         public Document(IHost host)
         {
             Children = new StatementList(host);
+            Errors = new List<ParserError>();
         }
 
         public Document(IHost host, Document document, Statement statement) : this(host)

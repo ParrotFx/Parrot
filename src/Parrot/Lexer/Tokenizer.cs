@@ -47,8 +47,8 @@ namespace Parrot.Lexer
             {
                 return new IdentifierToken
                 {
-                    Content = ConsumeIdentifier(),
                     Index = _currentIndex,
+                    Content = ConsumeIdentifier(),
                     Type = TokenType.Identifier
                 };
             }
@@ -57,8 +57,8 @@ namespace Parrot.Lexer
             {
                 return new WhitespaceToken
                 {
-                    Content = ConsumeWhitespace(),
                     Index = _currentIndex,
+                    Content = ConsumeWhitespace(),
                     Type = TokenType.Whitespace
                 };
             }
@@ -98,23 +98,23 @@ namespace Parrot.Lexer
                 case '|': //string literal pipe
                     return new StringLiteralPipeToken
                     {
+                        Index = _currentIndex,
                         Content = ConsumeUntilNewline(),
                         Type = TokenType.StringLiteralPipe,
-                        Index = _currentIndex
                     };
                 case '"': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
+                        Index = _currentIndex,
                         Content = ConsumeQuotedStringLiteral('"'),
                         Type = TokenType.QuotedStringLiteral,
-                        Index = _currentIndex
                     };
                 case '\'': //quoted string literal
                     return new QuotedStringLiteralToken
                     {
+                        Index = _currentIndex,
                         Content = ConsumeQuotedStringLiteral('\''),
                         Type = TokenType.QuotedStringLiteral,
-                        Index = _currentIndex
                     };
                 case '@': //Encoded output
                     Consume();
@@ -248,19 +248,11 @@ namespace Parrot.Lexer
 
         public List<Token> Tokenize()
         {
-            try
+            Token token;
+            while ((token = GetNextToken()) != null)
             {
-                Token token;
-                while ((token = GetNextToken()) != null)
-                {
-                    _tokens.Add(token);
-                }
+                _tokens.Add(token);
             }
-            catch(EndOfStreamException)
-            {
-                throw new ParserException("");
-            }
-
             return _tokens;
         }
 

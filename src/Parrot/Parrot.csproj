@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -88,6 +89,15 @@
     <Compile Include="Lexer\TokenType.cs" />
     <Compile Include="Lexer\UnexpectedTokenException.cs" />
     <Compile Include="Lexer\WhitespaceToken.cs" />
+    <Compile Include="Parser\ErrorTypes\AttributeIdentifierMissing.cs" />
+    <Compile Include="Parser\ErrorTypes\AttributeListEmpty.cs" />
+    <Compile Include="Parser\ErrorTypes\AttributeValueMissing.cs" />
+    <Compile Include="Parser\ErrorTypes\EndOfStream.cs" />
+    <Compile Include="Parser\ErrorTypes\MissingClassDeclaration.cs" />
+    <Compile Include="Parser\ErrorTypes\MissingIdDeclaration.cs" />
+    <Compile Include="Parser\ErrorTypes\MultipleIdDeclarations.cs" />
+    <Compile Include="Parser\ErrorTypes\ParserError.cs" />
+    <Compile Include="Parser\ErrorTypes\UnexpectedToken.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\Production.cs" />
     <Compile Include="Parser\Stream.cs" />

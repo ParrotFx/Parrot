@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Parrot.Infrastructure;
+using Parrot.Parser.ErrorTypes;
 
 namespace Parrot.Tests
 {
@@ -189,10 +190,28 @@ namespace Parrot.Tests
             }
 
             [Test]
+            public void ElementWithTwoOrMoreIds()
+            {
+                var document = Parse("div#first-id#second-id#third-id");
+                var error1 = document.Errors[0] as MultipleIdDeclarations;
+                var error2 = document.Errors[1] as MultipleIdDeclarations;
+                Assert.AreEqual("second-id", error1.Id);
+                Assert.AreEqual("third-id", error2.Id);
+            }
+
+            [Test]
             public void ElementWithMultipleIdsThrowsParserException()
             {
-                Assert.Throws<ParserException>(() => Parse("div#first-id#second-id"));
-                Assert.Throws<ParserException>(() => Parse("div#first-id.class-name#second-id"));
+                var document = Parse("div#first-id#second-id");
+                var error = document.Errors[0] as MultipleIdDeclarations;
+                Assert.AreEqual("second-id", error.Id);
+            }
+
+            [Test]
+            public void ElementWithEmptyIdDeclaration()
+            {
+                var document = Parse("div#");
+                Assert.IsAssignableFrom<MissingIdDeclaration>(document.Errors[0]);
             }
         }
 
@@ -218,6 +237,14 @@ namespace Parrot.Tests
                     Assert.AreEqual(classes[i], (document.Children[0].Attributes[i].Value as StringLiteral).Values[0].Data);
                 }
             }
+
+            [Test]
+            public void ElementWithEmptyClassDeclaration()
+            {
+                var document = Parse("div.");
+                Assert.IsAssignableFrom<MissingClassDeclaration>(document.Errors[0]);
+            }
+
         }
 
         public class AttributeTests
@@ -272,13 +299,31 @@ namespace Parrot.Tests
             }
 
             [Test]
-            public void ElementWithInvalidAttributeDeclarationsThrowsParserException()
+            public void ElementWithMissingAttributeValueButWithEqualsAddsErrorToDocumentErrors()
             {
-                Assert.Throws<ParserException>(() => Parse("div[attr1=]"));
-                Assert.Throws<ParserException>(() => Parse("div[]"));
-                Assert.Throws<ParserException>(() => Parse("div[=\"value only\"]"));
-                Assert.Throws<ParserException>(() => Parse("div[attr1=\"missing closing quote]"));
-                Assert.Throws<ParserException>(() => Parse("div[attr1='missing closing quote]"));
+                var document = Parse("div[attr1=]");
+                Assert.IsAssignableFrom<AttributeValueMissing>(document.Errors[0]);
+            }
+
+            [Test]
+            public void ElementWithEmptyAttributeBracketsAddsErrorToDocumentErrors()
+            {
+                var document = Parse("div[]");
+                Assert.IsAssignableFrom<AttributeListEmpty>(document.Errors[0]);
+            }
+
+            [Test]
+            public void ElementWithAttributeValueOnlyAddsErrorToDocumentErrors()
+            {
+                var document = Parse("div[=\"value only\"]");
+                Assert.IsAssignableFrom<AttributeIdentifierMissing>(document.Errors[0]);
+            }
+
+            [Test]
+            public void AttributeValueWithMissingClosingQuoteAddsErrorToDocumentErrors()
+            {
+                var document = Parse("div[attr1=\"missing closing quote");
+                Assert.IsAssignableFrom<EndOfStream>(document.Errors[0]);
             }
 
             [Test]
@@ -489,6 +534,7 @@ namespace Parrot.Tests
         }
 
     }
+
     public class IdentifierExtractionTests
     {
     }

@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using Parrot.Parser.ErrorTypes;
 
 namespace Parrot.Parser
 {
@@ -21,29 +22,49 @@ namespace Parrot.Parser
     public class Parser
     {
         private readonly IHost _host;
+        public IList<ParserError> Errors { get; private set; }
 
         public Parser(IHost host)
         {
             _host = host;
+            Errors = new List<ParserError>();
         }
 
         public bool Parse(System.IO.Stream stream, out Document document)
         {
-            var tokenizer = new Tokenizer(stream);
-
-            var tokens = tokenizer.Tokens();
-
-            var tokenStream = new Stream(tokens);
-
             document = new Document(_host);
 
-            foreach (var statement in Parse(tokenStream))
+            try
             {
-                foreach (var s in (statement as StatementList))
+                var tokenizer = new Tokenizer(stream);
+
+                var tokens = tokenizer.Tokens();
+
+                var tokenStream = new Stream(tokens);
+
+                foreach (var statement in Parse(tokenStream))
                 {
-                    document.Children.Add(s);
+                    foreach (var s in statement)
+                    {
+                        if (s.Errors.Any())
+                        {
+                            foreach (var error in s.Errors)
+                            {
+                                error.Index += s.Index;
+                                Errors.Add(error);
+                            }
+                        }
+
+                        document.Children.Add(s);
+                    }
                 }
             }
+            catch (EndOfStreamException)
+            {
+                Errors.Add(new EndOfStream() { Index = (int)stream.Length });
+            }
+
+            document.Errors = Errors;
 
             return true;
         }
@@ -72,7 +93,10 @@ namespace Parrot.Parser
                         yield return statement;
                         break;
                     default:
-                        throw new ParserException(token);
+                        Errors.Add(new UnexpectedToken(token));
+                        stream.Next();
+                        break;
+                    //throw new ParserException(token);
                 }
 
             }
@@ -113,7 +137,9 @@ namespace Parrot.Parser
                     identifier = stream.Next();
                     break;
                 default:
-                    throw new ParserException(stream.Peek());
+                    Errors.Add(new UnexpectedToken(previousToken));
+                    return new StatementList(_host);
+                //throw new ParserException(stream.Peek());
             }
 
 
@@ -200,10 +226,10 @@ namespace Parrot.Parser
                 {
                     case TokenType.StringLiteral:
                     case TokenType.QuotedStringLiteral:
-                        return new StringLiteral(_host, value, tail);
+                        return new StringLiteral(_host, value, tail) { Index = identifier.Index };
 
                     case TokenType.StringLiteralPipe:
-                        return new StringLiteralPipe(_host, value.Substring(1), tail);
+                        return new StringLiteralPipe(_host, value.Substring(1), tail) { Index = identifier.Index };
                 }
             }
 
@@ -212,13 +238,13 @@ namespace Parrot.Parser
                 switch (previousToken.Type)
                 {
                     case TokenType.At:
-                        return new EncodedOutput(_host, value);
+                        return new EncodedOutput(_host, value) { Index = previousToken.Index };
                     case TokenType.Equal:
-                        return new RawOutput(_host, value);
+                        return new RawOutput(_host, value) { Index = previousToken.Index };
                 }
             }
 
-            return new Statement(_host, value, tail);
+            return new Statement(_host, value, tail) { Index = identifier.Index };
         }
 
         private StatementTail ParseSingleStatementTail(Stream stream)
@@ -374,7 +400,10 @@ namespace Parrot.Parser
                         stream.NextNoReturn();
                         goto doneWithParameter;
                     default:
-                        throw new ParserException(token);
+                        //read until )
+                        Errors.Add(new UnexpectedToken(token));
+                        return parameterList;
+                    //throw new ParserException(token);
                 }
             }
 
@@ -394,7 +423,9 @@ namespace Parrot.Parser
                     break;
                 default:
                     //invalid token
-                    throw new ParserException(identifier);
+                    Errors.Add(new UnexpectedToken(identifier));
+                    //throw new ParserException(identifier);
+                    return null;
             }
 
             //reduction
@@ -428,7 +459,12 @@ namespace Parrot.Parser
                         goto doneWithAttribute;
                     default:
                         //invalid token
-                        throw new ParserException(token);
+                        Errors.Add(new AttributeIdentifierMissing()
+                            {
+                                Index = token.Index
+                            });
+                        //throw new ParserException(token);
+                        return attributes;
                 }
             }
 
@@ -436,7 +472,12 @@ namespace Parrot.Parser
             if (attributes.Count == 0)
             {
                 //must be empty attribute list
-                throw new ParserException(token);
+                Errors.Add(new AttributeListEmpty()
+                    {
+                        Index = token.Index
+                    });
+                return attributes;
+                //throw new ParserException(token);
             }
 
             //do reduction here
@@ -454,19 +495,34 @@ namespace Parrot.Parser
                 var valueToken = stream.Peek();
                 if (valueToken == null)
                 {
-                    throw new ParserException(string.Format("Unexpected end of stream"));
+                    //TODO: Errors.Add(stream.Next());
+                    Errors.Add(new UnexpectedToken(identifier));
+                    return new Attribute(_host, identifier.Content, null);
+                    //throw new ParserException(string.Format("Unexpected end of stream"));
+                }
+
+                if (valueToken.Type == TokenType.CloseBracket)
+                {
+                    //then it's an invalid declaration
+                    Errors.Add(new AttributeValueMissing() { Index = valueToken.Index });
                 }
 
                 value = ParseStatement(stream).SingleOrDefault();
                 //force this as an attribute type
-
-                switch (value.Name)
+                if (value == null)
                 {
-                    case "true":
-                    case "false":
-                    case "null":
-                        value = new StringLiteral(_host, "\"" + value.Name + "\"");
-                        break;
+
+                }
+                else
+                {
+                    switch (value.Name)
+                    {
+                        case "true":
+                        case "false":
+                        case "null":
+                            value = new StringLiteral(_host, "\"" + value.Name + "\"");
+                            break;
+                    }
                 }
 
                 //reduction

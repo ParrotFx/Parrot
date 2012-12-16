@@ -1,5 +1,6 @@
 using System;
 using Parrot.Infrastructure;
+using Parrot.Parser.ErrorTypes;
 
 namespace Parrot.Nodes
 {
@@ -14,12 +15,19 @@ namespace Parrot.Nodes
         public string Name { get; set; }
         public AttributeList Attributes { get; private set; }
         public StatementList Children { get; private set; }
+        public int Index { get; set; }
+        public int Length { get; set; }
+        public IList<Identifier> IdentifierParts { get; private set; }
+        internal List<ParserError> Errors { get; set; }
 
-        internal Statement(IHost host) : base(host)
+        internal Statement(IHost host)
+            : base(host)
         {
             Attributes = new AttributeList(host);
             Children = new StatementList(host);
             Parameters = new ParameterList(host);
+            IdentifierParts = new List<Identifier>();
+            Errors = new List<ParserError>();
         }
 
         protected Statement(IHost host, string name)
@@ -27,32 +35,38 @@ namespace Parrot.Nodes
         {
 
             //required bullshit
-            if (name.IndexOfAny(new [] { '.', '#', ':'}) > -1)
+            if (name.IndexOfAny(new[] { '.', '#', ':' }) > -1)
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
                     switch (part.Type)
                     {
                         case IdentifierType.Id:
-                            if (part.Name.Length == 1)
+                            if (part.Name.Length == 0)
                             {
-                                throw new ParserException("Id must have a length");
+                                Errors.Add(new MissingIdDeclaration() { Index = part.Index - 1, Length = 1 });
+                                //throw new ParserException("Id must have a length");
                             }
-
-                            if (Attributes.Any(a => a.Key == "id"))
+                            else if (Attributes.Any(a => a.Key == "id"))
                             {
-                                throw new ParserException("Id added more than once");
+                                Errors.Add(new MultipleIdDeclarations(part.Name) { Index = part.Index - 1, Length = part.Name.Length + 1 });
+                                //throw new ParserException("Id added more than once");
                             }
-
-                            AddAttribute(new Attribute(Host, "id", new StringLiteral(host, "\"" + part.Name + "\"")));
+                            else
+                            {
+                                AddAttribute(new Attribute(Host, "id", new StringLiteral(host, "\"" + part.Name + "\"")));
+                            }
                             break;
                         case IdentifierType.Class:
-                            if (part.Name.Length == 1)
+                            if (part.Name.Length == 0)
                             {
-                                throw new ParserException("Id must have a length");
+                                Errors.Add(new MissingClassDeclaration() { Index = part.Index - 1, Length = 1 });
+                                //throw new ParserException("Id must have a length");
                             }
-
-                            AddAttribute(new Attribute(Host, "class", new StringLiteral(host, "\"" + part.Name + "\"")));
+                            else
+                            {
+                                AddAttribute(new Attribute(Host, "class", new StringLiteral(host, "\"" + part.Name + "\"")));
+                            }
                             break;
 
                         case IdentifierType.Type:
@@ -63,6 +77,8 @@ namespace Parrot.Nodes
                             Name = part.Name;
                             break;
                     }
+
+                    IdentifierParts.Add(part);
                 }
             }
             else
@@ -72,7 +88,13 @@ namespace Parrot.Nodes
 
         }
 
-        public Statement(IHost host, string name, StatementTail statementTail) : this(host, name)
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public Statement(IHost host, string name, StatementTail statementTail)
+            : this(host, name)
         {
             ParseStatementTail(statementTail);
         }
@@ -140,13 +162,13 @@ namespace Parrot.Nodes
         {
             switch (character)
             {
-                case ':': 
+                case ':':
                     currentType = IdentifierType.Type;
                     break;
-                case '#': 
+                case '#':
                     currentType = IdentifierType.Id;
                     break;
-                case '.': 
+                case '.':
                     currentType = IdentifierType.Class;
                     break;
             }
@@ -168,7 +190,9 @@ namespace Parrot.Nodes
                     yield return new Identifier
                     {
                         Name = source.Substring(index, i - index),
-                        Type = partType
+                        Type = partType,
+                        Index = index,
+                        Length = i - index,
                     };
 
                     index = i + 1;
@@ -181,7 +205,8 @@ namespace Parrot.Nodes
             yield return new Identifier
             {
                 Name = source.Substring(index),
-                Type = partType
+                Type = partType,
+                Index = index
             };
         }
     }
