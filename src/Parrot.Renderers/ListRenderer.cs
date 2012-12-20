@@ -18,6 +18,15 @@ namespace Parrot.Renderers
     {
         public ListRenderer(IHost host) : base(host) { }
 
+        public override IEnumerable<string> Elements
+        {
+            get
+            {
+                yield return "ul";
+                yield return "ol";
+            }
+        }
+
         public override string DefaultChildTag
         {
             get { return "li"; }

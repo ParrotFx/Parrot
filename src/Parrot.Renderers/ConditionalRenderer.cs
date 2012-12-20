@@ -12,6 +12,11 @@ namespace Parrot.Renderers
     {
         public ConditionalRenderer(IHost host) : base(host) { }
 
+        public override IEnumerable<string> Elements
+        {
+            get { yield return "conditional"; }
+        }
+
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;

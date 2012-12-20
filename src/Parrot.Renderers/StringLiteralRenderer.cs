@@ -45,6 +45,8 @@ namespace Parrot.Renderers
             return data;
         }
 
+        public IEnumerable<string> Elements { get { yield return "string"; } }
+
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();

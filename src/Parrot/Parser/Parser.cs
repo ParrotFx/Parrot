@@ -114,6 +114,12 @@ namespace Parrot.Parser
         private StatementList ParseStatement(Stream stream)
         {
             var previousToken = stream.Peek();
+            if (previousToken == null)
+            {
+                Errors.Add(new EndOfStream());
+                return new StatementList(_host);
+            }
+
             var tokenType = previousToken.Type;
             Token identifier = null;
             switch (tokenType)

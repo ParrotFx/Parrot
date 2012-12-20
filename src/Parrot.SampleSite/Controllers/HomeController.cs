@@ -115,7 +115,7 @@ ul#phoneNumbers.phone(PhoneNumber) {
                 result = "Oops!"; // parser.ErrorString;
             }
 
-            return View(Tuple.Create(template, model, result));
+            return View(Tuple.Create(template, model, result, document.Errors));
         }
 
         public ActionResult Hattan()

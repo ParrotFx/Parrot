@@ -23,6 +23,8 @@ namespace Parrot.Renderers
             get { return "div"; }
         }
 
+        public virtual IEnumerable<string> Elements { get { yield return "*"; } }
+
         public virtual void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;

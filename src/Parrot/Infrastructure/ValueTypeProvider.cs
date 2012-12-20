@@ -54,6 +54,7 @@ namespace Parrot.Infrastructure
             else
             {
                 //check for keywords
+                //TODO: handle . variables
                 if (KeywordHandlers.Value.ContainsKey(value))
                 {
                     result = KeywordHandlers.Value[value](value);

@@ -18,6 +18,11 @@ namespace Parrot.Mvc.Renderers
             
         }
 
+        public override IEnumerable<string> Elements
+        {
+            get { yield return "partial"; }
+        }
+
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             object localModel = documentHost;

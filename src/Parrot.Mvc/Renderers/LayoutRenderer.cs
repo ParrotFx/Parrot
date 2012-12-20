@@ -29,6 +29,11 @@ namespace Parrot.Mvc.Renderers
             _host = host;
         }
 
+        public override IEnumerable<string> Elements
+        {
+            get { yield return "layout"; }
+        }
+
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             string layout = "";

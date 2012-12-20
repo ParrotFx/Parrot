@@ -13,6 +13,11 @@ namespace Parrot.Mvc.Renderers
     {
         public ContentRenderer(IHost host) : base(host) { }
 
+        public override IEnumerable<string> Elements
+        {
+            get { yield return "content"; }
+        }
+
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var childrenQueue = documentHost.GetValueOrDefault("_LayoutChildren_") as Queue<StatementList>;

@@ -12,6 +12,8 @@ namespace Parrot.Renderers
     {
         public DocTypeRenderer(IHost host) : base(host) { }
 
+        public IEnumerable<string> Elements { get { yield return "doctype"; } }
+
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var value = "html"; //default value of "html"

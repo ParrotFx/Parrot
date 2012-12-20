@@ -8,6 +8,7 @@ html {
 		link[rel="stylesheet" type="text/css" href="http://thisisparrot.com/stylesheets/stylesheet.css" media="screen"]
 		link[rel="stylesheet" type="text/css" href="http://thisisparrot.com/stylesheets/pygment_trac.css" media="screen"]
 		link[rel="stylesheet" type="text/css" href="http://thisisparrot.com/stylesheets/print.css" media="print"]
+		link[rel="stylesheet" type="text/css" href="~/content/site.css" media="screen"]
 
 		style[type='text/css'] {
             |label { margin-right: .5em; font-weight: bold; }
@@ -18,10 +19,9 @@ html {
 	}
 	
     body {
-        header[style="padding: 10px 0 10px 0;"] {
+        header {
             div.inner {
                 h1 > |Parrot Test Drive
-
                 h2 > |Try out Parrot right here in your browser!
                 a.button[href="https://github.com/Buildstarted/Parrot"] {
 	                small > |View project on
@@ -31,19 +31,16 @@ html {
         }
 
         div#content-wrapper {
-            div.inner.clearfix[style='width:100%'] {
-	            section#main-content[style='width:100%;'] {
+            div.inner.clearfix {
+	            section#main-content {
 		            form[action='/' method='post'] {
-			            table[style='width:100%;'] {
+			            table {
 				            tr {
-					            td[style='width:45%'] {
+					            td.half {
 						            h3 > |Model
-						            textarea[
-								            name='model' 
-								            style='width:95%; height:300px;'
-						            ] > =Item2
+						            textarea[name='model'] > =Item2
 					            }
-					            td[style='width:45%'] {
+					            td.half {
 						            h3 > |Template
 						            textarea[name='template' style='width:95%; height:300px;'] > =Item1
 					            }
@@ -52,14 +49,15 @@ html {
 			            input[type='submit' value='Parse']
 		            }
 		            table[style='width:100%; text-align:left;'] {
+                        tr {
+                            td[colspan='2' style='text-align:left;'] > ul(Item4) > li > @Message
+                        }
 			            tr {
-				            td[style='width:50%; vertical-align:top; text-align:left; max-width:50%;'] {
+				            td.output {
 					            h2 > "Output"
-					            pre {
-						            @Item3
-					            }
+					            pre > @Item3
 				            }
-				            td[style='width:50%; vertical-align:top; text-align:left;'] {
+				            td.render {
 					            h2 > "Render"   
                                 =Item3
 				            }

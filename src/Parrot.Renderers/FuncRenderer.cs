@@ -16,6 +16,14 @@ namespace Parrot.Renderers
             _renderer = renderer;
         }
 
+        public IEnumerable<string> Elements
+        {
+            get
+            {
+                yield break;
+            }
+        }
+
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             _renderer(statement, writer, documentHost, model);

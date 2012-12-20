@@ -101,6 +101,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="Views\Shared\layout.parrot" />
     <None Include="Views\Home\child.parrot" />
     <Content Include="Views\Home\hattan.parrot" />

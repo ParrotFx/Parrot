@@ -30,20 +30,20 @@ namespace Parrot.Tests
 
             parser.Parse(parrot, out document);
 
-            var rendererFactory = new RendererFactory(host);
-            rendererFactory.RegisterFactory("*", new HtmlRenderer(host));
-            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host));
-            rendererFactory.RegisterFactory("doctype", new DocTypeRenderer(host));
-            rendererFactory.RegisterFactory("layout", new LayoutRenderer(host));
-            rendererFactory.RegisterFactory("content", new ContentRenderer(host));
-            rendererFactory.RegisterFactory("foreach", new ForeachRenderer(host));
-            rendererFactory.RegisterFactory("conditional", new ConditionalRenderer(host));
-            rendererFactory.RegisterFactory("input", new InputRenderer(host));
-            rendererFactory.RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
-            rendererFactory.RegisterFactory(
-                new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" },
-                new SelfClosingRenderer(host)
-            );
+            var rendererFactory = new RendererFactory(new IRenderer[]
+                        {
+                            new HtmlRenderer(host),
+                            new StringLiteralRenderer(host),
+                            new DocTypeRenderer(host),
+                            new LayoutRenderer(host),
+                            new PartialRenderer(host),
+                            new ContentRenderer(host),
+                            new ForeachRenderer(host),
+                            new InputRenderer(host),
+                            new ConditionalRenderer(host),
+                            new ListRenderer(host),
+                            new SelfClosingRenderer(host)
+                        });
 
             DocumentView documentView = new DocumentView(new MemoryHost(), rendererFactory, documentHost, document);
 

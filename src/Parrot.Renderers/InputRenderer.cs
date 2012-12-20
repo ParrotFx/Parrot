@@ -15,6 +15,11 @@ namespace Parrot.Renderers
     {
         public InputRenderer(IHost host) : base(host) { }
 
+        public override IEnumerable<string> Elements
+        {
+            get { yield return "input"; }
+        }
+
         private string GetType(Statement statement, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model)
         {
             for (int i = 0; i < statement.Attributes.Count; i++)

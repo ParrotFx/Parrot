@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AspNetHost.cs" />
     <Compile Include="DefaultViewCache.cs" />
+    <Compile Include="ParrotView.cs" />
     <Compile Include="PathLocationResult.cs" />
     <Compile Include="PathResolver.cs" />
     <Compile Include="Renderers\AttributeRenderer.cs" />

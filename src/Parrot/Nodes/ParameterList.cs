@@ -13,7 +13,7 @@ namespace Parrot.Nodes
             List.AddRange(nodes);
         }
 
-        public ParameterList(IHost host, ParameterList list, params Parameter[] nodes) : base(host)
+        public ParameterList(IHost host, ParameterList list, params Parameter[] nodes)  : base(host)
         {
             List.AddRange(list);
             List.AddRange(nodes);

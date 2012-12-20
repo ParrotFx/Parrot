@@ -2,6 +2,6 @@
 {
     public class AttributeListEmpty : ParserError
     {
-        public override string Message { get { return ""; } }
+        public override string Message { get { return "Attribute list cannot be empty"; } }
     }
 }

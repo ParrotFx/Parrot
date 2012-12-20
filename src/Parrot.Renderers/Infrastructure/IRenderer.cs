@@ -8,6 +8,7 @@ namespace Parrot.Renderers.Infrastructure
 
     public interface IRenderer
     {
+        IEnumerable<string> Elements { get; } 
         void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model);
     }
 }

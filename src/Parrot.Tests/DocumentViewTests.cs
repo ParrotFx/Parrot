@@ -38,9 +38,7 @@ namespace Parrot.Tests
             Document document;
             parser.Parse(text, out document);
             
-            var rendererFactory = new RendererFactory(host);
-            rendererFactory.RegisterFactory("*", new HtmlRenderer(host));
-            rendererFactory.RegisterFactory("string", new StringLiteralRenderer(host));
+            var rendererFactory = new RendererFactory(new IRenderer[] { new HtmlRenderer(host), new StringLiteralRenderer(host)});
 
             DocumentView documentView = new DocumentView(
                 host,

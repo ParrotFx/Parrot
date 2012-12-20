@@ -11,55 +11,24 @@ namespace Parrot.Renderers.Infrastructure
     {
         readonly Dictionary<string, IRenderer> _renderers;
 
-        public RendererFactory(IHost host)
+        public RendererFactory(IEnumerable<IRenderer> renderers)
         {
             _renderers = new Dictionary<string, IRenderer>();
-
-            //register default renderers
-            //RegisterFactory(new[] { "base", "basefont", "frame", "link", "meta", "area", "br", "col", "hr", "img", "param" }, new SelfClosingRenderer(host));
-            //RegisterFactory("doctype", new DocTypeRenderer());
-            //RegisterFactory("rawoutput", new RawOutputRenderer(host));
-            //RegisterFactory("output", new OutputRenderer(host));
-            //RegisterFactory("input", new InputRenderer(host));
-            //RegisterFactory("string", new StringLiteralRenderer(host));
-            //RegisterFactory("literal", new LiteralRenderer(host));
-            //RegisterFactory("attribute", new LiteralRenderer(host));
-            //RegisterFactory("foreach", new ForeachRenderer(host));
-            //RegisterFactory("conditional", new ConditionalRenderer(host));
-            ////RegisterFactory("this", new ThisRenderer(host));
-            //RegisterFactory(new[] { "ul", "ol" }, new ListRenderer(host));
-
-            //default renderer
-            //RegisterFactory("*", new HtmlRenderer(host));
+            foreach (var renderer in renderers)
+            {
+                RegisterFactory(renderer);
+            }
         }
 
-        public void RegisterFactory(string[] blocks, Func<Statement, IParrotWriter, object, object, IRenderer> renderer)
+        public void RegisterFactory(IRenderer renderer)
         {
-            foreach (var block in blocks)
+            foreach (var block in renderer.Elements)
             {
                 RegisterFactory(block, renderer);
             }
         }
 
-        public void RegisterFactory(string blockName, Func<Statement, IParrotWriter, object, object, IRenderer> renderer)
-        {
-            if (_renderers.ContainsKey(blockName))
-            {
-                _renderers.Remove(blockName);
-            }
-            
-            _renderers.Add(blockName, new FuncRenderer(renderer));
-        }
-
-        public void RegisterFactory(string[] blocks, IRenderer renderer)
-        {
-            foreach (var block in blocks)
-            {
-                RegisterFactory(block, renderer);
-            }
-        }
-
-        public void RegisterFactory(string blockName, IRenderer renderer)
+        private void RegisterFactory(string blockName, IRenderer renderer)
         {
             if (string.IsNullOrEmpty(blockName))
             {
