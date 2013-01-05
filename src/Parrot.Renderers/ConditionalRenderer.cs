@@ -1,16 +1,17 @@
-﻿
-namespace Parrot.Renderers
+﻿namespace Parrot.Renderers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Parrot.Infrastructure;
-    using Nodes;
-    using Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
 
     public class ConditionalRenderer : HtmlRenderer
     {
-        public ConditionalRenderer(IHost host) : base(host) { }
+        public ConditionalRenderer(IHost host) : base(host)
+        {
+        }
 
         public override IEnumerable<string> Elements
         {
@@ -20,7 +21,7 @@ namespace Parrot.Renderers
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
+            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
 
             var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
@@ -35,8 +36,8 @@ namespace Parrot.Renderers
 
             foreach (var child in statement.Children)
             {
-                string value = null;
-                var valueWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
+                string value;
+                var valueWriter = Host.CreateWriter();
 
                 //get string value
                 var renderer = rendererFactory.GetRenderer(child.Name);

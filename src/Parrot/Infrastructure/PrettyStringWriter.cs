@@ -17,12 +17,12 @@ namespace Parrot.Infrastructure
                 //closing
                 return PrettyPrintWriteType.SelfClosingElement;
             }
-            
+
             if (value.StartsWith("</") && value.EndsWith(">"))
             {
                 return PrettyPrintWriteType.ClosingElement;
             }
-            
+
             if (value.StartsWith("<") && value.EndsWith(">"))
             {
                 return PrettyPrintWriteType.OpeningElement;
@@ -59,7 +59,7 @@ namespace Parrot.Infrastructure
                     {
                         base.Write("\r\n");
                     }
-                    _indentation -=1;
+                    _indentation -= 1;
                     addNewLineAfterWrite = true;
                     break;
                 case PrettyPrintWriteType.OpeningElement:
@@ -87,9 +87,6 @@ namespace Parrot.Infrastructure
             {
                 base.Write("\r\n");
             }
-
-
         }
-
     }
 }

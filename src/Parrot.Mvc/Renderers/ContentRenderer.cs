@@ -1,17 +1,17 @@
-using System.Collections.Generic;
-using System.IO;
-
 namespace Parrot.Mvc.Renderers
 {
-    using Parrot.Infrastructure;
     using System;
+    using System.Collections.Generic;
+    using Parrot.Infrastructure;
     using Parrot.Nodes;
     using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
     public class ContentRenderer : HtmlRenderer
     {
-        public ContentRenderer(IHost host) : base(host) { }
+        public ContentRenderer(IHost host) : base(host)
+        {
+        }
 
         public override IEnumerable<string> Elements
         {

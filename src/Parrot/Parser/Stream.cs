@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Parrot.Lexer;
-
 namespace Parrot.Parser
 {
+    using System.Collections.Generic;
+    using Parrot.Lexer;
+
     /// <summary>
     /// TODO: Update summary.
     /// </summary>

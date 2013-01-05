@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.Mvc;
-using Parrot.Renderers;
-using Parrot.Renderers.Infrastructure;
-
-namespace Parrot.Mvc.Renderers
+﻿namespace Parrot.Mvc.Renderers
 {
-    class AttributeRenderer : IAttributeRenderer
+    using System;
+    using System.Web;
+    using System.Web.Mvc;
+    using Parrot.Renderers.Infrastructure;
+
+    internal class AttributeRenderer : IAttributeRenderer
     {
         public string PostRender(string key, object value)
         {
@@ -27,7 +23,6 @@ namespace Parrot.Mvc.Renderers
             }
 
             return null;
-
         }
     }
 }

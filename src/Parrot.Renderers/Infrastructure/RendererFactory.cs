@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Parrot.Nodes;
-
-namespace Parrot.Renderers.Infrastructure
+﻿namespace Parrot.Renderers.Infrastructure
 {
-    using Parrot.Infrastructure;
+    using System;
+    using System.Collections.Generic;
 
     public class RendererFactory : IRendererFactory
     {
-        readonly Dictionary<string, IRenderer> _renderers;
+        private readonly Dictionary<string, IRenderer> _renderers;
 
         public RendererFactory(IEnumerable<IRenderer> renderers)
         {

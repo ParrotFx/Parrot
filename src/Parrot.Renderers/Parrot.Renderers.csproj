@@ -56,6 +56,8 @@
     </Compile>
     <Compile Include="HtmlRenderer.cs" />
     <Compile Include="Infrastructure\IAttributeRenderer.cs" />
+    <Compile Include="Infrastructure\IHost.cs" />
+    <Compile Include="Infrastructure\IPathResolver.cs" />
     <Compile Include="Infrastructure\ModelValueProviderFactory.cs" />
     <Compile Include="Infrastructure\ExpandoObjectModelValueProvider.cs" />
     <Compile Include="Infrastructure\IModelValueProvider.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="ListRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ParameterRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\RendererFactory.cs" />
     <Compile Include="SelfClosingRenderer.cs">

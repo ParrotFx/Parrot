@@ -4,29 +4,24 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Web.Mvc;
-using Parrot.Infrastructure;
-
 namespace Parrot.Mvc.Renderers
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Nodes;
+    using Parrot.Infrastructure;
+    using Parrot.Nodes;
     using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class LayoutRenderer : HtmlRenderer, IRenderer
+    public class LayoutRenderer : HtmlRenderer
     {
-        private readonly IHost _host;
-
         public LayoutRenderer(IHost host) : base(host)
         {
-            _host = host;
         }
 
         public override IEnumerable<string> Elements
@@ -39,15 +34,21 @@ namespace Parrot.Mvc.Renderers
             string layout = "";
             if (statement.Parameters != null && statement.Parameters.Any())
             {
+                Type modelType = model != null ? model.GetType() : null;
+                var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
+
+                var parameterLayout = GetLocalModelValue(documentHost, statement, modelValueProvider, model) ?? "_layout";
+
                 //assume only the first is the path
                 //second is the argument (model)
-                layout = statement.Parameters[0].Value;
+                layout = parameterLayout.ToString();
             }
+
 
             //ok...we need to load the view
             //then pass the model to it and
             //then return the result
-            var engine = _host.DependencyResolver.Resolve<IViewEngine>();
+            var engine = (Host as AspNetHost).ViewEngine;
             var result = engine.FindView(null, layout, null, false);
             if (result != null)
             {
@@ -65,7 +66,7 @@ namespace Parrot.Mvc.Renderers
                     }
                     (documentHost["_LayoutChildren_"] as Queue<StatementList>).Enqueue(statement.Children);
 
-                    DocumentView view = new DocumentView(_host, rendererFactory, documentHost, document);
+                    DocumentView view = new DocumentView(Host, rendererFactory, documentHost, document);
 
                     view.Render(writer);
                 }

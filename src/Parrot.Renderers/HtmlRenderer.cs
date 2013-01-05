@@ -1,21 +1,18 @@
-﻿
-namespace Parrot.Renderers
+﻿namespace Parrot.Renderers
 {
-    using Parrot.Infrastructure;
     using System;
-    using Infrastructure;
-    using Nodes;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Parrot.Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
 
     public class HtmlRenderer : BaseRenderer, IRenderer
     {
-        private IAttributeRenderer _attributeRenderer;
-
-        public HtmlRenderer(IHost host) : base(host)
+        public HtmlRenderer(IHost host)
         {
-            _attributeRenderer = host.DependencyResolver.Resolve<IAttributeRenderer>();
+            Host = host;
         }
 
         public virtual string DefaultChildTag
@@ -23,12 +20,17 @@ namespace Parrot.Renderers
             get { return "div"; }
         }
 
-        public virtual IEnumerable<string> Elements { get { yield return "*"; } }
+        protected override IHost Host { get; set; }
+
+        public virtual IEnumerable<string> Elements
+        {
+            get { yield return "*"; }
+        }
 
         public virtual void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
+            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
 
             var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
@@ -101,15 +103,14 @@ namespace Parrot.Renderers
             }
 
             //render attribute
-            var attributeRenderer = Host.DependencyResolver.Resolve<IAttributeRenderer>();
-            var tempWriter = Host.DependencyResolver.Resolve<IParrotWriter>();
+            var tempWriter = Host.CreateWriter();
             renderer.Render(tempWriter, rendererFactory, attribute.Value, documentHost, model);
 
             var attributeValue = tempWriter.Result();
 
-            if (attributeRenderer != null)
+            if (Host.PathResolver != null)
             {
-                attributeValue = attributeRenderer.PostRender(attribute.Key, attributeValue);
+                attributeValue = Host.PathResolver.ResolveAttributeRelativePath(attribute.Key, attributeValue);
             }
 
             return attributeValue;
@@ -119,23 +120,21 @@ namespace Parrot.Renderers
         {
             foreach (var attribute in statement.Attributes)
             {
-                object attributeValue = model;
-
                 if (attribute.Value == null)
                 {
                     builder.MergeAttribute(attribute.Key, attribute.Key, true);
                 }
                 else
                 {
-                    attributeValue = RenderAttribute(attribute, rendererFactory, documentHost, model);
+                    object attributeValue = RenderAttribute(attribute, rendererFactory, documentHost, model);
 
                     if (attribute.Key == "class")
                     {
-                        builder.AddCssClass((string)attributeValue);
+                        builder.AddCssClass((string) attributeValue);
                     }
                     else
                     {
-                        builder.MergeAttribute(attribute.Key, (string)attributeValue, true);
+                        builder.MergeAttribute(attribute.Key, (string) attributeValue, true);
                     }
                 }
             }
@@ -144,22 +143,15 @@ namespace Parrot.Renderers
 
     public abstract class BaseRenderer
     {
-        protected IHost Host;
-        protected IModelValueProviderFactory ModelValueProviderFactory;
-
-        protected BaseRenderer(IHost host)
-        {
-            Host = host;
-            ModelValueProviderFactory = host.DependencyResolver.Resolve<IModelValueProviderFactory>();
-        }
+        protected abstract IHost Host { get; set; }
 
         protected object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
         {
-            object value = null;
+            object value;
             if (statement.Parameters.Count > 0)
             {
                 //check here first
-                if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].ValueType, statement.Parameters[0].Value, out value))
+                if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].Value, out value))
                 {
                     return value;
                 }
@@ -168,6 +160,7 @@ namespace Parrot.Renderers
             if (model != null)
             {
                 //check DocumentHost next
+                //if (modelValueProvider.GetValue(documentHost, model, null, out value))
                 if (modelValueProvider.GetValue(documentHost, model, Parrot.Infrastructure.ValueType.Property, null, out value))
                 {
                     return value;

@@ -1,13 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
-
 namespace Parrot.Renderers.Infrastructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using Parrot.Infrastructure;
 
     public class ObjectModelValueProvider : IModelValueProvider
     {
+        private readonly IValueTypeProvider _valueTypeProvider;
+
+        public ObjectModelValueProvider(IValueTypeProvider valueTypeProvider)
+        {
+            _valueTypeProvider = valueTypeProvider;
+        }
+
+        public bool GetValue(IDictionary<string, object> documentHost, object model, object property, out object value)
+        {
+            var valueType = GetValueType(ref property);
+
+            return GetValue(documentHost, model, valueType, property, out value);
+        }
+
         public bool GetValue(IDictionary<string, object> documentHost, object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
@@ -38,6 +51,20 @@ namespace Parrot.Renderers.Infrastructure
             return false;
         }
 
+        private Parrot.Infrastructure.ValueType GetValueType(ref object property)
+        {
+            if (property != null)
+            {
+                var result = _valueTypeProvider.GetValue((string) property);
+
+                property = result.Value ?? null;
+
+                return result.Type;
+            }
+
+            return Parrot.Infrastructure.ValueType.Keyword;
+        }
+
         private bool GetModelProperty(object model, object property, out object value)
         {
             if (property != null)
@@ -63,7 +90,6 @@ namespace Parrot.Renderers.Infrastructure
                 {
                     if (parameters[0].Length > 0)
                     {
-
                         var pi = model.GetType().GetProperty(parameters[0]);
                         if (pi != null)
                         {

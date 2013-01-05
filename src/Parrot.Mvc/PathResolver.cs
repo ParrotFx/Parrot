@@ -7,8 +7,12 @@
 
 namespace Parrot.Mvc
 {
+    using System;
     using System.IO;
+    using System.Web;
     using System.Web.Hosting;
+    using System.Web.Mvc;
+    using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
@@ -25,7 +29,7 @@ namespace Parrot.Mvc
             return HostingEnvironment.VirtualPathProvider.FileExists(path);
         }
 
-        public string VirtualFilePath(string path)
+        public string ResolvePath(string path)
         {
             if (FileExists(path))
             {
@@ -35,12 +39,22 @@ namespace Parrot.Mvc
 
             throw new FileNotFoundException(path);
         }
-    }
 
-    public interface IPathResolver
-    {
-        Stream OpenFile(string path);
-        bool FileExists(string path);
-        string VirtualFilePath(string path);
+        public string ResolveAttributeRelativePath(string key, object value)
+        {
+            if (value != null)
+            {
+                string temp = value.ToString();
+                if (temp.StartsWith("~/") && !key.StartsWith("data-val", StringComparison.OrdinalIgnoreCase))
+                {
+                    //convert this to a server path
+
+                    return UrlHelper.GenerateContentUrl(temp, new HttpContextWrapper(HttpContext.Current));
+                }
+                return temp;
+            }
+
+            return null;
+        }
     }
 }

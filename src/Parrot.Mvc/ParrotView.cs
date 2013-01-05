@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Web.Mvc;
-using Parrot.Infrastructure;
-using Parrot.Nodes;
-using Parrot.Renderers;
-using Parrot.Renderers.Infrastructure;
-
-namespace Parrot.Mvc
+﻿namespace Parrot.Mvc
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Web.Mvc;
+    using Parrot.Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers;
+    using Parrot.Renderers.Infrastructure;
+
     public class ParrotView : IView
     {
-        readonly string _viewPath;
+        private readonly string _viewPath;
         private readonly IHost _host;
 
-        public ParrotView(IHost host,  string viewPath)
+        public ParrotView(IHost host, string viewPath)
         {
-            this._viewPath = viewPath;
+            _viewPath = viewPath;
             _host = host;
         }
 
@@ -25,7 +25,7 @@ namespace Parrot.Mvc
 
         internal Stream LoadStream()
         {
-            var pathResolver = _host.DependencyResolver.Resolve<IPathResolver>();
+            var pathResolver = _host.PathResolver;
             return pathResolver.OpenFile(_viewPath);
         }
 
@@ -46,7 +46,7 @@ namespace Parrot.Mvc
 
         public void Render(ViewContext viewContext, TextWriter writer)
         {
-            var parrotWriter = _host.DependencyResolver.Resolve<IParrotWriter>();
+            var parrotWriter = _host.CreateWriter();
 
             Render(viewContext, parrotWriter);
 
@@ -55,7 +55,7 @@ namespace Parrot.Mvc
 
         internal Document LoadDocument(string template)
         {
-            Parser.Parser parser = new Parser.Parser(_host);
+            Parser.Parser parser = new Parser.Parser();
             Document document;
 
             if (parser.Parse(template, out document))
@@ -66,7 +66,7 @@ namespace Parrot.Mvc
             throw new Exception("Unable to parse: ");
         }
 
-        string Parse(ViewContext viewContext, string template)
+        private string Parse(ViewContext viewContext, string template)
         {
             Stopwatch watch = Stopwatch.StartNew();
 
@@ -87,10 +87,10 @@ namespace Parrot.Mvc
             }
 
             //need to create a custom viewhost
-            var rendererFactory = _host.DependencyResolver.Resolve<IRendererFactory>();
+            var rendererFactory = _host.RendererFactory;
             DocumentView view = new DocumentView(_host, rendererFactory, documentHost, document);
 
-            IParrotWriter writer = _host.DependencyResolver.Resolve<IParrotWriter>();
+            IParrotWriter writer = _host.CreateWriter();
             view.Render(writer);
 
             watch.Stop();

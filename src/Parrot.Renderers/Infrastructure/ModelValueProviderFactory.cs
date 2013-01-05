@@ -9,17 +9,17 @@ namespace Parrot.Renderers.Infrastructure
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
-    using System.Text;
+    using Parrot.Infrastructure;
 
     public class ModelValueProviderFactory : IModelValueProviderFactory
     {
-        readonly Dictionary<Type, Func<IModelValueProvider>> _providers;
+        private readonly Dictionary<Type, Func<IModelValueProvider>> _providers;
 
-        public ModelValueProviderFactory()
+        public ModelValueProviderFactory(IValueTypeProvider valueTypeProvider)
         {
             _providers = new Dictionary<Type, Func<IModelValueProvider>>();
-            _providers.Add(typeof (object), () => new ObjectModelValueProvider());
-            _providers.Add(typeof(ExpandoObject), () => new ExpandoObjectModelValueProvider());
+            _providers.Add(typeof (object), () => new ObjectModelValueProvider(valueTypeProvider));
+            _providers.Add(typeof (ExpandoObject), () => new ExpandoObjectModelValueProvider(valueTypeProvider));
         }
 
         public void Register(Type type, Func<IModelValueProvider> provider)
@@ -29,9 +29,11 @@ namespace Parrot.Renderers.Infrastructure
                 _providers.Remove(type);
             }
 
-            _providers.Add(type, provider);
+            if (type != null)
+            {
+                _providers.Add(type, provider);
+            }
         }
-
 
 
         public IModelValueProvider Get(Type type)
@@ -41,7 +43,7 @@ namespace Parrot.Renderers.Infrastructure
                 return _providers[type]();
             }
 
-            return _providers[typeof(object)]();
+            return _providers[typeof (object)]();
         }
     }
 }

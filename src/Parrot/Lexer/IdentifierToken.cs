@@ -1,4 +1,6 @@
 namespace Parrot.Lexer
 {
-    internal class IdentifierToken : Token {}
+    internal class IdentifierToken : Token
+    {
+    }
 }

@@ -1,5 +1,3 @@
-using Parrot.Infrastructure;
-
 namespace Parrot.Nodes
 {
     using System.Collections;
@@ -9,7 +7,7 @@ namespace Parrot.Nodes
     {
         #region " IList Members "
 
-        protected List<AbstractNode> _list = new List<AbstractNode>();
+        private readonly List<AbstractNode> _list = new List<AbstractNode>();
 
         public IEnumerator<AbstractNode> GetEnumerator()
         {
@@ -76,18 +74,20 @@ namespace Parrot.Nodes
             get { return _list[index]; }
             set { _list[index] = value; }
         }
+
         #endregion
 
-        public AbstractNodeList(IHost host) : base(host)
+        public AbstractNodeList()
         {
             _list = new List<AbstractNode>(64);
         }
     }
 
 
-    public class AbstractNodeList<T> : AbstractNode, IList<T> where T: AbstractNode
+    public class AbstractNodeList<T> : AbstractNode, IList<T> where T : AbstractNode
     {
         #region " IList Members "
+
         protected internal List<T> List = new List<T>(64);
 
         public IEnumerator<T> GetEnumerator()
@@ -155,12 +155,12 @@ namespace Parrot.Nodes
             get { return List[index]; }
             set { List[index] = value; }
         }
+
         #endregion
 
-        public AbstractNodeList(IHost host) : base(host)
+        public AbstractNodeList()
         {
             List = new List<T>();
         }
     }
-
 }

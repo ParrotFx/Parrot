@@ -6,11 +6,6 @@
 
 namespace Parrot.Debugger
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
@@ -51,7 +46,7 @@ namespace Parrot.Debugger
                 return this;
             }
         }
-        
+
         public static ILogger WriteLine(object value)
         {
             return Instance.WriteLine(value);

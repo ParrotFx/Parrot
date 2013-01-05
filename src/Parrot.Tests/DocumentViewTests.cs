@@ -4,19 +4,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.IO;
-using NUnit.Framework;
-using Parrot.Infrastructure;
-using Parrot.Nodes;
-using Parrot.Renderers;
-using Parrot.Renderers.Infrastructure;
-
 namespace Parrot.Tests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using NUnit.Framework;
+    using Parrot.Nodes;
+    using Parrot.Renderers;
+    using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
@@ -29,25 +23,25 @@ namespace Parrot.Tests
             var text = "div[attr1='test'](Model) > @Value";
             var host = new MemoryHost();
 
-            var parser = new Parser.Parser(host);
+            var parser = new Parser.Parser();
             var documentHost = new Dictionary<string, object>
-            {
-                { "Model" , new { Value = "This is a test" } } 
-            };
+                {
+                    {"Model", new {Value = "This is a test"}}
+                };
 
             Document document;
             parser.Parse(text, out document);
-            
-            var rendererFactory = new RendererFactory(new IRenderer[] { new HtmlRenderer(host), new StringLiteralRenderer(host)});
+
+            var rendererFactory = new RendererFactory(new IRenderer[] {new HtmlRenderer(host), new StringLiteralRenderer(host)});
 
             DocumentView documentView = new DocumentView(
                 host,
                 rendererFactory,
                 documentHost,
                 document
-            );
+                );
 
-            var writer = host.DependencyResolver.Resolve<IParrotWriter>();
+            var writer = host.CreateWriter();
 
             documentView.Render(writer);
 

@@ -4,19 +4,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using NUnit.Framework;
-
 namespace Parrot.Tests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Dynamic;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Text;
-    using Renderers.Infrastructure;
-    using ValueType = Infrastructure.ValueType;
+    using NUnit.Framework;
+    using Parrot.Infrastructure;
+    using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
@@ -36,12 +30,12 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.StringLiteral;
             object property = "this is a string literal";
-            object model = null;
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
-            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, null, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -51,10 +45,11 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Local;
             object property = "this";
-            object model = new { Name = "Ben" };
+            object model = new {Name = "Ben"};
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
@@ -66,12 +61,12 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Keyword;
             object property = false;
-            object model = null;
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
-            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, null, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -81,10 +76,11 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Property;
             object property = "Name";
-            object model = new { Name = "Ben" };
+            object model = new {Name = "Ben"};
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
@@ -96,10 +92,11 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Property;
             object property = "Name.FirstName";
-            object model = new { Name = new { FirstName = "Ben", LastName = "Dornis" } };
+            object model = new {Name = new {FirstName = "Ben", LastName = "Dornis"}};
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
@@ -110,18 +107,17 @@ namespace Parrot.Tests
     [TestFixture]
     public class ExpandoObjectModelValueProviderTests
     {
-
         [Test]
         public void ExpandoObjectStringLiteral()
         {
             var valueType = ValueType.StringLiteral;
             dynamic property = "this is a string literal";
-            object model = null;
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
-            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, null, valueType, property, out result);
             Assert.IsInstanceOf<string>(result);
             Assert.AreEqual(property, result as string);
         }
@@ -131,10 +127,11 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Local;
             object property = "this";
-            object model = new { Name = "Ben" };
+            object model = new {Name = "Ben"};
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
@@ -146,12 +143,12 @@ namespace Parrot.Tests
         {
             var valueType = ValueType.Keyword;
             object property = false;
-            object model = null;
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
-            modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
+            modelValueProvider.GetValue(documentHost, null, valueType, property, out result);
 
             Assert.AreEqual(property, result);
         }
@@ -166,7 +163,8 @@ namespace Parrot.Tests
             model.Name = "Ben";
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
@@ -184,13 +182,12 @@ namespace Parrot.Tests
             model.Name.LastName = "Dornis";
             var documentHost = new Dictionary<string, object>();
 
-            IModelValueProvider modelValueProvider = new ExpandoObjectModelValueProvider();
+            IValueTypeProvider valueTypeProvider = new ValueTypeProvider();
+            IModelValueProvider modelValueProvider = new ObjectModelValueProvider(valueTypeProvider);
             object result;
             modelValueProvider.GetValue(documentHost, model, valueType, property, out result);
 
             Assert.AreEqual("Ben", result);
         }
-
     }
-
 }

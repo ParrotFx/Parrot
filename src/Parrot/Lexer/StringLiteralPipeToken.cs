@@ -1,4 +1,6 @@
 namespace Parrot.Lexer
 {
-    internal class StringLiteralPipeToken : Token {}
+    internal class StringLiteralPipeToken : Token
+    {
+    }
 }

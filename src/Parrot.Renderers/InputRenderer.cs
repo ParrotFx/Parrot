@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Parrot.Renderers.Infrastructure;
-using Parrot.Nodes;
-
 namespace Parrot.Renderers
 {
+    using System;
+    using System.Collections.Generic;
     using Parrot.Infrastructure;
-    using Parrot.Renderers;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
 
-    public class InputRenderer : SelfClosingRenderer, IRenderer
+    public class InputRenderer : SelfClosingRenderer
     {
-        public InputRenderer(IHost host) : base(host) { }
+        public InputRenderer(IHost host) : base(host)
+        {
+        }
 
         public override IEnumerable<string> Elements
         {
@@ -52,7 +49,7 @@ namespace Parrot.Renderers
                             switch (attributeValue)
                             {
                                 case "true":
-                                    statement.Attributes[i] = new Parrot.Nodes.Attribute(Host, statement.Attributes[i].Key, new StringLiteral(Host, "\"checked\""));
+                                    statement.Attributes[i] = new Nodes.Attribute(statement.Attributes[i].Key, new StringLiteral("\"checked\""));
                                     //.Value = "checked";
                                     break;
                                 case "false":
@@ -70,6 +67,5 @@ namespace Parrot.Renderers
 
             base.Render(writer, rendererFactory, statement, documentHost, model);
         }
-
     }
 }

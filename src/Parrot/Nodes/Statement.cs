@@ -1,13 +1,8 @@
-using System;
-using Parrot.Infrastructure;
-using Parrot.Parser.ErrorTypes;
-
 namespace Parrot.Nodes
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
-    using Parrot;
+    using Parrot.Parser.ErrorTypes;
 
     public class Statement : AbstractNode
     {
@@ -20,22 +15,19 @@ namespace Parrot.Nodes
         public IList<Identifier> IdentifierParts { get; private set; }
         internal List<ParserError> Errors { get; set; }
 
-        internal Statement(IHost host)
-            : base(host)
+        internal Statement()
         {
-            Attributes = new AttributeList(host);
-            Children = new StatementList(host);
-            Parameters = new ParameterList(host);
+            Attributes = new AttributeList();
+            Children = new StatementList();
+            Parameters = new ParameterList();
             IdentifierParts = new List<Identifier>();
             Errors = new List<ParserError>();
         }
 
-        protected Statement(IHost host, string name)
-            : this(host)
+        protected Statement(string name) : this()
         {
-
             //required bullshit
-            if (name.IndexOfAny(new[] { '.', '#', ':' }) > -1)
+            if (name.IndexOfAny(new[] {'.', '#', ':'}) > -1)
             {
                 foreach (var part in GetIdentifierParts(name))
                 {
@@ -44,33 +36,33 @@ namespace Parrot.Nodes
                         case IdentifierType.Id:
                             if (part.Name.Length == 0)
                             {
-                                Errors.Add(new MissingIdDeclaration() { Index = part.Index - 1, Length = 1 });
+                                Errors.Add(new MissingIdDeclaration {Index = part.Index - 1, Length = 1});
                                 //throw new ParserException("Id must have a length");
                             }
                             else if (Attributes.Any(a => a.Key == "id"))
                             {
-                                Errors.Add(new MultipleIdDeclarations(part.Name) { Index = part.Index - 1, Length = part.Name.Length + 1 });
+                                Errors.Add(new MultipleIdDeclarations(part.Name) {Index = part.Index - 1, Length = part.Name.Length + 1});
                                 //throw new ParserException("Id added more than once");
                             }
                             else
                             {
-                                AddAttribute(new Attribute(Host, "id", new StringLiteral(host, "\"" + part.Name + "\"")));
+                                AddAttribute(new Attribute("id", new StringLiteral("\"" + part.Name + "\"")));
                             }
                             break;
                         case IdentifierType.Class:
                             if (part.Name.Length == 0)
                             {
-                                Errors.Add(new MissingClassDeclaration() { Index = part.Index - 1, Length = 1 });
+                                Errors.Add(new MissingClassDeclaration {Index = part.Index - 1, Length = 1});
                                 //throw new ParserException("Id must have a length");
                             }
                             else
                             {
-                                AddAttribute(new Attribute(Host, "class", new StringLiteral(host, "\"" + part.Name + "\"")));
+                                AddAttribute(new Attribute("class", new StringLiteral("\"" + part.Name + "\"")));
                             }
                             break;
 
                         case IdentifierType.Type:
-                            AddAttribute(new Attribute(host, "type", new StringLiteral(host, "\"" + part.Name + "\"")));
+                            AddAttribute(new Attribute("type", new StringLiteral("\"" + part.Name + "\"")));
                             break;
 
                         case IdentifierType.Literal:
@@ -85,7 +77,6 @@ namespace Parrot.Nodes
             {
                 Name = name;
             }
-
         }
 
         public override string ToString()
@@ -93,8 +84,7 @@ namespace Parrot.Nodes
             return Name;
         }
 
-        public Statement(IHost host, string name, StatementTail statementTail)
-            : this(host, name)
+        public Statement(string name, StatementTail statementTail) : this(name)
         {
             ParseStatementTail(statementTail);
         }
@@ -111,9 +101,9 @@ namespace Parrot.Nodes
                 //AddAttributes(statementTail.Attributes);
                 if (statementTail.Attributes != null)
                 {
-                    for (int i = 0; i < Attributes.Count; i++)
+                    foreach (Attribute attribute in Attributes)
                     {
-                        statementTail.Attributes.Add(Attributes[i]);
+                        statementTail.Attributes.Add(attribute);
                     }
                     Attributes = statementTail.Attributes;
                 }
@@ -147,10 +137,10 @@ namespace Parrot.Nodes
             //        var values = nodeValue.Split(".".ToCharArray());
             //        foreach (var value in values.Skip(1))
             //        {
-            //            Attributes.Add(new Attribute(Host, "class", value));
+            //            Attributes.Add(new Attribute("class", value));
             //        }
 
-            //        Attributes.Add(new Attribute(Host, node.Key, values[0]));
+            //        Attributes.Add(new Attribute(node.Key, values[0]));
             //        return;
             //    }
             //}
@@ -188,26 +178,25 @@ namespace Parrot.Nodes
                 if (nextType != IdentifierType.None)
                 {
                     yield return new Identifier
-                    {
-                        Name = source.Substring(index, i - index),
-                        Type = partType,
-                        Index = index,
-                        Length = i - index,
-                    };
+                        {
+                            Name = source.Substring(index, i - index),
+                            Type = partType,
+                            Index = index,
+                            Length = i - index,
+                        };
 
                     index = i + 1;
                     partType = nextType;
                     nextType = IdentifierType.None;
                 }
-
             }
 
             yield return new Identifier
-            {
-                Name = source.Substring(index),
-                Type = partType,
-                Index = index
-            };
+                {
+                    Name = source.Substring(index),
+                    Type = partType,
+                    Index = index
+                };
         }
     }
 }

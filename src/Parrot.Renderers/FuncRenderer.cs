@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Parrot.Infrastructure;
-using Parrot.Nodes;
-using Parrot.Renderers.Infrastructure;
-
 namespace Parrot.Renderers
 {
+    using System;
+    using System.Collections.Generic;
+    using Parrot.Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
+
     public class FuncRenderer : IRenderer
     {
-        readonly Func<Statement, IParrotWriter, object, object, IRenderer> _renderer;
+        private readonly Func<Statement, IParrotWriter, object, object, IRenderer> _renderer;
 
         public FuncRenderer(Func<Statement, IParrotWriter, object, object, IRenderer> renderer)
         {
@@ -18,10 +17,7 @@ namespace Parrot.Renderers
 
         public IEnumerable<string> Elements
         {
-            get
-            {
-                yield break;
-            }
+            get { yield break; }
         }
 
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)

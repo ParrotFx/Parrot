@@ -2,6 +2,9 @@
 {
     public class EndOfStream : ParserError
     {
-        public override string Message { get { return "Unexpected end of file."; } }
+        public override string Message
+        {
+            get { return "Unexpected end of file."; }
+        }
     }
 }

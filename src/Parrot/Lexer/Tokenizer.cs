@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace Parrot.Lexer
+﻿namespace Parrot.Lexer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+
     public class Tokenizer
     {
         private readonly List<Token> _tokens = new List<Token>();
         private int _currentIndex;
         private readonly StreamReader _reader;
 
-        public Tokenizer(string source) : this(new MemoryStream(Encoding.Default.GetBytes(source))) { }
+        public Tokenizer(string source) : this(new MemoryStream(Encoding.Default.GetBytes(source)))
+        {
+        }
 
         public Tokenizer(Stream source)
         {
@@ -41,84 +42,84 @@ namespace Parrot.Lexer
         private Token GetNextToken()
         {
             int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
             if (IsIdentifierHead(currentCharacter))
             {
                 return new IdentifierToken
-                {
-                    Index = _currentIndex,
-                    Content = ConsumeIdentifier(),
-                    Type = TokenType.Identifier
-                };
+                    {
+                        Index = _currentIndex,
+                        Content = ConsumeIdentifier(),
+                        Type = TokenType.Identifier
+                    };
             }
 
             if (IsWhitespace(currentCharacter))
             {
                 return new WhitespaceToken
-                {
-                    Index = _currentIndex,
-                    Content = ConsumeWhitespace(),
-                    Type = TokenType.Whitespace
-                };
+                    {
+                        Index = _currentIndex,
+                        Content = ConsumeWhitespace(),
+                        Type = TokenType.Whitespace
+                    };
             }
 
             switch (currentCharacter)
             {
                 case ',': //this is for the future
                     Consume();
-                    return new CommaToken { Index = _currentIndex };
+                    return new CommaToken {Index = _currentIndex};
                 case '(': //parameter list start
                     Consume();
-                    return new OpenParenthesisToken { Index = _currentIndex };
+                    return new OpenParenthesisToken {Index = _currentIndex};
                 case ')': //parameter list end
                     Consume();
-                    return new CloseParenthesisToken { Index = _currentIndex };
+                    return new CloseParenthesisToken {Index = _currentIndex};
                 case '[': //attribute list start
                     Consume();
-                    return new OpenBracketToken { Index = _currentIndex };
+                    return new OpenBracketToken {Index = _currentIndex};
                 case ']': //attribute list end
                     Consume();
-                    return new CloseBracketToken { Index = _currentIndex };
+                    return new CloseBracketToken {Index = _currentIndex};
                 case '=': //attribute assignment, raw output
                     Consume();
-                    return new EqualToken { Index = _currentIndex };
+                    return new EqualToken {Index = _currentIndex};
                 case '{': //child block start
                     Consume();
-                    return new OpenBracesToken { Index = _currentIndex };
+                    return new OpenBracesToken {Index = _currentIndex};
                 case '}': //child block end
                     Consume();
-                    return new CloseBracesToken { Index = _currentIndex };
+                    return new CloseBracesToken {Index = _currentIndex};
                 case '>': //child assignment
                     Consume();
-                    return new GreaterThanToken { Index = _currentIndex };
+                    return new GreaterThanToken {Index = _currentIndex};
                 case '+': //sibling assignment
                     Consume();
-                    return new PlusToken { Index = _currentIndex };
+                    return new PlusToken {Index = _currentIndex};
                 case '|': //string literal pipe
                     return new StringLiteralPipeToken
-                    {
-                        Index = _currentIndex,
-                        Content = ConsumeUntilNewline(),
-                        Type = TokenType.StringLiteralPipe,
-                    };
+                        {
+                            Index = _currentIndex,
+                            Content = ConsumeUntilNewline(),
+                            Type = TokenType.StringLiteralPipe,
+                        };
                 case '"': //quoted string literal
                     return new QuotedStringLiteralToken
-                    {
-                        Index = _currentIndex,
-                        Content = ConsumeQuotedStringLiteral('"'),
-                        Type = TokenType.QuotedStringLiteral,
-                    };
+                        {
+                            Index = _currentIndex,
+                            Content = ConsumeQuotedStringLiteral('"'),
+                            Type = TokenType.QuotedStringLiteral,
+                        };
                 case '\'': //quoted string literal
                     return new QuotedStringLiteralToken
-                    {
-                        Index = _currentIndex,
-                        Content = ConsumeQuotedStringLiteral('\''),
-                        Type = TokenType.QuotedStringLiteral,
-                    };
+                        {
+                            Index = _currentIndex,
+                            Content = ConsumeQuotedStringLiteral('\''),
+                            Type = TokenType.QuotedStringLiteral,
+                        };
                 case '@': //Encoded output
                     Consume();
-                    return new AtToken { Index = _currentIndex };
+                    return new AtToken {Index = _currentIndex};
                 case '\0':
                     return null;
                 default:
@@ -131,14 +132,14 @@ namespace Parrot.Lexer
             //(char)Consume() + ReadUntil(IsNewLine)
             StringBuilder sb = new StringBuilder();
             int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
             while (!IsNewLine(currentCharacter))
             {
                 Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
+                currentCharacter = peek == -1 ? '\0' : (char) peek;
             }
 
             return sb.ToString();
@@ -148,14 +149,14 @@ namespace Parrot.Lexer
         {
             StringBuilder sb = new StringBuilder();
             int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
             while ((IsIdTail(currentCharacter)))
             {
                 Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
+                currentCharacter = peek == -1 ? '\0' : (char) peek;
             }
 
             return sb.ToString();
@@ -165,14 +166,14 @@ namespace Parrot.Lexer
         {
             StringBuilder sb = new StringBuilder();
             int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
             while ((IsWhitespace(currentCharacter)))
             {
                 Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
+                currentCharacter = peek == -1 ? '\0' : (char) peek;
             }
 
             return sb.ToString();
@@ -181,32 +182,32 @@ namespace Parrot.Lexer
         private string ConsumeQuotedStringLiteral(char quote)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append((char)Consume());
+            sb.Append((char) Consume());
             int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char)peek;
+            var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
             while (currentCharacter != quote)
             {
                 Consume();
                 sb.Append(currentCharacter);
                 peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
+                currentCharacter = peek == -1 ? '\0' : (char) peek;
             }
 
-            sb.Append((char)Consume());
+            sb.Append((char) Consume());
             return sb.ToString();
         }
 
         private bool IsWhitespace(char character)
         {
             return
-                   character == '\r' ||
-                   character == '\n' ||
-                   character == ' ' ||
-                   character == '\f' ||
-                   character == '\t' ||
-                   character == '\u000B' || // Vertical Tab
-                   Char.GetUnicodeCategory(character) == UnicodeCategory.SpaceSeparator;
+                character == '\r' ||
+                character == '\n' ||
+                character == ' ' ||
+                character == '\f' ||
+                character == '\t' ||
+                character == '\u000B' || // Vertical Tab
+                Char.GetUnicodeCategory(character) == UnicodeCategory.SpaceSeparator;
         }
 
         private bool IsIdentifierHead(char character)
@@ -240,10 +241,10 @@ namespace Parrot.Lexer
         private bool IsNewLine(char character)
         {
             return character == '\r' // Carriage return
-                || character == '\n' // Linefeed
-                || character == '\u0085' // Next Line
-                || character == '\u2028' // Line separator
-                || character == '\u2029'; // Paragraph separator
+                   || character == '\n' // Linefeed
+                   || character == '\u0085' // Next Line
+                   || character == '\u2028' // Line separator
+                   || character == '\u2029'; // Paragraph separator
         }
 
         public List<Token> Tokenize()

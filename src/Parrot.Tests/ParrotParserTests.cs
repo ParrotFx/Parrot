@@ -4,21 +4,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Threading;
-using Parrot.Infrastructure;
-using Parrot.Parser.ErrorTypes;
-
 namespace Parrot.Tests
 {
-    using System;
-    using System.IO;
+    using System.Collections.Generic;
     using System.Linq;
-    using Nodes;
-    using Parrot;
     using NUnit.Framework;
-    using Parser;
-    using ValueType = ValueType;
+    using Parrot.Nodes;
+    using Parrot.Parser;
+    using Parrot.Parser.ErrorTypes;
 
     /// <summary>
     /// TODO: Update summary.
@@ -34,7 +27,7 @@ namespace Parrot.Tests
         //parameter name/values
         public static Document Parse(string text)
         {
-            Parser parser = new Parser(new MemoryHost());
+            Parser parser = new Parser();
             Document document;
 
             parser.Parse(text, out document);
@@ -244,7 +237,6 @@ namespace Parrot.Tests
                 var document = Parse("div.");
                 Assert.IsAssignableFrom<MissingClassDeclaration>(document.Errors[0]);
             }
-
         }
 
         public class AttributeTests
@@ -337,14 +329,13 @@ namespace Parrot.Tests
                 Assert.AreEqual("div", document.Children[0].Name);
                 Assert.AreEqual("span", document.Children[0].Children[0].Name);
                 Assert.AreEqual("span", document.Children[0].Children[0].Children[0].Name);
-
             }
 
             [TestCase("@", StringLiteralPartType.Encoded)]
             [TestCase("=", StringLiteralPartType.Raw)]
             public void StringLiteralParserTests(string delimiter, StringLiteralPartType encoding)
             {
-                var parts = new StringLiteral(new MemoryHost(), string.Format("\"this {0}is awesome {0}right\"", delimiter)).Values;
+                var parts = new StringLiteral(string.Format("\"this {0}is awesome {0}right\"", delimiter)).Values;
 
                 Assert.AreEqual(4, parts.Count);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
@@ -357,37 +348,35 @@ namespace Parrot.Tests
                 Assert.AreEqual(" awesome ", parts[2].Data);
                 Assert.AreEqual("right", parts[3].Data);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"this contains a {0} but not a keyword\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"this contains a {0} but not a keyword\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[0].Type);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"{0}keyword_only\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"{0}keyword_only\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual("keyword_only", parts[0].Data);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"{0}keyword_first followed by more words\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"{0}keyword_first followed by more words\"", delimiter)).Values;
                 Assert.AreEqual(2, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"{0}keyword.with.dot\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"{0}keyword.with.dot\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual("keyword.with.dot", parts[0].Data);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"this is an {0}{0} escaped colon\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"this is an {0}{0} escaped colon\"", delimiter)).Values;
                 Assert.AreEqual(1, parts.Count);
                 Assert.AreEqual(string.Format("this is an {0} escaped colon", delimiter), parts[0].Data);
 
-                parts = new StringLiteral(new MemoryHost(), string.Format("\"{0}keyword_only_endsin. a dot\"", delimiter)).Values;
+                parts = new StringLiteral(string.Format("\"{0}keyword_only_endsin. a dot\"", delimiter)).Values;
                 Assert.AreEqual(2, parts.Count);
                 Assert.AreEqual(encoding, parts[0].Type);
                 Assert.AreEqual(StringLiteralPartType.Literal, parts[1].Type);
                 Assert.AreEqual("keyword_only_endsin", parts[0].Data);
                 Assert.AreEqual(". a dot", parts[1].Data);
-
-
             }
         }
 
@@ -496,28 +485,28 @@ namespace Parrot.Tests
                     {
                         case ':':
                             yield return new Identifier
-                            {
-                                Name = source.Substring(index, i - index),
-                                Type = partType
-                            };
+                                {
+                                    Name = source.Substring(index, i - index),
+                                    Type = partType
+                                };
                             partType = IdentifierType.Type;
                             index = i + 1;
                             break;
                         case '#':
                             yield return new Identifier
-                            {
-                                Name = source.Substring(index, i - index),
-                                Type = partType
-                            };
+                                {
+                                    Name = source.Substring(index, i - index),
+                                    Type = partType
+                                };
                             partType = IdentifierType.Id;
                             index = i + 1;
                             break;
                         case '.':
                             yield return new Identifier
-                            {
-                                Name = source.Substring(index, i - index),
-                                Type = partType
-                            };
+                                {
+                                    Name = source.Substring(index, i - index),
+                                    Type = partType
+                                };
                             partType = IdentifierType.Class;
                             index = i + 1;
                             break;
@@ -525,18 +514,15 @@ namespace Parrot.Tests
                 }
 
                 yield return new Identifier
-                {
-                    Name = source.Substring(index),
-                    Type = partType
-                };
+                    {
+                        Name = source.Substring(index),
+                        Type = partType
+                    };
             }
-
         }
-
     }
 
     public class IdentifierExtractionTests
     {
     }
-
 }

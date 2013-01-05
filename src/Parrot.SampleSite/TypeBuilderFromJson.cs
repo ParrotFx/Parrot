@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Web;
-using Newtonsoft.Json.Linq;
-
-namespace Parrot.SampleSite
+﻿namespace Parrot.SampleSite
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using Newtonsoft.Json.Linq;
+
     public static class TypeBuilderFromJson
     {
         public static Type CreateType(JObject jObject)
@@ -40,7 +38,7 @@ namespace Parrot.SampleSite
                 }
                 else
                 {
-                    CreateProperty(tb, field, typeof(object));
+                    CreateProperty(tb, field, typeof (object));
                 }
             }
 
@@ -50,7 +48,6 @@ namespace Parrot.SampleSite
 
         public static Type CompileResultType(IEnumerable<object> properties)
         {
-
             string typeName = "t" + Guid.NewGuid().ToString("N");
 
             TypeBuilder tb = GetTypeBuilder(typeName);
@@ -74,13 +71,11 @@ namespace Parrot.SampleSite
                         }
                     }
 
-                    Type t = typeof(IList<>);
+                    Type t = typeof (IList<>);
                     return t.MakeGenericType(CompileResultType(dict));
                 }
-                else
-                {
-                    CreateProperty(tb, (field as JProperty).Name, typeof(object));
-                }
+
+                CreateProperty(tb, (field as JProperty).Name, typeof (object));
             }
 
             Type objectType = tb.CreateType();
@@ -96,7 +91,7 @@ namespace Parrot.SampleSite
                 typeName,
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,
                 null
-            );
+                );
 
             return tb;
         }
@@ -111,7 +106,7 @@ namespace Parrot.SampleSite
                 MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
                 propertyType,
                 Type.EmptyTypes
-            );
+                );
 
             ILGenerator getIl = getPropMthdBldr.GetILGenerator();
 
@@ -125,10 +120,10 @@ namespace Parrot.SampleSite
                     MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
                     null,
                     new[]
-                    {
-                        propertyType
-                    }
-                );
+                        {
+                            propertyType
+                        }
+                    );
 
             ILGenerator setIl = setPropMthdBldr.GetILGenerator();
             Label modifyProperty = setIl.DefineLabel();
@@ -146,6 +141,5 @@ namespace Parrot.SampleSite
             propertyBuilder.SetGetMethod(getPropMthdBldr);
             propertyBuilder.SetSetMethod(setPropMthdBldr);
         }
-
     }
 }

@@ -4,14 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using NUnit.Framework;
-
 namespace Parrot.Tests.RendererTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using NUnit.Framework;
 
     /// <summary>
     /// TODO: Update summary.
@@ -54,7 +49,7 @@ namespace Parrot.Tests.RendererTests
                                 default > 'this is the default'
                             }";
 
-                var result = Render(text, new { Name = "ben" });
+                var result = Render(text, new {Name = "ben"});
                 Assert.AreEqual("your name is ben", result);
             }
 
@@ -67,7 +62,7 @@ namespace Parrot.Tests.RendererTests
                                 default > 'this is the default'
                             }";
 
-                var result = Render(text, new { Name = "not-ben" });
+                var result = Render(text, new {Name = "not-ben"});
                 Assert.AreEqual("your name is not ben", result);
             }
 
@@ -80,7 +75,7 @@ namespace Parrot.Tests.RendererTests
                                 default > 'this is the default'
                             }";
 
-                var result = Render(text, new { Name = "should render default as it exists" });
+                var result = Render(text, new {Name = "should render default as it exists"});
                 Assert.AreEqual("this is the default", result);
             }
         }

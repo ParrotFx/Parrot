@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Parrot.Renderers.Infrastructure;
-using Parrot.Nodes;
-
 namespace Parrot.Renderers
 {
-    using System.Web;
+    using System;
+    using System.Collections.Generic;
     using Parrot.Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
 
     public class StringLiteralRenderer : IRenderer
     {
@@ -20,21 +17,20 @@ namespace Parrot.Renderers
 
         private string GetModelValue(IModelValueProviderFactory factory, IDictionary<string, object> documentHost, object model, StringLiteralPartType type, string data)
         {
-            IValueTypeProvider valueTypeProvider = _host.DependencyResolver.Resolve<IValueTypeProvider>();
-            var valueType = valueTypeProvider.GetValue(data);
+            Type modelType = model != null ? model.GetType() : null;
 
-            object value = null;
+            object value;
             switch (type)
             {
                 case StringLiteralPartType.Encoded:
                     //get the valuetype
-                    if (factory.Get(model.GetType()).GetValue(documentHost, model, valueType.Type, data, out value))
+                    if (factory.Get(modelType).GetValue(documentHost, model, data, out value))
                     {
                         return System.Net.WebUtility.HtmlEncode(value.ToString());
                     }
                     break;
                 case StringLiteralPartType.Raw:
-                    if (factory.Get(model.GetType()).GetValue(documentHost, model, valueType.Type, data, out value))
+                    if (factory.Get(modelType).GetValue(documentHost, model, data, out value))
                     {
                         return value.ToString();
                     }
@@ -45,11 +41,14 @@ namespace Parrot.Renderers
             return data;
         }
 
-        public IEnumerable<string> Elements { get { yield return "string"; } }
+        public IEnumerable<string> Elements
+        {
+            get { yield return "string"; }
+        }
 
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            var modelValueProviderFactory = _host.DependencyResolver.Resolve<IModelValueProviderFactory>();
+            var modelValueProviderFactory = _host.ModelValueProviderFactory;
 
             string result = "";
             if (statement is StringLiteral)
@@ -57,12 +56,12 @@ namespace Parrot.Renderers
                 foreach (var value in (statement as StringLiteral).Values)
                 {
                     result += GetModelValue(
-                        modelValueProviderFactory, 
-                        documentHost, 
-                        model, 
-                        value.Type, 
+                        modelValueProviderFactory,
+                        documentHost,
+                        model,
+                        value.Type,
                         value.Data
-                    );
+                        );
                 }
             }
             else

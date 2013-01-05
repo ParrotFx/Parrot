@@ -1,33 +1,30 @@
-using Parrot.Infrastructure;
-using Parrot.Mvc;
-
-[assembly: WebActivator.PreApplicationStartMethod(typeof(Parrot.SampleSite.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(Parrot.SampleSite.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivator.PreApplicationStartMethod(typeof (Parrot.SampleSite.App_Start.NinjectWebCommon), "Start")]
+[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof (Parrot.SampleSite.App_Start.NinjectWebCommon), "Stop")]
 
 namespace Parrot.SampleSite.App_Start
 {
     using System;
     using System.Web;
-
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
     using Ninject;
     using Ninject.Web.Common;
+    using Parrot.Infrastructure;
+    using Parrot.Mvc;
 
-    public static class NinjectWebCommon 
+    public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
         /// <summary>
         /// Starts the application
         /// </summary>
-        public static void Start() 
+        public static void Start()
         {
-            DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
-            DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof (OnePerRequestHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof (NinjectHttpModule));
             bootstrapper.Initialize(CreateKernel);
         }
-        
+
         /// <summary>
         /// Stops the application.
         /// </summary>
@@ -35,7 +32,7 @@ namespace Parrot.SampleSite.App_Start
         {
             bootstrapper.ShutDown();
         }
-        
+
         /// <summary>
         /// Creates the kernel that will manage your application.
         /// </summary>
@@ -45,7 +42,7 @@ namespace Parrot.SampleSite.App_Start
             var kernel = new StandardKernel();
             kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
             kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
-            
+
             RegisterServices(kernel);
             return kernel;
         }
@@ -57,12 +54,27 @@ namespace Parrot.SampleSite.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<AspNetHost>().ToMethod(c =>
-            {
-                var host = new AspNetHost();
-                host.DependencyResolver.Register(typeof (IParrotWriter), () => new PrettyStringWriter());
+                {
+                    var host = new AspNetHost(new PrettyWriterProvider());
 
-                return host;
-            }).InSingletonScope();
+                    return host;
+                }).InSingletonScope();
+        }
+    }
+
+    internal class PrettyWriterProvider : IParrotWriterProvider
+    {
+        public IParrotWriter CreateWriter()
+        {
+            return new PrettyStringWriter();
+        }
+    }
+
+    internal class StandardWriterProvider : IParrotWriterProvider
+    {
+        public IParrotWriter CreateWriter()
+        {
+            return new StandardWriter();
         }
     }
 }

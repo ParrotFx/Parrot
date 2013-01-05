@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using Parrot.Infrastructure;
-using Parrot.Mvc;
-using Parrot.Mvc.Renderers;
-using Parrot.Nodes;
-
-namespace Parrot.Tests
+﻿namespace Parrot.Tests
 {
-    using System.IO;
-    using Renderers;
-    using Renderers.Infrastructure;
+    using NUnit.Framework;
+    using Parrot.Mvc;
+    using Parrot.Nodes;
 
     [TestFixture]
     public class InputRendererTests : TestRenderingBase
     {
-        private Document Parse(string text, IHost host)
+        private Document Parse(string text)
         {
-            Parser.Parser parser = new Parser.Parser(host);
+            Parser.Parser parser = new Parser.Parser();
             Document document;
 
             parser.Parse(text, out document);
@@ -33,7 +23,7 @@ namespace Parrot.Tests
             var host = new AspNetHost();
 
             string block = "input";
-            var nodes = Parse(block, host);
+            var nodes = Parse(block);
 
             Assert.AreEqual("<input />", Render(block, host));
 

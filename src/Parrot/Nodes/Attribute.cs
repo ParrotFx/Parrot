@@ -1,5 +1,3 @@
-using Parrot.Infrastructure;
-
 namespace Parrot.Nodes
 {
     public class Attribute : AbstractNode
@@ -9,7 +7,7 @@ namespace Parrot.Nodes
 
         //public ValueType ValueType { get; internal set; }
 
-        public Attribute(IHost host, string key, Statement value) : base(host)
+        public Attribute(string key, Statement value)
         {
             Key = key;
             Value = value;

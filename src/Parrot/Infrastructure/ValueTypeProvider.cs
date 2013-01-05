@@ -19,10 +19,10 @@ namespace Parrot.Infrastructure
         private static IDictionary<string, Func<string, ValueTypeResult>> InitializeKeywordHanlders()
         {
             var handlers = new Dictionary<string, Func<string, ValueTypeResult>>(4);
-            handlers.Add("this", s => new ValueTypeResult { Type = ValueType.Local, Value = "this" });
-            handlers.Add("false", s => new ValueTypeResult { Type = ValueType.Keyword, Value = false });
-            handlers.Add("true", s => new ValueTypeResult { Type = ValueType.Keyword, Value = true });
-            handlers.Add("null", s => new ValueTypeResult { Type = ValueType.Keyword, Value = null });
+            handlers.Add("this", s => new ValueTypeResult {Type = ValueType.Local, Value = "this"});
+            handlers.Add("false", s => new ValueTypeResult {Type = ValueType.Keyword, Value = false});
+            handlers.Add("true", s => new ValueTypeResult {Type = ValueType.Keyword, Value = true});
+            handlers.Add("null", s => new ValueTypeResult {Type = ValueType.Keyword, Value = null});
 
             return handlers;
         }
@@ -39,12 +39,12 @@ namespace Parrot.Infrastructure
             if (value == null)
             {
                 return new ValueTypeResult
-                {
-                    Type = ValueType.StringLiteral,
-                    Value = null
-                };
+                    {
+                        Type = ValueType.StringLiteral,
+                        Value = null
+                    };
             }
-            
+
             if (IsWrappedInQuotes(value))
             {
                 result.Type = ValueType.StringLiteral;
@@ -84,7 +84,6 @@ namespace Parrot.Infrastructure
         {
             return (StartsWith(value, '"') && EndsWith(value, '"')) || (StartsWith(value, '\'') || EndsWith(value, '\''));
         }
-
     }
 
     public interface IValueTypeProvider

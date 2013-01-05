@@ -1,10 +1,14 @@
-﻿using Parrot.Lexer;
-
-namespace Parrot.Parser.ErrorTypes
+﻿namespace Parrot.Parser.ErrorTypes
 {
+    using Parrot.Lexer;
+
     public class UnexpectedToken : ParserError
     {
-        public override string Message { get { return string.Format("Unexpected token: {0}", Type.ToString()); } }
+        public override string Message
+        {
+            get { return string.Format("Unexpected token: {0}", Type.ToString()); }
+        }
+
         protected TokenType Type { get; set; }
         protected string Token { get; set; }
 
@@ -14,6 +18,5 @@ namespace Parrot.Parser.ErrorTypes
             Token = token.Content;
             Type = token.Type;
         }
-
     }
 }

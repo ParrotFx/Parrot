@@ -2,9 +2,24 @@ namespace Parrot.Renderers.Infrastructure
 {
     using System;
     using System.Collections.Generic;
+    using Parrot.Infrastructure;
 
     public class ExpandoObjectModelValueProvider : IModelValueProvider
     {
+        private readonly IValueTypeProvider _valueTypeProvider;
+
+        public ExpandoObjectModelValueProvider(IValueTypeProvider valueTypeProvider)
+        {
+            _valueTypeProvider = valueTypeProvider;
+        }
+
+        public bool GetValue(IDictionary<string, object> documentHost, object model, object property, out object value)
+        {
+            var valueType = GetValueType(ref property);
+
+            return GetValue(documentHost, model, valueType, property, out value);
+        }
+
         public bool GetValue(IDictionary<string, object> documentHost, object model, Parrot.Infrastructure.ValueType valueType, object property, out object value)
         {
             switch (valueType)
@@ -22,7 +37,7 @@ namespace Parrot.Renderers.Infrastructure
                         throw new NullReferenceException("model");
                     }
 
-                    var propertyValues = (IDictionary<string, object>)model;
+                    var propertyValues = (IDictionary<string, object>) model;
                     var result = model;
 
                     var properties = property.ToString().Split(".".ToCharArray());
@@ -41,5 +56,13 @@ namespace Parrot.Renderers.Infrastructure
             return false;
         }
 
+        private Parrot.Infrastructure.ValueType GetValueType(ref object property)
+        {
+            var result = _valueTypeProvider.GetValue((string) property);
+
+            property = result.Value.ToString();
+
+            return result.Type;
+        }
     }
 }

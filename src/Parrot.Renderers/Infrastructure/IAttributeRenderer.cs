@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Parrot.Renderers.Infrastructure
+﻿namespace Parrot.Renderers.Infrastructure
 {
     public interface IAttributeRenderer
     {

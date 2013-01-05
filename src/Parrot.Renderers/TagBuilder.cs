@@ -39,11 +39,7 @@ namespace Parrot.Renderers
             Attributes = new SortedDictionary<string, string>(StringComparer.Ordinal);
         }
 
-        public IDictionary<string, string> Attributes
-        {
-            get;
-            private set;
-        }
+        public IDictionary<string, string> Attributes { get; private set; }
 
         public string IdAttributeDotReplacement
         {
@@ -55,29 +51,16 @@ namespace Parrot.Renderers
                 }
                 return _idAttributeDotReplacement;
             }
-            set
-            {
-                _idAttributeDotReplacement = value;
-            }
+            set { _idAttributeDotReplacement = value; }
         }
 
         public string InnerHtml
         {
-            get
-            {
-                return _innerHtml ?? String.Empty;
-            }
-            set
-            {
-                _innerHtml = value;
-            }
+            get { return _innerHtml ?? String.Empty; }
+            set { _innerHtml = value; }
         }
 
-        public string TagName
-        {
-            get;
-            private set;
-        }
+        public string TagName { get; private set; }
 
         public void AddCssClass(string value)
         {
@@ -157,7 +140,7 @@ namespace Parrot.Renderers
                 {
                     continue; // DevDiv Bugs #227595: don't output empty IDs 
                 }
-                
+
                 string value = attribute.Value;
 
                 //if (value != null && value.Trim() == "null") continue;
@@ -173,10 +156,10 @@ namespace Parrot.Renderers
                 }
 
                 sb.Append(' ')
-                    .Append(key)
-                    .Append("=\"")
-                    .Append(value)
-                    .Append('"');
+                  .Append(key)
+                  .Append("=\"")
+                  .Append(value)
+                  .Append('"');
             }
         }
 

@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using Parrot.Renderers.Infrastructure;
-using Parrot.Nodes;
-
 namespace Parrot.Renderers
 {
+    using System;
+    using System.Collections.Generic;
     using Parrot.Infrastructure;
+    using Parrot.Nodes;
+    using Parrot.Renderers.Infrastructure;
 
     public class SelfClosingRenderer : HtmlRenderer
     {
-        public SelfClosingRenderer(IHost host) : base(host) { }
+        public SelfClosingRenderer(IHost host) : base(host)
+        {
+        }
 
         public override IEnumerable<string> Elements
         {
@@ -19,7 +20,7 @@ namespace Parrot.Renderers
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = ModelValueProviderFactory.Get(modelType);
+            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
 
             var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
 
@@ -36,6 +37,5 @@ namespace Parrot.Renderers
 
             writer.Write(builder.ToString(TagRenderMode.SelfClosing));
         }
-
     }
 }

@@ -4,8 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Parrot.Infrastructure;
-
 namespace Parrot.Nodes
 {
     /// <summary>
@@ -13,8 +11,12 @@ namespace Parrot.Nodes
     /// </summary>
     public class StringLiteralPipe : StringLiteral
     {
-        public StringLiteralPipe(IHost host, string value) : this(host, value, null) { }
+        public StringLiteralPipe(string value) : this(value, null)
+        {
+        }
 
-        public StringLiteralPipe(IHost host, string value, StatementTail statementTail) : base(host, "\"" + value + "\"", statementTail) { }
+        public StringLiteralPipe(string value, StatementTail statementTail) : base("\"" + value + "\"", statementTail)
+        {
+        }
     }
 }

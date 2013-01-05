@@ -4,16 +4,15 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using Parrot.Infrastructure;
-using ValueType = Parrot.Infrastructure.ValueType;
-
 namespace Parrot.Nodes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Text;
+    using ValueType = Parrot.Infrastructure.ValueType;
+
     /// <summary>
     /// Parrot node that contains a string literal statement
     /// </summary>
@@ -22,17 +21,19 @@ namespace Parrot.Nodes
         public List<StringLiteralPart> Values { get; private set; }
         public ValueType ValueType { get; private set; }
 
-        public StringLiteral(IHost host, string value) : this(host, value, null) { }
+        public StringLiteral(string value) : this(value, null)
+        {
+        }
 
-        public StringLiteral(IHost host, string value, StatementTail tail) : base(host, "string", tail)
+        public StringLiteral(string value, StatementTail tail) : base("string", tail)
         {
             if (IsWrappedInQuotes(value))
             {
                 ValueType = ValueType.StringLiteral;
                 //strip quotes
 
-                int offset = 1;
-                value = new string(value.ToArray(), offset, value.Length - (offset + 1));
+                const int quoteOffset = 1;
+                value = new string(value.ToArray(), quoteOffset, value.Length - (quoteOffset + 1));
             }
             else if (value == "this")
             {
@@ -62,7 +63,7 @@ namespace Parrot.Nodes
         {
             return (StartsWith(value, '"') || StartsWith(value, '\''));
         }
-        
+
         public override string ToString()
         {
             return string.Join("", Values.Select(f => f.Data));
@@ -152,7 +153,7 @@ namespace Parrot.Nodes
 
             return parts;
         }
-        
+
         private bool IsIdentifierHead(char character)
         {
             return Char.IsLetter(character) ||
@@ -181,6 +182,5 @@ namespace Parrot.Nodes
                    category == UnicodeCategory.ConnectorPunctuation ||
                    category == UnicodeCategory.Format;
         }
-
     }
 }

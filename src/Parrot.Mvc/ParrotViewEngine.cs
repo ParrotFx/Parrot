@@ -1,9 +1,7 @@
-﻿using System.Text;
-using Parrot.Infrastructure;
-
-namespace Parrot.Mvc
+﻿namespace Parrot.Mvc
 {
     using System.Web.Mvc;
+    using Parrot.Renderers.Infrastructure;
 
     public class ParrotViewEngine : IViewEngine
     {
@@ -17,10 +15,10 @@ namespace Parrot.Mvc
         }
 
         public readonly string[] SearchLocations = new[]
-        {
-            "~/Views/{1}/{0}.parrot",
-            "~/Views/Shared/{0}.parrot"
-        };
+            {
+                "~/Views/{1}/{0}.parrot",
+                "~/Views/Shared/{0}.parrot"
+            };
 
         public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache)
         {
@@ -70,7 +68,7 @@ namespace Parrot.Mvc
 
         public string FindPath(string viewName, string controllerName, out string[] searchedLocations)
         {
-            var pathResolver = _host.DependencyResolver.Resolve<IPathResolver>();
+            var pathResolver = _host.PathResolver;
 
             searchedLocations = new string[SearchLocations.Length];
 
@@ -84,7 +82,7 @@ namespace Parrot.Mvc
                 if (pathResolver.FileExists(virtualPath))
                 {
                     //add it to cache - not currently implemented
-                    return pathResolver.VirtualFilePath(virtualPath);
+                    return pathResolver.ResolvePath(virtualPath);
                 }
             }
 
@@ -96,7 +94,9 @@ namespace Parrot.Mvc
             return FindPartialView(controllerContext, viewName, useCache);
         }
 
-        public void ReleaseView(ControllerContext controllerContext, IView view) { }
+        public void ReleaseView(ControllerContext controllerContext, IView view)
+        {
+        }
 
         #endregion
     }

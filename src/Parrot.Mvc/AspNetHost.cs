@@ -4,49 +4,59 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Parrot.Renderers;
 
 namespace Parrot.Mvc
 {
     using System.Web.Mvc;
-
-    using Infrastructure;
-    using Renderers;
+    using Parrot.Infrastructure;
+    using Parrot.Mvc.Renderers;
+    using Parrot.Renderers;
     using Parrot.Renderers.Infrastructure;
 
     /// <summary>
     /// Asp.Net host for Parrot
     /// </summary>
-    public class AspNetHost : Host
+    public class AspNetHost : IHost
     {
-        public AspNetHost() : base(new Infrastructure.DependencyResolver())
-        {
-            DependencyResolver.Register(typeof(IPathResolver), () => new PathResolver());
-            DependencyResolver.Register(typeof(IModelValueProviderFactory), () => new ModelValueProviderFactory());
+        private readonly IParrotWriterProvider _parrotWriterProvider;
 
-            DependencyResolver.Register(typeof(IAttributeRenderer), () => new AttributeRenderer());
-            DependencyResolver.Register(typeof(IViewEngine), () => new ParrotViewEngine(this));
-            DependencyResolver.Register(typeof(IParrotWriter), () => new StandardWriter());
-            DependencyResolver.Register(typeof(IRendererFactory), () =>
+        public AspNetHost() : this(new StandardWriterProvider())
+        {
+        }
+
+        public AspNetHost(IParrotWriterProvider parrotWriterProvider)
+        {
+            _parrotWriterProvider = parrotWriterProvider;
+            ValueTypeProvider = new ValueTypeProvider();
+            ModelValueProviderFactory = new ModelValueProviderFactory(ValueTypeProvider);
+            AttributeRenderer = new AttributeRenderer();
+            RendererFactory = new RendererFactory(new IRenderer[]
                 {
-                    return new RendererFactory(new IRenderer[]
-                        {
-                            new HtmlRenderer(this),
-                            new StringLiteralRenderer(this),
-                            new DocTypeRenderer(this),
-                            new LayoutRenderer(this),
-                            new PartialRenderer(this),
-                            new ContentRenderer(this),
-                            new ForeachRenderer(this),
-                            new InputRenderer(this),
-                            new ConditionalRenderer(this),
-                            new ListRenderer(this),
-                            new SelfClosingRenderer(this)
-                        });
+                    new HtmlRenderer(this),
+                    new StringLiteralRenderer(this),
+                    new DocTypeRenderer(this),
+                    new LayoutRenderer(this),
+                    new PartialRenderer(this),
+                    new ContentRenderer(this),
+                    new ForeachRenderer(this),
+                    new InputRenderer(this),
+                    new ConditionalRenderer(this),
+                    new ListRenderer(this),
+                    new SelfClosingRenderer(this)
                 });
+            PathResolver = new PathResolver();
+        }
+
+        public IModelValueProviderFactory ModelValueProviderFactory { get; set; }
+        public IAttributeRenderer AttributeRenderer { get; set; }
+        public IValueTypeProvider ValueTypeProvider { get; set; }
+        public IRendererFactory RendererFactory { get; set; }
+        public IPathResolver PathResolver { get; set; }
+        public IViewEngine ViewEngine { get; set; }
+
+        public virtual IParrotWriter CreateWriter()
+        {
+            return _parrotWriterProvider.CreateWriter();
         }
     }
 }

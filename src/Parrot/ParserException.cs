@@ -4,19 +4,22 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Parrot.Lexer;
-
 namespace Parrot
 {
     using System;
+    using Parrot.Lexer;
 
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
     public class ParserException : Exception
     {
-        public ParserException(string message) : base(message) { }
+        public ParserException(string message) : base(message)
+        {
+        }
 
-        public ParserException(Token token) : base(string.Format("Invalid token '{0}' at {1}", token.Type, token.Index)) { }
+        public ParserException(Token token) : base(string.Format("Invalid token '{0}' at {1}", token.Type, token.Index))
+        {
+        }
     }
 }

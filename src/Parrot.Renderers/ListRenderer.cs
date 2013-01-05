@@ -4,11 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace Parrot.Renderers
 {
-    using Parrot.Infrastructure;
+    using System.Collections.Generic;
     using Parrot.Renderers.Infrastructure;
 
     /// <summary>
@@ -16,7 +14,9 @@ namespace Parrot.Renderers
     /// </summary>
     public class ListRenderer : HtmlRenderer
     {
-        public ListRenderer(IHost host) : base(host) { }
+        public ListRenderer(IHost host) : base(host)
+        {
+        }
 
         public override IEnumerable<string> Elements
         {

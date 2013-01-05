@@ -4,44 +4,35 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.IO;
-using NUnit.Framework;
-using Parrot.Infrastructure;
-
 namespace Parrot.Tests.RendererTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using NUnit.Framework;
+    using Parrot.Infrastructure;
 
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
     public class PrettyRenderingTests : TestRenderingBase
     {
-
-        private Host GetHost()
+        private class PrettyRenderingHost : MemoryHost
         {
-            var host = new MemoryHost();
-            host.DependencyResolver.Register(typeof(IParrotWriter), () => new PrettyStringWriter());
-
-            return host;
+            public override IParrotWriter CreateWriter()
+            {
+                return new PrettyStringWriter();
+            }
         }
 
         [Test]
         public void SingleIndentation()
         {
-            Assert.AreEqual("<div>\r\n\tthis is a test\r\n</div>\r\n", Render("div > @\"this is a test\"", GetHost()));
-            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html > div > @\"1\"", GetHost()));
-            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html { div { @\"1\" } div { @\"1\" } }", GetHost()));
+            Assert.AreEqual("<div>\r\n\tthis is a test\r\n</div>\r\n", Render("div > @\"this is a test\"", new PrettyRenderingHost()));
+            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html > div > @\"1\"", new PrettyRenderingHost()));
+            Assert.AreEqual("<html>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n\t<div>\r\n\t\t1\r\n\t</div>\r\n</html>\r\n", Render("html { div { @\"1\" } div { @\"1\" } }", new PrettyRenderingHost()));
         }
 
         [Test]
         public void Tests()
         {
-            
         }
-
     }
 }

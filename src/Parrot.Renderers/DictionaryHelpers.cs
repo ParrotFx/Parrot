@@ -6,10 +6,7 @@
 
 namespace Parrot.Renderers
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// TODO: Update summary.
@@ -27,7 +24,7 @@ namespace Parrot.Renderers
             return defaultVal;
         }
 
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key )
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
             TValue ret;
             if (dictionary.TryGetValue(key, out ret))
