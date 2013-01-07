@@ -1,0 +1,22 @@
+enum TokenType {
+    start,
+    identifier,
+    quotedStringLiteral,
+    stringLiteral,
+    openBracket,
+    closeBracket,
+    openParenthesis,
+    closeParenthesis,
+    comma,
+    openBrace,
+    closeBrace,
+    greaterThan,
+    plus,
+    whitespace,
+    stringLiteralPipe,
+    commentLine,
+    commentStart,
+    commentEnd,
+    equal,
+    at
+}

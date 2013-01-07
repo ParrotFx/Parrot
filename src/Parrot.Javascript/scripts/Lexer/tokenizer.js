@@ -1,26 +1,27 @@
 var Tokenizer = (function () {
     function Tokenizer(source) {
         this._source = source;
+        this._currentIndex = 0;
     }
     Tokenizer.prototype.hasAvailableTokens = function () {
         return this._currentIndex < this._source.length;
     };
     Tokenizer.prototype.peek = function () {
-        var character = this._source[this._currentIndex];
+        var character = this._source.charAt(this._currentIndex);
         return character;
     };
     Tokenizer.prototype.consume = function () {
         if(this._currentIndex >= this._source.length) {
             throw new EndOfStreamException();
         }
-        var character = this._source[this._currentIndex];
+        var character = this._source.charAt(this._currentIndex);
         this._currentIndex++;
         return character;
     };
     Tokenizer.prototype.consumeIdentifier = function () {
         var identifier = "";
         var character = this.peek();
-        while(!this.isIdTail(character)) {
+        while(this.isIdTail(character)) {
             this.consume();
             identifier += character;
             character = this.peek();
@@ -30,11 +31,12 @@ var Tokenizer = (function () {
     Tokenizer.prototype.consumeWhitespace = function () {
         var whitespace = "";
         var character = this.peek();
-        while(!this.isWhitespace(character)) {
+        while(this.isWhitespace(character)) {
             this.consume();
             whitespace += character;
             character = this.peek();
         }
+        console.log("consumeWhitespace:", whitespace.length);
         return whitespace;
     };
     Tokenizer.prototype.consumeUntilNewLine = function () {
@@ -66,9 +68,11 @@ var Tokenizer = (function () {
         if(this.hasAvailableTokens()) {
             var currentCharacter = this.peek();
             if(this.isIdentifierHead(currentCharacter)) {
-                return new IdentifierToken(this._currentIndex, this.consumeIdentifier(), TokenType.identifier);
+                var token = new IdentifierToken(this._currentIndex, this.consumeIdentifier(), TokenType.identifier);
+                return token;
             }
             if(this.isWhitespace(currentCharacter)) {
+                console.log("isWhitespace");
                 return new WhitespaceToken(this._currentIndex, this.consumeWhitespace(), TokenType.whitespace);
             }
             switch(currentCharacter) {
@@ -143,9 +147,13 @@ var Tokenizer = (function () {
                     return null;
 
                 }
-                default:
+                default: {
+                    throw new UnexpectedTokenException("Unexpected token: " + currentCharacter);
+
+                }
             }
         }
+        return null;
     };
     Tokenizer.prototype.isWhitespace = function (character) {
         return character == "\r" || character == "\n" || character == " " || character == "\f" || character == "\t" || character == "\u000B";
@@ -161,7 +169,7 @@ var Tokenizer = (function () {
     Tokenizer.prototype.tokenize = function () {
         var token;
         var _tokens = [];
-        while((token == this.getNextToken()) != null) {
+        while((token = this.getNextToken()) != null) {
             _tokens.push(token);
         }
         return _tokens;
@@ -170,4 +178,14 @@ var Tokenizer = (function () {
         return this.tokenize();
     };
     return Tokenizer;
+})();
+var EndOfStreamException = (function () {
+    function EndOfStreamException() { }
+    return EndOfStreamException;
+})();
+var UnexpectedTokenException = (function () {
+    function UnexpectedTokenException(message) {
+        this.message = message;
+    }
+    return UnexpectedTokenException;
 })();

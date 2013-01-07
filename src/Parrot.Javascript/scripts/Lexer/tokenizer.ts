@@ -6,6 +6,7 @@ class Tokenizer {
 
     constructor(source: string) {
         this._source = source;
+        this._currentIndex = 0;
     }
 
     hasAvailableTokens() : bool {
@@ -13,7 +14,7 @@ class Tokenizer {
     }
 
     peek() : string {
-        var character = this._source[this._currentIndex];
+        var character = this._source.charAt(this._currentIndex);
         return character;
     }
 
@@ -21,17 +22,16 @@ class Tokenizer {
         if (this._currentIndex >= this._source.length) {
             throw new EndOfStreamException();
         }
-        var character = this._source[this._currentIndex];
 
+        var character = this._source.charAt(this._currentIndex);
         this._currentIndex++;
-
         return character;
     }
 
     consumeIdentifier() : string {
         var identifier = "";
         var character = this.peek();
-        while (!this.isIdTail(character)) {
+        while (this.isIdTail(character)) {
             this.consume();
             identifier += character;
             character = this.peek();
@@ -43,11 +43,13 @@ class Tokenizer {
     consumeWhitespace() : string {
         var whitespace = "";
         var character = this.peek();
-        while (!this.isWhitespace(character)) {
+        while (this.isWhitespace(character)) {
             this.consume();
             whitespace += character;
             character = this.peek();
         }
+
+        console.log("consumeWhitespace:", whitespace.length);
 
         return whitespace;
     }
@@ -84,12 +86,14 @@ class Tokenizer {
     getNextToken() : Token {
         if (this.hasAvailableTokens()) {
             var currentCharacter = this.peek();
-
+            
             if (this.isIdentifierHead(currentCharacter)) {
-                return new IdentifierToken(this._currentIndex, this.consumeIdentifier(), TokenType.identifier);
+                var token = new IdentifierToken(this._currentIndex, this.consumeIdentifier(), TokenType.identifier);
+                return token;
             }
 
             if (this.isWhitespace(currentCharacter)) {
+                console.log("isWhitespace");
                 return new WhitespaceToken(this._currentIndex, this.consumeWhitespace(), TokenType.whitespace);
             }
 
@@ -136,10 +140,11 @@ class Tokenizer {
                 case '\0':
                     return null;
                 default:
+                    throw new UnexpectedTokenException("Unexpected token: "+currentCharacter);
             }
         }
 
-
+        return null;
     }
     
     isWhitespace(character: string) : bool {
@@ -159,14 +164,24 @@ class Tokenizer {
     tokenize(): Token[] {
         var token: Token;
         var _tokens : Token[] = [];
-        while ((token == this.getNextToken()) != null) {
+        while ((token = this.getNextToken()) != null) {
             _tokens.push(token);
         }
-
+        
         return _tokens;
     }
 
     tokens(): Token[] {
         return this.tokenize();
+    }
+}
+
+class EndOfStreamException {
+}
+
+class UnexpectedTokenException {
+    message: string;
+    constructor(message: string) {
+        this.message = message;
     }
 }

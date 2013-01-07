@@ -1,5 +1,5 @@
-/// <reference path="../token.ts" />
-/// <reference path="../tokenType.ts" />
+/// <reference path="token.ts" />
+/// <reference path="tokenType.ts" />
 class AtToken extends Token {
     constructor(index: number) {
         super(index, "@", TokenType.at);

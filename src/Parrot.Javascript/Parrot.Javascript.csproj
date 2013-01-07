@@ -57,9 +57,10 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="scripts\stream.ts" />
-    <TypeScriptCompile Include="scripts\parser.ts" />
+    <TypeScriptCompile Include="scripts\Parser\stream.ts" />
+    <TypeScriptCompile Include="scripts\Parser\parser.ts" />
     <TypeScriptCompile Include="scripts\Lexer\tokenizer.ts" />
+    <Content Include="index.html" />
     <Content Include="scripts\Lexer\tokenizer.js">
       <DependentUpon>tokenizer.ts</DependentUpon>
     </Content>
@@ -67,22 +68,22 @@
     <Content Include="scripts\Lexer\tokens.js">
       <DependentUpon>tokens.ts</DependentUpon>
     </Content>
-    <Content Include="scripts\parser.js">
+    <Content Include="scripts\Parser\parser.js">
       <DependentUpon>parser.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="scripts\parserError.ts" />
-    <Content Include="scripts\parserError.js">
+    <TypeScriptCompile Include="scripts\Parser\parserError.ts" />
+    <Content Include="scripts\Parser\parserError.js">
       <DependentUpon>parserError.ts</DependentUpon>
     </Content>
-    <Content Include="scripts\stream.js">
+    <Content Include="scripts\Parser\stream.js">
       <DependentUpon>stream.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="scripts\token.ts" />
-    <Content Include="scripts\token.js">
+    <TypeScriptCompile Include="scripts\Lexer\token.ts" />
+    <Content Include="scripts\Lexer\token.js">
       <DependentUpon>token.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="scripts\tokenType.ts" />
-    <Content Include="scripts\TokenType.js">
+    <TypeScriptCompile Include="scripts\Lexer\tokenType.ts" />
+    <Content Include="scripts\Lexer\TokenType.js">
       <DependentUpon>tokenType.ts</DependentUpon>
     </Content>
     <Content Include="Web.config" />

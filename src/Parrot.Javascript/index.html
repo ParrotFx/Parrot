@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript" src="scripts/Lexer/token.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/tokenizer.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/tokens.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/TokenType.js"></script>
+    <script type="text/javascript" src="scripts/Parser/parserError.js"></script>
+    <script type="text/javascript" src="scripts/Parser/parser.js"></script>
+    <script type="text/javascript" src="scripts/Parser/stream.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var parser = new Parser();
+        var d = parser.parse("html > body");
+
+        console.log("children count:", d.children.length);
+        console.log("first child:", d.children[0].name);
+        console.log("child's child:", d.children[0].children[0].name);
+    </script>
+</body>
+</html>
