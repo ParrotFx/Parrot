@@ -115,36 +115,8 @@ namespace Parrot.Nodes
             }
         }
 
-        private void AddAttributes(AttributeList attributes)
-        {
-            if (attributes == null) return;
-
-            int length = attributes.Count;
-            for (int i = 0; i < length; i++)
-            {
-                Attributes.Add(attributes[i]);
-            }
-        }
-
         private void AddAttribute(Attribute node)
         {
-            //if (node.Key == "id")
-            //{
-            //    var nodeValue = node.Value as string;
-
-            //    if (nodeValue != null && nodeValue.Contains("."))
-            //    {
-            //        var values = nodeValue.Split(".".ToCharArray());
-            //        foreach (var value in values.Skip(1))
-            //        {
-            //            Attributes.Add(new Attribute("class", value));
-            //        }
-
-            //        Attributes.Add(new Attribute(node.Key, values[0]));
-            //        return;
-            //    }
-            //}
-
             Attributes.Add(node);
         }
 

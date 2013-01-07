@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9F2637
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.Javascript", "Parrot.Javascript\Parrot.Javascript.csproj", "{558C0F20-6E04-4B6D-86AE-06B891668794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,16 @@ Global
 		{9AC0D35D-89F5-4626-A8C1-E6481DE57174}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9AC0D35D-89F5-4626-A8C1-E6481DE57174}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9AC0D35D-89F5-4626-A8C1-E6481DE57174}.Release|x86.ActiveCfg = Release|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{558C0F20-6E04-4B6D-86AE-06B891668794}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
