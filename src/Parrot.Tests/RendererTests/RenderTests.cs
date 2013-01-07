@@ -55,8 +55,8 @@ namespace Parrot.Tests
         public void ForeachRendererTests()
         {
             object model = new[] {1, 2};
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > @this }", model));
-            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach(Model) { div > @this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div > @this }", model));
+            Assert.AreEqual("<div>1</div><div>2</div>", Render("foreach { div > @this }", model));
 
             Assert.Throws<InvalidCastException>(() => Render("foreach(Model) { div(this) }", new {Model = new {Item = 1}}));
         }

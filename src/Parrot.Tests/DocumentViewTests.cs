@@ -39,7 +39,7 @@ namespace Parrot.Tests
                 rendererFactory,
                 documentHost,
                 document
-                );
+            );
 
             var writer = host.CreateWriter();
 

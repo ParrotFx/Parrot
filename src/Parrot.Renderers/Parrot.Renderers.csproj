@@ -55,6 +55,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HtmlRenderer.cs" />
+    <Compile Include="IfRenderer.cs" />
     <Compile Include="Infrastructure\IAttributeRenderer.cs" />
     <Compile Include="Infrastructure\IHost.cs" />
     <Compile Include="Infrastructure\IPathResolver.cs" />

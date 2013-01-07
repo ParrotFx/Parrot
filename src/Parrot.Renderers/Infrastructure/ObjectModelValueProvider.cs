@@ -85,6 +85,20 @@ namespace Parrot.Renderers.Infrastructure
                         var tempObject = host[parameters[0]];
                         return GetModelProperty(tempObject, string.Join(".", parameters.Skip(1)), out value);
                     }
+
+                    //check the locals property
+                    if (host.ContainsKey(Locals.LocalsKey))
+                    {
+                        List<object> locals = host[Locals.LocalsKey] as List<object>;
+                        for (int i = locals.Count - 1; i >= 0; i--)
+                        {
+                            var local = locals[i];
+                            if (GetModelProperty(local, property, out value))
+                            {
+                                return true;
+                            }
+                        }
+                    }
                 }
                 else
                 {

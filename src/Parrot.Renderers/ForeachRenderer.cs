@@ -18,7 +18,8 @@ namespace Parrot.Renderers
     /// </summary>
     public class ForeachRenderer : HtmlRenderer
     {
-        public ForeachRenderer(IHost host) : base(host)
+        public ForeachRenderer(IHost host)
+            : base(host)
         {
         }
 
@@ -41,14 +42,49 @@ namespace Parrot.Renderers
                 throw new InvalidCastException("model is not IEnumerable");
             }
 
-            foreach (var item in loop)
+            //create a local copy
+            IList<object> items = ToList(loop);
+            
+            //create locals object to handle local values to the method
+            Locals locals = new Locals(documentHost);
+
+            for (int i = 0; i < items.Count; i++)
             {
+                var item = items[i];
+
                 foreach (var child in statement.Children)
                 {
                     var renderer = rendererFactory.GetRenderer(child.Name);
+                    locals.Push(IteratorItem(i, items));
+
                     renderer.Render(writer, rendererFactory, child, documentHost, item);
+
+                    locals.Pop();
                 }
             }
+        }
+
+        private static object IteratorItem(int index, IList<object> items)
+        {
+            return new
+                {
+                    _first = index == 0,
+                    _last = index == items.Count - 1,
+                    _index = index,
+                    _even = index % 2 == 0,
+                    _odd = index % 2 == 1
+                };
+        }
+
+        private IList<object> ToList(IEnumerable loop)
+        {
+            var list = new List<object>();
+            foreach (var item in loop)
+            {
+                list.Add(item);
+            }
+
+            return list;
         }
     }
 }

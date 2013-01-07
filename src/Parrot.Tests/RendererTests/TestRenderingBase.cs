@@ -37,6 +37,7 @@ namespace Parrot.Tests
                     new InputRenderer(host),
                     new ConditionalRenderer(host),
                     new ListRenderer(host),
+                    new IfRenderer(host), 
                     new SelfClosingRenderer(host)
                 });
 

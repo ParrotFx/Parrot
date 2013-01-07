@@ -79,6 +79,17 @@
                 RenderChildren(writer, statement.Children, rendererFactory, documentHost, defaultTag, model);
             }
         }
+        
+        private IList<object> ToList(IEnumerable loop)
+        {
+            var list = new List<object>();
+            foreach (var item in loop)
+            {
+                list.Add(item);
+            }
+
+            return list;
+        }
 
         protected void RenderChildren(IParrotWriter writer, StatementList children, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, string defaultTag, object model)
         {
@@ -168,5 +179,6 @@
             }
             return model;
         }
+
     }
 }

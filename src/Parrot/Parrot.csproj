@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Debugger\Debug.cs" />
     <Compile Include="Infrastructure\IParrotWriter.cs" />
+    <Compile Include="Infrastructure\Locals.cs" />
     <Compile Include="Infrastructure\PrettyStringWriter.cs" />
     <Compile Include="Infrastructure\StandardWriter.cs" />
     <Compile Include="Infrastructure\ValueType.cs" />
