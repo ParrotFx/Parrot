@@ -1,3 +1,4 @@
+///<reference path="../Parser/parser.ts" />
 var ValueTypeResult = (function () {
     function ValueTypeResult(type, value) {
         this.type = type;
@@ -47,3 +48,4 @@ var ValueTypeProvider = (function () {
     };
     return ValueTypeProvider;
 })();
+//@ sourceMappingURL=ValueTypeProvider.js.map

@@ -6,3 +6,4 @@ var Token = (function () {
     }
     return Token;
 })();
+//@ sourceMappingURL=token.js.map

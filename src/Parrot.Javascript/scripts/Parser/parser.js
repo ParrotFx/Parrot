@@ -3,6 +3,10 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="stream.ts" />
+///<reference path="parserError.ts" />
+///<reference path="../lexer/tokenizer.ts" />
+///<reference path="../lexer/tokentype.ts" />
 var ParrotDocument = (function () {
     function ParrotDocument() {
         this.errors = [];
@@ -60,7 +64,8 @@ var Parser = (function () {
                     this.errors.push(new UnexpectedToken(token));
                     stream.next();
                     break;
-
+                    //throw new ParserException(token);
+                    
                 }
             }
         }
@@ -75,30 +80,33 @@ var Parser = (function () {
         var identifier = null;
         switch(tokenType) {
             case TokenType.identifier: {
+                //standard identifier
                 identifier = stream.next();
                 break;
 
             }
             case TokenType.openBracket:
             case TokenType.openParenthesis: {
+                //ignore these
                 break;
 
             }
             case TokenType.stringLiteral:
             case TokenType.stringLiteralPipe:
             case TokenType.quotedStringLiteral: {
+                //string statement
                 identifier = stream.next();
                 break;
 
             }
             case TokenType.at: {
-                stream.getNextNoReturn();
+                stream.nextNoReturn();
                 identifier = stream.next();
                 break;
 
             }
             case TokenType.equal: {
-                stream.getNextNoReturn();
+                stream.nextNoReturn();
                 identifier = stream.next();
                 break;
 
@@ -106,7 +114,8 @@ var Parser = (function () {
             default: {
                 this.errors.push(new UnexpectedToken(previousToken));
                 return [];
-
+                //throw new ParserException(stream.Peek());
+                
             }
         }
         var statement;
@@ -195,9 +204,6 @@ var Parser = (function () {
         var exit = false;
         while(stream.peek() != null && !exit) {
             var token = stream.peek();
-            if(token == null) {
-                break;
-            }
             switch(token.type) {
                 case TokenType.openParenthesis: {
                     additional[1] = this.parseParameters(stream);
@@ -216,6 +222,7 @@ var Parser = (function () {
                 }
                 case TokenType.openBrace: {
                     additional[2] = this.parseChildren(stream);
+                    exit = true;
                     break;
 
                 }
@@ -270,15 +277,17 @@ var Parser = (function () {
 
                 }
                 default: {
-                    var statements = this.parseStatement(stream);
-                    for(var i in statements) {
-                        statements.push(statements[i]);
+                    var s = this.parseStatement(stream);
+                    console.log("parseChildren:", s);
+                    for(var i in s) {
+                        statements.push(s[i]);
                     }
                     break;
 
                 }
             }
         }
+        console.log("returning:", statements);
         return statements;
     };
     Parser.prototype.parseParameters = function (stream) {
@@ -299,20 +308,24 @@ var Parser = (function () {
 
                 }
                 case TokenType.comma: {
+                    //another parameter - consume this
                     stream.nextNoReturn();
                     break;
 
                 }
                 case TokenType.closeParenthesis: {
+                    //consume close parenthesis
                     stream.nextNoReturn();
                     exit = true;
                     break;
 
                 }
                 default: {
+                    //read until )
                     this.errors.push(new UnexpectedToken(token));
                     return list;
-
+                    //throw new ParserException(token);
+                    
                 }
             }
         }
@@ -329,11 +342,14 @@ var Parser = (function () {
 
             }
             default: {
+                //invalid token
                 this.errors.push(new UnexpectedToken(identifier));
+                //throw new ParserException(identifier);
                 return null;
 
             }
         }
+        //reduction
         return new Parameter(identifier.content);
     };
     Parser.prototype.parseAttributes = function (stream) {
@@ -352,13 +368,16 @@ var Parser = (function () {
 
                 }
                 case TokenType.closeBracket: {
+                    //consume close bracket
                     stream.nextNoReturn();
                     exit = true;
                     break;
 
                 }
                 default: {
+                    //invalid token
                     this.errors.push(new AttributeIdentifierMissing(token.index));
+                    //throw new ParserException(token);
                     return attributes;
 
                 }
@@ -372,13 +391,17 @@ var Parser = (function () {
             stream.nextNoReturn();
             var valueToken = stream.peek();
             if(valueToken == null) {
+                //TODO: Errors.Add(stream.Next());
                 this.errors.push(new UnexpectedToken(identifier));
                 return new Attribute(identifier.content, null);
-            }
+                //throw new ParserException(string.Format("Unexpected end of stream"));
+                            }
             if(valueToken.type == TokenType.closeBracket) {
+                //then it's an invalid declaration
                 this.errors.push(new AttributeValueMissing(valueToken.index));
             }
             var value = this.parseStatement(stream)[0];
+            //force this as an attribute type
             if(value == null) {
             } else {
                 switch(value.name) {
@@ -391,8 +414,10 @@ var Parser = (function () {
                     }
                 }
             }
+            //reduction
             return new Attribute(identifier.content, value);
         }
+        //single attribute only
         return new Attribute(identifier.content, null);
     };
     return Parser;
@@ -782,3 +807,4 @@ var RawOutput = (function (_super) {
     }
     return RawOutput;
 })(StringLiteral);
+//@ sourceMappingURL=parser.js.map

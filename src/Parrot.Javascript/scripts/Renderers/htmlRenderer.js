@@ -3,6 +3,14 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../Parser/parser.ts" />
+///<reference path="./irenderer.ts" />
+///<reference path="./rendererProvider.ts" />
+///<reference path="../Infrastructure/ObjectModelValueProvider.ts" />
+///<reference path="../Infrastructure/ValueTypeProvider.ts" />
+///<reference path="../exceptions.ts" />
+///<reference path="./tagBuilder.ts" />
+///<reference path="./baseRenderer.ts" />
 var HtmlRenderer = (function (_super) {
     __extends(HtmlRenderer, _super);
     function HtmlRenderer() {
@@ -14,8 +22,10 @@ var HtmlRenderer = (function (_super) {
         ];
     }
     HtmlRenderer.prototype.render = function (statement, host, model, rendererProvider) {
+        //get the local model
         this.rendererProvider = rendererProvider;
         var localModel = this.getLocalModelValue(host, statement, model);
+        console.log("rendering statement:", statement.name);
         return this.createTag(statement, host, localModel);
     };
     HtmlRenderer.prototype.createTag = function (statement, host, model) {
@@ -75,3 +85,4 @@ var HtmlRenderer = (function (_super) {
     };
     return HtmlRenderer;
 })(BaseRenderer);
+//@ sourceMappingURL=htmlRenderer.js.map

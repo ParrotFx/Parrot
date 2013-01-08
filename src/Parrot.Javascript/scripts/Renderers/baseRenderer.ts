@@ -3,6 +3,8 @@
 ///<reference path="../Infrastructure/ValueTypeProvider.ts" />
 
 class BaseRenderer {
+    private getlocal() {
+    }
     getLocalModelValue(host: any[], statement: Statement, model: any): any {
         var modelValueProvider = new ObjectModelValueProvider();
 

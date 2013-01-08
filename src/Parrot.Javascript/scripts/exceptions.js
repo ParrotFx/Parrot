@@ -10,3 +10,4 @@ var NullReferenceException = (function () {
     }
     return NullReferenceException;
 })();
+//@ sourceMappingURL=exceptions.js.map

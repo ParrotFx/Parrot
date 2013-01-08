@@ -42,3 +42,4 @@ var TokenType;
     TokenType._map[19] = "at";
     TokenType.at = 19;
 })(TokenType || (TokenType = {}));
+//@ sourceMappingURL=tokenType.js.map

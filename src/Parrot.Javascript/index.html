@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
     <script type="text/javascript" src="scripts/Lexer/token.js"></script>
     <script type="text/javascript" src="scripts/Lexer/tokenizer.js"></script>
     <script type="text/javascript" src="scripts/Lexer/tokens.js"></script>
@@ -11,6 +13,7 @@
     <script type="text/javascript" src="scripts/Renderers/baseRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/docTypeRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/htmlRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/listRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/stringRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/selfClosingRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/tagBuilder.js"></script>
@@ -20,31 +23,117 @@
     <script type="text/javascript" src="scripts/exceptions.js"></script>
     <script type="text/javascript" src="scripts/Infrastructure/ObjectModelValueProvider.js"></script>
     <script type="text/javascript" src="scripts/Infrastructure/ValueTypeProvider.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/Locals.js"></script>
 
     <title>Parrot javascript</title>
+    
+    <style type="text/css">
+        table {
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+        }
+
+        button {
+            float: right;
+        }
+    </style>
 </head>
 <body>
     <script type="text/javascript">
-        var parser = new Parser();
-        var d = parser.parse("ul(Model) > li > @this");
+        $(function() {
+            $("button").click(function() {
+                var model = $.parseJSON($("#model").val());
+                var template = $("#template").val();
 
-        var model = [1, 2, 3];
-        var host = [];
-        host["Model"] = model;
+                var parser = new Parser();
+                var host = [];
+                host["Model"] = model;
+                var view = new ParrotDocumentView(parser.parse(template));
 
-        var view = new ParrotDocumentView(d);
-        var result = view.render(host, model);
-        console.log(result);
+                var result = view.render(host, model);
 
+                //$("#output-html").text(result);
+                $("#output").html(result);
 
-        var d2 = parser.parse("div > @Model.item1\r\nhr.row\r\ndoctype");
-        var model = { item1: "woo!" };
-        var host = [];
-        host["Model"] = model;
-
-        view = new ParrotDocumentView(d2);
-        result = view.render(host, model);
-        console.log(result);
+            });
+        });
     </script>
+    <table>
+        <thead></thead>
+        <tbody>
+            <tr>
+                <td>
+                    <textarea id="template">div#firstname.nameInfo {
+    label { 'First name' }
+    span > =FirstName
+}
+div#lastname.nameInfo {
+    label { 'Last name' }
+    span > =LastName
+}
+div#age.nameInfo {
+    label { 'Age' }
+    span > @Age
+}
+div#address.addressInfo {
+    div(Address) {
+        div > =StreetAddress
+        div > =City
+        div > =State
+        div > =PostalCode
+    }
+}
+ul#phoneNumbers.phone(PhoneNumber) {
+    li {
+        span > @Type
+        span > =Number
+    }
+}</textarea>
+                </td>
+                <td>
+                    <textarea id="model">{
+     "FirstName": "John",
+     "LastName" : "Smith",
+     "Age"      : 25,
+     "Address"  :
+     {
+         "StreetAddress": "21 2nd Street",
+         "City"         : "New York",
+         "State"        : "NY",
+         "PostalCode"   : "10021"
+     },
+     "PhoneNumber":
+     [
+         {
+           "Type"  : "home",
+           "Number": "212 555-1234"
+         },
+         {
+           "Type"  : "fax",
+           "Number": "646 555-4567"
+         }
+     ]
+ }</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button>Parse</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <pre id="output-html"></pre>
+                </td>
+                <td>
+                    <div id="output"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

@@ -1,3 +1,4 @@
+///<reference path="tokens.ts" />
 var Tokenizer = (function () {
     function Tokenizer(source) {
         this._source = source;
@@ -75,68 +76,82 @@ var Tokenizer = (function () {
             }
             switch(currentCharacter) {
                 case ',': {
+                    //this is for the future
                     this.consume();
                     return new CommaToken(this._currentIndex);
 
                 }
                 case '(': {
+                    //parameter list start
                     this.consume();
                     return new OpenParenthesisToken(this._currentIndex);
 
                 }
                 case ')': {
+                    //parameter list end
                     this.consume();
                     return new CloseParenthesisToken(this._currentIndex);
 
                 }
                 case '[': {
+                    //attribute list start
                     this.consume();
                     return new OpenBracketToken(this._currentIndex);
 
                 }
                 case ']': {
+                    //attribute list end
                     this.consume();
                     return new CloseBracketToken(this._currentIndex);
 
                 }
                 case '=': {
+                    //attribute assignment, raw output
                     this.consume();
                     return new EqualToken(this._currentIndex);
 
                 }
                 case '{': {
+                    //child block start
                     this.consume();
                     return new OpenBracesToken(this._currentIndex);
 
                 }
-                case ')': {
+                case '}': {
+                    //child block end
                     this.consume();
                     return new CloseBracesToken(this._currentIndex);
 
                 }
                 case '>': {
+                    //child assignment
                     this.consume();
                     return new GreaterThanToken(this._currentIndex);
 
                 }
                 case '+': {
+                    //sibling assignment
                     this.consume();
                     return new PlusToken(this._currentIndex);
 
                 }
                 case '|': {
+                    //string literal pipe
                     return new StringLiteralPipeToken(this._currentIndex, this.consumeUntilNewLine());
 
                 }
                 case '"': {
+                    //quoted string literal
                     return new QuotedStringLiteralToken(this._currentIndex, this.consumeQuotedStringLiteral("\""));
 
                 }
                 case '\'': {
+                    //quoted string literal
                     return new QuotedStringLiteralToken(this._currentIndex, this.consumeQuotedStringLiteral("\'"));
 
                 }
                 case '@': {
+                    //Encoded output
                     this.consume();
                     return new AtToken(this._currentIndex);
 
@@ -187,3 +202,4 @@ var UnexpectedTokenException = (function () {
     }
     return UnexpectedTokenException;
 })();
+//@ sourceMappingURL=tokenizer.js.map

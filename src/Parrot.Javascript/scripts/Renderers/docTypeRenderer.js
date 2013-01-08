@@ -3,6 +3,14 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../Parser/parser.ts" />
+///<reference path="./irenderer.ts" />
+///<reference path="./rendererProvider.ts" />
+///<reference path="../Infrastructure/ObjectModelValueProvider.ts" />
+///<reference path="../Infrastructure/ValueTypeProvider.ts" />
+///<reference path="../exceptions.ts" />
+///<reference path="./tagBuilder.ts" />
+///<reference path="./baseRenderer.ts" />
 var DocTypeRenderer = (function (_super) {
     __extends(DocTypeRenderer, _super);
     function DocTypeRenderer() {
@@ -19,8 +27,8 @@ var DocTypeRenderer = (function (_super) {
             var localModel = this.getLocalModelValue(host, statement, model);
             value = localModel;
         }
-        console.log(value);
         return "<!DOCTYPE " + value + ">";
     };
     return DocTypeRenderer;
 })(BaseRenderer);
+//@ sourceMappingURL=docTypeRenderer.js.map

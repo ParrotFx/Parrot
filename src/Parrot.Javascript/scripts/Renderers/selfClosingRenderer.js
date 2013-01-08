@@ -3,6 +3,13 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../Parser/parser.ts" />
+///<reference path="./irenderer.ts" />
+///<reference path="rendererProvider.ts" />
+///<reference path="../Infrastructure/ObjectModelValueProvider.ts" />
+///<reference path="../Infrastructure/ValueTypeProvider.ts" />
+///<reference path="../exceptions.ts" />
+///<reference path="./htmlRenderer.ts" />
 var SelfClosingRenderer = (function (_super) {
     __extends(SelfClosingRenderer, _super);
     function SelfClosingRenderer() {
@@ -24,6 +31,7 @@ var SelfClosingRenderer = (function (_super) {
         ];
     }
     SelfClosingRenderer.prototype.render = function (statement, host, model, rendererProvider) {
+        //get the local model
         var localModel = this.getLocalModelValue(host, statement, model);
         return this.createTag(statement, host, localModel);
     };
@@ -35,3 +43,4 @@ var SelfClosingRenderer = (function (_super) {
     };
     return SelfClosingRenderer;
 })(HtmlRenderer);
+//@ sourceMappingURL=selfClosingRenderer.js.map

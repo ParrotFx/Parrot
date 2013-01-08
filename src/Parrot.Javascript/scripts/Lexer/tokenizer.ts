@@ -93,7 +93,7 @@ class Tokenizer {
             if (this.isWhitespace(currentCharacter)) {
                 return new WhitespaceToken(this._currentIndex, this.consumeWhitespace(), TokenType.whitespace);
             }
-
+            
             switch (currentCharacter) {
                 case ',': //this is for the future
                     this.consume();
@@ -116,7 +116,7 @@ class Tokenizer {
                 case '{': //child block start
                     this.consume();
                     return new OpenBracesToken(this._currentIndex);
-                case ')': //child block end
+                case '}': //child block end
                     this.consume();
                     return new CloseBracesToken(this._currentIndex);
                 case '>': //child assignment

@@ -1,3 +1,4 @@
+///<reference path="rendererProvider.ts" />
 var ParrotDocumentView = (function () {
     function ParrotDocumentView(parrotDocument) {
         this.parrotDocument = parrotDocument;
@@ -5,6 +6,7 @@ var ParrotDocumentView = (function () {
     }
     ParrotDocumentView.prototype.render = function (host, model) {
         var result = "";
+        console.log("rendering document");
         for(var i in this.parrotDocument.children) {
             var child = this.parrotDocument.children[i];
             var renderer = this.rendererProvider.getRenderer(child.name);
@@ -14,3 +16,4 @@ var ParrotDocumentView = (function () {
     };
     return ParrotDocumentView;
 })();
+//@ sourceMappingURL=parrotDocumentView.js.map

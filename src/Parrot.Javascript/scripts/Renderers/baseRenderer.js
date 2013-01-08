@@ -1,5 +1,10 @@
+///<reference path="../Parser/parser.ts" />
+///<reference path="../Infrastructure/ObjectModelValueProvider.ts" />
+///<reference path="../Infrastructure/ValueTypeProvider.ts" />
 var BaseRenderer = (function () {
     function BaseRenderer() { }
+    BaseRenderer.prototype.getlocal = function () {
+    };
     BaseRenderer.prototype.getLocalModelValue = function (host, statement, model) {
         var modelValueProvider = new ObjectModelValueProvider();
         if(statement.parameters.length > 0) {
@@ -18,3 +23,4 @@ var BaseRenderer = (function () {
     };
     return BaseRenderer;
 })();
+//@ sourceMappingURL=baseRenderer.js.map

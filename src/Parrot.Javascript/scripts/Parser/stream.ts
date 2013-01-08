@@ -8,11 +8,11 @@ class Stream {
     constructor(source: Token[]) { 
         this._list = source;
         this._count = source.length;
-        this._index = 0;
+        this._index = -1;
     }
 
     peek() : Token {
-        var temp = this._index;
+        var temp = this._index + 1;
         while (temp < this._count) {
             if (this._list[temp].type != TokenType.whitespace) {
                 return this._list[temp];
@@ -36,10 +36,10 @@ class Stream {
     }
 
     next() : Token {
-        this._index;
+        this._index++;
         while (this._index < this._count) {
             if (this._list[this._index].type != TokenType.whitespace) {
-                return this._list[this._index++];
+                return this._list[this._index];
             }
 
             this._index++;

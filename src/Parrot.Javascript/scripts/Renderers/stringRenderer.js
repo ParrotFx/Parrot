@@ -1,3 +1,9 @@
+///<reference path="../Parser/parser.ts" />
+///<reference path="./irenderer.ts" />
+///<reference path="rendererProvider.ts" />
+///<reference path="../Infrastructure/ObjectModelValueProvider.ts" />
+///<reference path="../Infrastructure/ValueTypeProvider.ts" />
+///<reference path="../exceptions.ts" />
 var StringRenderer = (function () {
     function StringRenderer() {
         this.defaultChildTag = "";
@@ -6,6 +12,7 @@ var StringRenderer = (function () {
         ];
     }
     StringRenderer.prototype.render = function (statement, host, model, rendererProvider) {
+        //get the local model
         this.rendererProvider = rendererProvider;
         var result = "";
         if(statement instanceof StringLiteral) {
@@ -37,3 +44,4 @@ var StringRenderer = (function () {
     };
     return StringRenderer;
 })();
+//@ sourceMappingURL=stringRenderer.js.map

@@ -10,6 +10,7 @@ class ParrotDocumentView {
 
     render(host: any[], model: any): string {
         var result: string = "";
+        console.log("rendering document");
         for (var i in this.parrotDocument.children) {
             var child = this.parrotDocument.children[i];
 

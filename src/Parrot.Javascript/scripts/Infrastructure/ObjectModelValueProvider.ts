@@ -1,5 +1,6 @@
 ///<reference path="../Parser/parser.ts" />
 ///<reference path="ValueTypeProvider.ts" />
+///<reference path="../exceptions.ts" />
 class ObjectModelValueProvider {
     valueTypeProvider: ValueTypeProvider;
 
@@ -71,6 +72,17 @@ class ObjectModelValueProvider {
                         }
 
                         return this.getModelProperty(tempObject, parameters.slice(1).join("."));
+                    }
+                }
+
+                if (model["__locals"] != undefined && model["__locals"] != null) {
+                    var locals = model["__locals"];
+                    for (var i = locals.length - 1; i >= 0; i--) {
+                        var local = locals[i];
+                        var result = this.getModelProperty(local, property);
+                        if (result.result == true) {
+                            return result;
+                        }
                     }
                 }
             } else {

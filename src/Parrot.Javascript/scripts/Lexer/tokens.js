@@ -3,6 +3,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+/// <reference path="token.ts" />
+/// <reference path="tokenType.ts" />
 var AtToken = (function (_super) {
     __extends(AtToken, _super);
     function AtToken(index) {
@@ -108,3 +110,4 @@ var WhitespaceToken = (function (_super) {
     }
     return WhitespaceToken;
 })(Token);
+//@ sourceMappingURL=tokens.js.map

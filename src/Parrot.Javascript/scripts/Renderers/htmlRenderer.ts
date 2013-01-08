@@ -18,6 +18,8 @@ class HtmlRenderer extends BaseRenderer implements IRenderer {
 
         var localModel = this.getLocalModelValue(host, statement, model);
 
+        console.log("rendering statement:", statement.name);
+
         return this.createTag(statement, host, localModel);
     }
 

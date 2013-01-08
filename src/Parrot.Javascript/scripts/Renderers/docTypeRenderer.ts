@@ -19,8 +19,6 @@ class DocTypeRenderer extends BaseRenderer implements IRenderer {
             value = localModel;
         }
 
-        console.log(value);
-
         return "<!DOCTYPE " + value + ">";
     }
 }

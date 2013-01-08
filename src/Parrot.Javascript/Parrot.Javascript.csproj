@@ -66,25 +66,59 @@
     <Content Include="scripts\exceptions.js">
       <DependentUpon>exceptions.ts</DependentUpon>
     </Content>
+    <Content Include="scripts\exceptions.min.js">
+      <DependentUpon>exceptions.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Infrastructure\Locals.ts" />
+    <Content Include="scripts\Infrastructure\Locals.js">
+      <DependentUpon>Locals.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\Locals.min.js">
+      <DependentUpon>Locals.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Infrastructure\ObjectModelValueProvider.js">
       <DependentUpon>ObjectModelValueProvider.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Infrastructure\ValueTypeProvider.ts" />
+    <Content Include="scripts\Infrastructure\ObjectModelValueProvider.min.js">
+      <DependentUpon>ObjectModelValueProvider.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Infrastructure\ValueTypeProvider.js">
       <DependentUpon>ValueTypeProvider.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\ValueTypeProvider.min.js">
+      <DependentUpon>ValueTypeProvider.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\token.min.js">
+      <DependentUpon>token.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Lexer\tokenizer.js">
       <DependentUpon>tokenizer.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Lexer\tokens.ts" />
+    <Content Include="scripts\Lexer\tokenizer.min.js">
+      <DependentUpon>tokenizer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Lexer\tokens.js">
       <DependentUpon>tokens.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\tokens.min.js">
+      <DependentUpon>tokens.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\tokenType.min.js">
+      <DependentUpon>tokenType.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Parser\parser.js">
       <DependentUpon>parser.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Parser\parserError.ts" />
+    <Content Include="scripts\Parser\parser.min.js">
+      <DependentUpon>parser.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Parser\parserError.js">
+      <DependentUpon>parserError.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Parser\parserError.min.js">
       <DependentUpon>parserError.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Parser\stream.js">
@@ -100,23 +134,76 @@
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\htmlRenderer.ts" />
     <TypeScriptCompile Include="scripts\Renderers\baseRenderer.ts" />
+    <Content Include="scripts\Parser\stream.min.js">
+      <DependentUpon>stream.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\baseRenderer.js">
       <DependentUpon>baseRenderer.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\docTypeRenderer.ts" />
+    <Content Include="scripts\Renderers\baseRenderer.min.js">
+      <DependentUpon>baseRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\conditionalRenderer.ts" />
+    <Content Include="scripts\Renderers\conditionalRenderer.js">
+      <DependentUpon>conditionalRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\conditionalRenderer.min.js">
+      <DependentUpon>conditionalRenderer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\docTypeRenderer.js">
       <DependentUpon>docTypeRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\docTypeRenderer.min.js">
+      <DependentUpon>docTypeRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\foreachRenderer.ts" />
+    <Content Include="scripts\Renderers\foreachRenderer.js">
+      <DependentUpon>foreachRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\foreachRenderer.min.js">
+      <DependentUpon>foreachRenderer.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Renderers\htmlRenderer.js">
       <DependentUpon>htmlRenderer.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\iRenderer.ts" />
+    <Content Include="scripts\Renderers\htmlRenderer.min.js">
+      <DependentUpon>htmlRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\inputRenderer.ts" />
+    <TypeScriptCompile Include="scripts\Renderers\ifRenderer.ts" />
+    <Content Include="scripts\Renderers\ifRenderer.js">
+      <DependentUpon>ifRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\ifRenderer.min.js">
+      <DependentUpon>ifRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\inputRenderer.js">
+      <DependentUpon>inputRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\inputRenderer.min.js">
+      <DependentUpon>inputRenderer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\iRenderer.js">
       <DependentUpon>iRenderer.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\rendererProvider.ts" />
     <TypeScriptCompile Include="scripts\Renderers\parrotDocumentView.ts" />
+    <TypeScriptCompile Include="scripts\Renderers\listRenderer.ts" />
+    <Content Include="scripts\Renderers\iRenderer.min.js">
+      <DependentUpon>iRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\listRenderer.js">
+      <DependentUpon>listRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\listRenderer.min.js">
+      <DependentUpon>listRenderer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\parrotDocumentView.js">
+      <DependentUpon>parrotDocumentView.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\parrotDocumentView.min.js">
       <DependentUpon>parrotDocumentView.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Renderers\rendererProvider.js">
@@ -124,14 +211,26 @@
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\stringRenderer.ts" />
     <TypeScriptCompile Include="scripts\Renderers\selfClosingRenderer.ts" />
+    <Content Include="scripts\Renderers\rendererProvider.min.js">
+      <DependentUpon>rendererProvider.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\selfClosingRenderer.js">
+      <DependentUpon>selfClosingRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\selfClosingRenderer.min.js">
       <DependentUpon>selfClosingRenderer.ts</DependentUpon>
     </Content>
     <Content Include="scripts\Renderers\stringRenderer.js">
       <DependentUpon>stringRenderer.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\tagBuilder.ts" />
+    <Content Include="scripts\Renderers\stringRenderer.min.js">
+      <DependentUpon>stringRenderer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\tagBuilder.js">
+      <DependentUpon>tagBuilder.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\tagBuilder.min.js">
       <DependentUpon>tagBuilder.ts</DependentUpon>
     </Content>
     <Content Include="Web.config" />
@@ -140,6 +239,78 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="scripts\Renderers\listRenderer.js.map">
+      <DependentUpon>listRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\exceptions.js.map">
+      <DependentUpon>exceptions.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\tokenizer.js.map">
+      <DependentUpon>tokenizer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\tokenType.js.map">
+      <DependentUpon>tokenType.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Parser\stream.js.map">
+      <DependentUpon>stream.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\baseRenderer.js.map">
+      <DependentUpon>baseRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\parrotDocumentView.js.map">
+      <DependentUpon>parrotDocumentView.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\ObjectModelValueProvider.js.map">
+      <DependentUpon>ObjectModelValueProvider.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\ValueTypeProvider.js.map">
+      <DependentUpon>ValueTypeProvider.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\token.js.map">
+      <DependentUpon>token.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Lexer\tokens.js.map">
+      <DependentUpon>tokens.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\rendererProvider.js.map">
+      <DependentUpon>rendererProvider.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\tagBuilder.js.map">
+      <DependentUpon>tagBuilder.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Parser\parserError.js.map">
+      <DependentUpon>parserError.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\selfClosingRenderer.js.map">
+      <DependentUpon>selfClosingRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\stringRenderer.js.map">
+      <DependentUpon>stringRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Parser\parser.js.map">
+      <DependentUpon>parser.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\docTypeRenderer.js.map">
+      <DependentUpon>docTypeRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\htmlRenderer.js.map">
+      <DependentUpon>htmlRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\foreachRenderer.js.map">
+      <DependentUpon>foreachRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\inputRenderer.js.map">
+      <DependentUpon>inputRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\ifRenderer.js.map">
+      <DependentUpon>ifRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\conditionalRenderer.js.map">
+      <DependentUpon>conditionalRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\Locals.js.map">
+      <DependentUpon>Locals.ts</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -179,7 +350,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="BeforeBuild">
-    <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.1.1\tsc.exe&quot; @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" />
-  </Target>
 </Project>

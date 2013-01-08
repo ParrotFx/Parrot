@@ -24,9 +24,9 @@ class Parser {
         var tokenizer = new Tokenizer(stream);
         var tokens = tokenizer.tokens();
         var tokenStream = new Stream(tokens);
-
+        
         var parent = this;
-
+        
         this.parseStream(tokenStream, function (s) {
             for (var i in s) {
                 parent.parseStatementErrors(s[i]);
@@ -35,9 +35,9 @@ class Parser {
         });
 
         document.errors = this.errors;
-        
-        console.log(document.children);
 
+        console.log(document.children);
+        
         return document;
     }
 
@@ -101,11 +101,11 @@ class Parser {
                 identifier = stream.next();
                 break;
             case TokenType.at:
-                stream.getNextNoReturn();
+                stream.nextNoReturn();
                 identifier = stream.next();
                 break;
             case TokenType.equal:
-                stream.getNextNoReturn();
+                stream.nextNoReturn();
                 identifier = stream.next();
                 break;
             default:
@@ -203,10 +203,6 @@ class Parser {
 
         while (stream.peek() != null && !exit) {
             var token = stream.peek();
-            if (token == null) {
-                break;
-            }
-
             switch (token.type) {
                 case TokenType.openParenthesis:
                     additional[1] = this.parseParameters(stream);
@@ -219,6 +215,7 @@ class Parser {
                     break;
                 case TokenType.openBrace:
                     additional[2] = this.parseChildren(stream);
+                    exit = true;
                     break;
                 default:
                     exit = true;
@@ -271,14 +268,16 @@ class Parser {
                     exit = true;
                     break;
                 default:
-                    var statements = this.parseStatement(stream);
-                    for (var i in statements) {
-                        statements.push(statements[i]);
+                    var s = this.parseStatement(stream);
+                    console.log("parseChildren:", s);
+                    for (var i in s) {
+                        statements.push(s[i]);
                     }
                     break;
             }
         }
 
+        console.log("returning:", statements);
         return statements;
     }
 
