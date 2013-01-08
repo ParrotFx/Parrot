@@ -36,7 +36,6 @@ var Tokenizer = (function () {
             whitespace += character;
             character = this.peek();
         }
-        console.log("consumeWhitespace:", whitespace.length);
         return whitespace;
     };
     Tokenizer.prototype.consumeUntilNewLine = function () {
@@ -72,7 +71,6 @@ var Tokenizer = (function () {
                 return token;
             }
             if(this.isWhitespace(currentCharacter)) {
-                console.log("isWhitespace");
                 return new WhitespaceToken(this._currentIndex, this.consumeWhitespace(), TokenType.whitespace);
             }
             switch(currentCharacter) {

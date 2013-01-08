@@ -19,7 +19,6 @@ var Parser = (function () {
         var tokenizer = new Tokenizer(stream);
         var tokens = tokenizer.tokens();
         var tokenStream = new Stream(tokens);
-        console.log(tokens);
         var parent = this;
         this.parseStream(tokenStream, function (s) {
             for(var i in s) {
@@ -28,6 +27,7 @@ var Parser = (function () {
             }
         });
         document.errors = this.errors;
+        console.log(document.children);
         return document;
     };
     Parser.prototype.parseStatementErrors = function (statement) {
@@ -191,7 +191,7 @@ var Parser = (function () {
         return tail;
     };
     Parser.prototype.parseStatementTail = function (stream) {
-        var additional = new Array[3]();
+        var additional = new Array(3);
         var exit = false;
         while(stream.peek() != null && !exit) {
             var token = stream.peek();
@@ -442,6 +442,7 @@ var Statement = (function () {
         this.children = [];
         this.identifierParts = [];
         this.errors = [];
+        var container = this;
         if(this.indexOfAny(name, [
             ".", 
             "#", 
@@ -451,14 +452,15 @@ var Statement = (function () {
                 switch(part.type) {
                     case IdentifierType.id: {
                         if(part.name.length == 0) {
-                            this.errors.push(new MissingIdDeclaration(part.index - 1, 1));
+                            container.errors.push(new MissingIdDeclaration(part.index - 1, 1));
                         } else {
-                            if(this.anyAttributes(function (a) {
+                            if(container.anyAttributes(function (a) {
                                 return a.key == "id";
                             })) {
-                                this.errors.push(new MultipleIdDeclarations(part.name, part.index - 1, part.name.length + 1));
+                                container.errors.push(new MultipleIdDeclarations(part.name, part.index - 1, part.name.length + 1));
                             } else {
-                                this.addAttribute(new Attribute("id", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                                var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                                container.addAttribute(new Attribute("id", literal));
                             }
                         }
                         break;
@@ -466,28 +468,30 @@ var Statement = (function () {
                     }
                     case IdentifierType.class: {
                         if(part.name.length == 0) {
-                            this.errors.push(new MissingClassDeclaration(part.index = 1, 1));
+                            container.errors.push(new MissingClassDeclaration(1, 1));
                         } else {
-                            this.addAttribute(new Attribute("class", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                            var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                            container.addAttribute(new Attribute("class", literal));
                         }
                         break;
 
                     }
                     case IdentifierType.type: {
-                        this.addAttribute(new Attribute("type", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                        var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                        container.addAttribute(new Attribute("type", literal));
                         break;
 
                     }
                     case IdentifierType.literal: {
-                        this.name = part.name;
+                        container.name = part.name;
                         break;
 
                     }
                 }
-                this.identifierParts.push(part);
+                container.identifierParts.push(part);
             });
         } else {
-            this.name = name;
+            container.name = name;
         }
         this.parseStatementTail(tail);
     }
@@ -519,7 +523,7 @@ var Statement = (function () {
         this.attributes.push(node);
     };
     Statement.prototype.identifierTypeFromCharacter = function (character, currentType) {
-        switch(currentType) {
+        switch(character) {
             case ":": {
                 return IdentifierType.type;
 
@@ -540,10 +544,10 @@ var Statement = (function () {
         var partType = IdentifierType.literal;
         var nextType = IdentifierType.none;
         for(var i = 0; i < source.length; i++) {
-            nextType = this.identifierTypeFromCharacter(source[i], nextType);
+            nextType = this.identifierTypeFromCharacter(source.charAt(i), nextType);
             if(nextType != IdentifierType.none) {
                 var identifier = new Identifier();
-                identifier.name = source.substring(index, i - index);
+                identifier.name = source.substring(index, index + (i - index));
                 identifier.type = partType;
                 identifier.index = index;
                 identifier.length = i - index;
@@ -667,20 +671,15 @@ var StringLiteralPart = (function () {
     }
     return StringLiteralPart;
 })();
-var StringLiteralPipe = (function (_super) {
-    __extends(StringLiteralPipe, _super);
-    function StringLiteralPipe(value, tail, index) {
-        _super.call(this, value, tail, index);
-    }
-    return StringLiteralPipe;
-})(StringLiteral);
 var StringLiteral = (function (_super) {
     __extends(StringLiteral, _super);
     function StringLiteral(value, tail, index) {
         _super.call(this, "string", tail, index);
+        this.values = [];
+        this.valueType = ValueType.stringLiteral;
         if(this.isWrappedInQuotes(value)) {
             this.valueType = ValueType.stringLiteral;
-            value = value.substring(1, value.length - 2);
+            value = value.substring(1, 1 + value.length - 2);
         } else {
             if(value == "this") {
                 this.valueType = ValueType.local;
@@ -697,7 +696,7 @@ var StringLiteral = (function (_super) {
         }
     }
     StringLiteral.prototype.startsWith = function (source, value) {
-        return source.length > 0 && source[0] == value;
+        return source.length > 0 && source.charAt(0) == value;
     };
     StringLiteral.prototype.isWrappedInQuotes = function (value) {
         return (this.startsWith(value, "\"") || this.startsWith(value, "'"));
@@ -707,26 +706,26 @@ var StringLiteral = (function (_super) {
         var tempCounter = 0;
         var c = new Array(source.length);
         for(var i = 0; i < source.length; i++) {
-            if(source[i] == "@" || source[i] == "=") {
-                var comparer = source[i];
+            if(source.charAt(i) == "@" || source.charAt(i) == "=") {
+                var comparer = source.charAt(i);
                 var comparerType = (comparer == "@" ? StringLiteralPartType.encoded : StringLiteralPartType.raw);
                 i++;
-                if(source[Math.min(source.length - 1, i)] == comparer) {
+                if(source.charAt(Math.min(source.length - 1, i)) == comparer) {
                     c[tempCounter++] = comparer;
                 } else {
-                    if(this.isIdentifierHead(source[i])) {
+                    if(this.isIdentifierHead(source.charAt(i))) {
                         if(tempCounter > 0) {
                             parts.push(new StringLiteralPart(StringLiteralPartType.literal, c.join(""), i - tempCounter));
                         }
                         tempCounter = 0;
-                        var word;
+                        var word = "";
                         for(; i < source.length; i++ , tempCounter++) {
-                            if(!this.isIdTail(source[i])) {
+                            if(!this.isIdTail(source.charAt(i))) {
                                 break;
                             }
-                            word += source[i];
+                            word += source.charAt(i);
                         }
-                        if(word[word.length - 1] == ".") {
+                        if(word.charAt(word.length - 1) == ".") {
                             word = word.substring(0, word.length - 1);
                             parts.push(new StringLiteralPart(comparerType, word, i - tempCounter));
                             tempCounter = 0;
@@ -736,7 +735,7 @@ var StringLiteral = (function (_super) {
                             tempCounter = 0;
                         }
                         if(i < source.length) {
-                            c[tempCounter++] = source[i];
+                            c[tempCounter++] = source.charAt(i);
                         }
                     } else {
                         c[tempCounter++] = comparer;
@@ -744,7 +743,7 @@ var StringLiteral = (function (_super) {
                     }
                 }
             } else {
-                c[tempCounter++] = source[i];
+                c[tempCounter++] = source.charAt(i);
             }
         }
         if(tempCounter > 0) {
@@ -762,6 +761,13 @@ var StringLiteral = (function (_super) {
     };
     return StringLiteral;
 })(Statement);
+var StringLiteralPipe = (function (_super) {
+    __extends(StringLiteralPipe, _super);
+    function StringLiteralPipe(value, tail, index) {
+        _super.call(this, value, tail, index);
+    }
+    return StringLiteralPipe;
+})(StringLiteral);
 var EncodedOutput = (function (_super) {
     __extends(EncodedOutput, _super);
     function EncodedOutput(variableName, tail, index) {
@@ -772,7 +778,7 @@ var EncodedOutput = (function (_super) {
 var RawOutput = (function (_super) {
     __extends(RawOutput, _super);
     function RawOutput(variableName, tail, index) {
-        _super.call(this, "\"@" + variableName + "\"", tail, index);
+        _super.call(this, "\"=" + variableName + "\"", tail, index);
     }
     return RawOutput;
 })(StringLiteral);

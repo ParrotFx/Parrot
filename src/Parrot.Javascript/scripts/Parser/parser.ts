@@ -25,8 +25,6 @@ class Parser {
         var tokens = tokenizer.tokens();
         var tokenStream = new Stream(tokens);
 
-        console.log(tokens);
-
         var parent = this;
 
         this.parseStream(tokenStream, function (s) {
@@ -37,6 +35,8 @@ class Parser {
         });
 
         document.errors = this.errors;
+        
+        console.log(document.children);
 
         return document;
     }
@@ -197,7 +197,7 @@ class Parser {
     }
 
     parseStatementTail(stream: Stream) {
-        var additional: any[] = new Array[3];
+        var additional: any[] = new Array(3);
 
         var exit: bool = false;
 
@@ -463,36 +463,42 @@ class Statement {
         this.identifierParts = [];
         this.errors = [];
 
+        var container = this;
+
         if (this.indexOfAny(name, [".", "#", ":"]) > -1) {
             this.getIdentifierParts(name, function (part: Identifier) {
                 switch (part.type) {
                     case IdentifierType.id:
                         if (part.name.length == 0) {
-                            this.errors.push(new MissingIdDeclaration(part.index - 1, 1));
-                        } else if (this.anyAttributes(function (a) { return a.key == "id"; })) {
-                            this.errors.push(new MultipleIdDeclarations(part.name, part.index - 1, part.name.length + 1));
+                            container.errors.push(new MissingIdDeclaration(part.index - 1, 1));
+                        } else if (container.anyAttributes(function (a) { return a.key == "id"; })) {
+                            container.errors.push(new MultipleIdDeclarations(part.name, part.index - 1, part.name.length + 1));
                         } else {
-                            this.addAttribute(new Attribute("id", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                            var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                            container.addAttribute(new Attribute("id", literal));
                         }
                         break;
                     case IdentifierType.class:
                         if (part.name.length == 0) {
-                            this.errors.push(new MissingClassDeclaration(part.index = 1, 1));
+                            container.errors.push(new MissingClassDeclaration(1, 1));
                         } else {
-                            this.addAttribute(new Attribute("class", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                            var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                            container.addAttribute(new Attribute("class", literal));
                         }
                         break;
                     case IdentifierType.type:
-                        this.addAttribute(new Attribute("type", new StringLiteral("\"" + part.name + "\"", null, 0)));
+                        var literal = new StringLiteral("\"" + part.name + "\"", null, 0);
+                        container.addAttribute(new Attribute("type", literal));
                         break;
                     case IdentifierType.literal:
-                        this.name = part.name;
+                        container.name = part.name;
                         break;
                 }
-                this.identifierParts.push(part);
+
+                container.identifierParts.push(part);
             });
         } else {
-            this.name = name;
+            container.name = name;
         }
 
         this.parseStatementTail(tail);
@@ -533,7 +539,8 @@ class Statement {
     }
 
     identifierTypeFromCharacter(character: string, currentType: IdentifierType): IdentifierType {
-        switch (currentType) {
+
+        switch (character) {
             case ":":
                 return IdentifierType.type;
             case "#":
@@ -551,11 +558,11 @@ class Statement {
         var nextType: IdentifierType = IdentifierType.none;
 
         for (var i = 0; i < source.length; i++) {
-            nextType = this.identifierTypeFromCharacter(source[i], nextType);
+            nextType = this.identifierTypeFromCharacter(source.charAt(i), nextType);
 
             if (nextType != IdentifierType.none) {
                 var identifier = new Identifier();
-                identifier.name = source.substring(index, i - index);
+                identifier.name = source.substring(index, index + (i - index));
                 identifier.type = partType;
                 identifier.index = index;
                 identifier.length = i - index;
@@ -684,12 +691,6 @@ class StringLiteralPart {
     }
 }
 
-class StringLiteralPipe extends StringLiteral {
-    constructor(value: string, tail: StatementTail, index: number) {
-        super(value, tail, index);
-    }
-}
-
 class StringLiteral extends Statement {
     values: StringLiteralPart[];
     valueType: ValueType;
@@ -697,9 +698,12 @@ class StringLiteral extends Statement {
     constructor(value: string, tail: StatementTail, index: number) {
         super("string", tail, index);
 
+        this.values = [];
+        this.valueType = ValueType.stringLiteral;
+
         if (this.isWrappedInQuotes(value)) {
             this.valueType = ValueType.stringLiteral;
-            value = value.substring(1, value.length - 2);
+            value = value.substring(1, 1 + value.length - 2);
         } else if (value == "this") {
             this.valueType = ValueType.local;
         } else if (value == "null" || value == "true" || value == "false") {
@@ -714,7 +718,7 @@ class StringLiteral extends Statement {
     }
 
     startsWith(source: string, value: string): bool {
-        return source.length > 0 && source[0] == value;
+        return source.length > 0 && source.charAt(0) == value;
     }
 
     isWrappedInQuotes(value: string): bool {
@@ -727,31 +731,31 @@ class StringLiteral extends Statement {
         var c: string[] = new Array(source.length);
 
         for (var i: number = 0; i < source.length; i++) {
-            if (source[i] == "@" || source[i] == "=") {
-                var comparer: string = source[i];
+            if (source.charAt(i) == "@" || source.charAt(i) == "=") {
+                var comparer: string = source.charAt(i);
                 var comparerType: StringLiteralPartType = (comparer == "@" ? StringLiteralPartType.encoded : StringLiteralPartType.raw);
 
                 i++;
 
-                if (source[Math.min(source.length - 1, i)] == comparer) {
+                if (source.charAt(Math.min(source.length - 1, i)) == comparer) {
                     c[tempCounter++] = comparer;
                 }
-                else if (this.isIdentifierHead(source[i])) {
+                else if (this.isIdentifierHead(source.charAt(i))) {
                     if (tempCounter > 0) {
                         parts.push(new StringLiteralPart(StringLiteralPartType.literal, c.join(""), i - tempCounter));
                     }
 
                     tempCounter = 0;
-                    var word: string;
+                    var word: string = "";
                     for (; i < source.length; i++, tempCounter++) {
-                        if (!this.isIdTail(source[i])) {
+                        if (!this.isIdTail(source.charAt(i))) {
                             break;
                         }
 
-                        word += source[i];
+                        word += source.charAt(i);
                     }
 
-                    if (word[word.length - 1] == ".") {
+                    if (word.charAt(word.length - 1) == ".") {
                         word = word.substring(0, word.length - 1);
                         parts.push(new StringLiteralPart(comparerType, word, i - tempCounter));
                         tempCounter = 0;
@@ -763,7 +767,7 @@ class StringLiteral extends Statement {
                     }
 
                     if (i < source.length) {
-                        c[tempCounter++] = source[i];
+                        c[tempCounter++] = source.charAt(i);
                     }
 
                 } else {
@@ -771,7 +775,7 @@ class StringLiteral extends Statement {
                     i -= 1;
                 }
             } else {
-                c[tempCounter++] = source[i];
+                c[tempCounter++] = source.charAt(i);
             }
         }
 
@@ -794,6 +798,12 @@ class StringLiteral extends Statement {
 
 }
 
+class StringLiteralPipe extends StringLiteral {
+    constructor(value: string, tail: StatementTail, index: number) {
+        super(value, tail, index);
+    }
+}
+
 class EncodedOutput extends StringLiteral {
     constructor(variableName: string, tail: StatementTail, index: number) {
         super("\"@" + variableName + "\"", tail, index);
@@ -802,6 +812,6 @@ class EncodedOutput extends StringLiteral {
 
 class RawOutput extends StringLiteral {
     constructor(variableName: string, tail: StatementTail, index: number) {
-        super("\"@" + variableName + "\"", tail, index);
+        super("\"=" + variableName + "\"", tail, index);
     }
 }

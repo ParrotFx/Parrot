@@ -49,8 +49,6 @@ class Tokenizer {
             character = this.peek();
         }
 
-        console.log("consumeWhitespace:", whitespace.length);
-
         return whitespace;
     }
 
@@ -93,7 +91,6 @@ class Tokenizer {
             }
 
             if (this.isWhitespace(currentCharacter)) {
-                console.log("isWhitespace");
                 return new WhitespaceToken(this._currentIndex, this.consumeWhitespace(), TokenType.whitespace);
             }
 

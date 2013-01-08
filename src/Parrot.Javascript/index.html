@@ -8,15 +8,30 @@
     <script type="text/javascript" src="scripts/Parser/parserError.js"></script>
     <script type="text/javascript" src="scripts/Parser/parser.js"></script>
     <script type="text/javascript" src="scripts/Parser/stream.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/htmlRenderer.js"></script>
 </head>
 <body>
     <script type="text/javascript">
         var parser = new Parser();
-        var d = parser.parse("html > body");
+        var d = parser.parse("ul(Model) > li > @this");
 
-        console.log("children count:", d.children.length);
-        console.log("first child:", d.children[0].name);
-        console.log("child's child:", d.children[0].children[0].name);
+        var model = [1, 2, 3];
+        var host = [];
+        host["Model"] = model;
+
+        var view = new ParrotDocumentView(d);
+        var result = view.render(host, model);
+        console.log(result);
+
+
+        var d2 = parser.parse("div > @Model.item1");
+        var model = { item1: "woo!" };
+        var host = [];
+        host["Model"] = model;
+
+        view = new ParrotDocumentView(d2);
+        result = view.render(host, model);
+        console.log(result);
     </script>
 </body>
 </html>
