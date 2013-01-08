@@ -61,6 +61,18 @@
     <TypeScriptCompile Include="scripts\Parser\parser.ts" />
     <TypeScriptCompile Include="scripts\Lexer\tokenizer.ts" />
     <Content Include="index.html" />
+    <TypeScriptCompile Include="scripts\Infrastructure\ObjectModelValueProvider.ts" />
+    <TypeScriptCompile Include="scripts\exceptions.ts" />
+    <Content Include="scripts\exceptions.js">
+      <DependentUpon>exceptions.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Infrastructure\ObjectModelValueProvider.js">
+      <DependentUpon>ObjectModelValueProvider.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Infrastructure\ValueTypeProvider.ts" />
+    <Content Include="scripts\Infrastructure\ValueTypeProvider.js">
+      <DependentUpon>ValueTypeProvider.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Lexer\tokenizer.js">
       <DependentUpon>tokenizer.ts</DependentUpon>
     </Content>
@@ -87,8 +99,40 @@
       <DependentUpon>tokenType.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="scripts\Renderers\htmlRenderer.ts" />
+    <TypeScriptCompile Include="scripts\Renderers\baseRenderer.ts" />
+    <Content Include="scripts\Renderers\baseRenderer.js">
+      <DependentUpon>baseRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\docTypeRenderer.ts" />
+    <Content Include="scripts\Renderers\docTypeRenderer.js">
+      <DependentUpon>docTypeRenderer.ts</DependentUpon>
+    </Content>
     <Content Include="scripts\Renderers\htmlRenderer.js">
       <DependentUpon>htmlRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\iRenderer.ts" />
+    <Content Include="scripts\Renderers\iRenderer.js">
+      <DependentUpon>iRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\rendererProvider.ts" />
+    <TypeScriptCompile Include="scripts\Renderers\parrotDocumentView.ts" />
+    <Content Include="scripts\Renderers\parrotDocumentView.js">
+      <DependentUpon>parrotDocumentView.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\rendererProvider.js">
+      <DependentUpon>rendererProvider.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\stringRenderer.ts" />
+    <TypeScriptCompile Include="scripts\Renderers\selfClosingRenderer.ts" />
+    <Content Include="scripts\Renderers\selfClosingRenderer.js">
+      <DependentUpon>selfClosingRenderer.ts</DependentUpon>
+    </Content>
+    <Content Include="scripts\Renderers\stringRenderer.js">
+      <DependentUpon>stringRenderer.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="scripts\Renderers\tagBuilder.ts" />
+    <Content Include="scripts\Renderers\tagBuilder.js">
+      <DependentUpon>tagBuilder.ts</DependentUpon>
     </Content>
     <Content Include="Web.config" />
   </ItemGroup>
@@ -135,13 +179,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <TypeScriptCompile Include="C:\Git\Parrot\src\Parrot.Javascript\\scripts\parser.ts" />
-    <TypeScriptCompile Include="C:\Git\Parrot\src\Parrot.Javascript\\scripts\parserError.ts" />
-    <TypeScriptCompile Include="C:\Git\Parrot\src\Parrot.Javascript\\scripts\stream.ts" />
-    <TypeScriptCompile Include="C:\Git\Parrot\src\Parrot.Javascript\\scripts\token.ts" />
-    <TypeScriptCompile Include="C:\Git\Parrot\src\Parrot.Javascript\\scripts\tokenType.ts" />
-  </ItemGroup>
   <Target Name="BeforeBuild">
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.1.1\tsc.exe&quot; @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" />
   </Target>

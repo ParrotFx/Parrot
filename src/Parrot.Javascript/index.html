@@ -8,7 +8,20 @@
     <script type="text/javascript" src="scripts/Parser/parserError.js"></script>
     <script type="text/javascript" src="scripts/Parser/parser.js"></script>
     <script type="text/javascript" src="scripts/Parser/stream.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/baseRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/docTypeRenderer.js"></script>
     <script type="text/javascript" src="scripts/Renderers/htmlRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/stringRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/selfClosingRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/tagBuilder.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/iRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/parrotDocumentView.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/rendererProvider.js"></script>
+    <script type="text/javascript" src="scripts/exceptions.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/ObjectModelValueProvider.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/ValueTypeProvider.js"></script>
+
+    <title>Parrot javascript</title>
 </head>
 <body>
     <script type="text/javascript">
@@ -24,7 +37,7 @@
         console.log(result);
 
 
-        var d2 = parser.parse("div > @Model.item1");
+        var d2 = parser.parse("div > @Model.item1\r\nhr.row\r\ndoctype");
         var model = { item1: "woo!" };
         var host = [];
         host["Model"] = model;
