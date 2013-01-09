@@ -1,7 +1,0 @@
-C:\Git\Parrot\src\Parrot.Renderers\bin\Debug\Parrot.Renderers.dll
-C:\Git\Parrot\src\Parrot.Renderers\bin\Debug\Parrot.Renderers.pdb
-C:\Git\Parrot\src\Parrot.Renderers\bin\Debug\Parrot.dll
-C:\Git\Parrot\src\Parrot.Renderers\bin\Debug\Parrot.pdb
-C:\Git\Parrot\src\Parrot.Renderers\obj\Debug\Parrot.Renderers.csprojResolveAssemblyReference.cache
-C:\Git\Parrot\src\Parrot.Renderers\obj\Debug\Parrot.Renderers.dll
-C:\Git\Parrot\src\Parrot.Renderers\obj\Debug\Parrot.Renderers.pdb
