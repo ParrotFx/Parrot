@@ -1,0 +1,9 @@
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.Mvc.dll
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.Mvc.pdb
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.dll
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.Renderers.dll
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.Renderers.pdb
+C:\Git\Parrot\src\Parrot.Mvc\bin\Debug\Parrot.pdb
+C:\Git\Parrot\src\Parrot.Mvc\obj\Debug\Parrot.Mvc.csprojResolveAssemblyReference.cache
+C:\Git\Parrot\src\Parrot.Mvc\obj\Debug\Parrot.Mvc.dll
+C:\Git\Parrot\src\Parrot.Mvc\obj\Debug\Parrot.Mvc.pdb

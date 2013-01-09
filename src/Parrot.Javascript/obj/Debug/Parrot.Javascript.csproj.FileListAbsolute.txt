@@ -1,0 +1,5 @@
+C:\Git\Parrot\src\Parrot.Javascript\bin\Parrot.Javascript.dll
+C:\Git\Parrot\src\Parrot.Javascript\bin\Parrot.Javascript.pdb
+C:\Git\Parrot\src\Parrot.Javascript\obj\Debug\Parrot.Javascript.csprojResolveAssemblyReference.cache
+C:\Git\Parrot\src\Parrot.Javascript\obj\Debug\Parrot.Javascript.dll
+C:\Git\Parrot\src\Parrot.Javascript\obj\Debug\Parrot.Javascript.pdb

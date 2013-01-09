@@ -1,0 +1,5 @@
+C:\Git\Parrot\src\Parrot\bin\Debug\Parrot.dll
+C:\Git\Parrot\src\Parrot\bin\Debug\Parrot.pdb
+C:\Git\Parrot\src\Parrot\obj\Debug\Parrot.csprojResolveAssemblyReference.cache
+C:\Git\Parrot\src\Parrot\obj\Debug\Parrot.dll
+C:\Git\Parrot\src\Parrot\obj\Debug\Parrot.pdb
