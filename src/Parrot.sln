@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.Mvc", "Parrot.Mvc\Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parrot.SampleSite", "Parrot.SampleSite\Parrot.SampleSite.csproj", "{9AC0D35D-89F5-4626-A8C1-E6481DE57174}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9F2637FD-5BE3-4DE1-AA62-D1089DDD0454}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1D90ADCC-7D4E-4E1F-85FA-A538E59EC6F3}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
