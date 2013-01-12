@@ -427,6 +427,13 @@ namespace Parrot.Tests
         public class StringLiteralTests
         {
             [Test]
+            public void Blah()
+            {
+                var document = Parse("\"string\"\"with quote in it\"");
+                Assert.AreEqual("string\"with quote in it", (document.Children[0] as StringLiteral).ToString());
+            }
+
+            [Test]
             public void StringLiteralPipeAsLastElementOfFile()
             {
                 //TODO: Remove \r\n

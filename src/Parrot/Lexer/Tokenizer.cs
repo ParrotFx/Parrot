@@ -186,15 +186,28 @@
             int peek = _reader.Peek();
             var currentCharacter = peek == -1 ? '\0' : (char) peek;
 
-            while (currentCharacter != quote)
+            //extra quote for continuations
+
+            while (true)
             {
+                while (currentCharacter != quote)
+                {
+                    Consume();
+                    sb.Append(currentCharacter);
+                    peek = _reader.Peek();
+                    currentCharacter = peek == -1 ? '\0' : (char) peek;
+                }
+                sb.Append((char) Consume());
+                if (_reader.Peek() != quote)
+                {
+                    break;
+                }
                 Consume();
-                sb.Append(currentCharacter);
                 peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char) peek;
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
             }
 
-            sb.Append((char) Consume());
+            //sb.Append((char) Consume());
             return sb.ToString();
         }
 
