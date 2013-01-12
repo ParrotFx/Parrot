@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<meta charset="utf-8">
+	
+	<title>Parrot</title>
+	
+	<meta name="description" content="">
+
+	<!-- ClearType -->
+	<meta http-equiv="cleartype" content="on">
+	<title></title>
+    <link href="site.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Page scrolling
+            $(function () {
+                $('a').bind('click', function (e)
+                {
+                    e.preventDefault();
+
+                    var $anchor = $(this);
+
+                    $("nav ul li a.active").removeClass("active");
+                    $anchor.addClass("active");                    
+
+                    $('html, body').stop().animate({
+                        scrollTop: $($anchor.attr('href')).offset().top - 60
+                    }, 1500, 'easeInOutExpo', function () {
+                        window.location.hash = $anchor.attr("href");
+                    });
+                });
+            });
+
+            //// Sticky Nav
+            $(window).scroll(function (e) {
+                var nav_anchor = $(".nav_anchor").offset().top;
+
+                
+                $("section").each(function (e) {
+                    var section = $(this);
+                    var top = section.offset().top - $(window).scrollTop();
+
+                    if (top > 0 && top < ($(window).height() / 3)) {
+                        
+                        var id = section.attr("id");
+                        $("nav ul li a.active").removeClass("active");
+                        $("nav ul li a[href='#" + id + "']").addClass("active");
+                    }
+                });
+
+                //if ($(this).scrollTop() >= nav_anchor && $('#intro').css('position') != 'fixed')
+                //{
+                //    $('#intro').css({
+                //        'position': 'fixed',
+                //        'top': '0px'
+                //    });
+
+                //    $('.nav_anchor').css('height', '60px');
+                //}
+                //else if ($(this).scrollTop() < nav_anchor && $('#intro').css('position') != 'relative')
+                //{
+                //    $('.nav_anchor').css('height', '0px');
+
+                //    $('#intro').css({
+                //        'position': 'relative'
+                //    });
+                //}
+            });
+        });
+    </script>
+</head>
+<body>
+	<!-- INTRO -->
+	<div id="intro">
+		<h1>Parrot</h1>
+        <div id="logo"></div>
+	</div>
+
+	<!-- NAV default -->
+	<div style="height: 0px;" class="nav_anchor"></div>
+	
+	<!-- NAV -->
+	<nav>
+		<ul>
+			<li><a href="#about" class="active">About<br /><span>What is parrot?</span></a></li>
+			<li><a href="#dotnet">.Net<br /><span>.net version of parrot</span></a></li>
+			<li><a href="#nancy">Nancy<br /><span>Nancy version of parrot</span></a></li>
+			<li><a href="#javascript">Javascript<br /><span>javascript version of parrot</span></a></li>
+			<li><a href="https://github.com/ParrotFx">Contribute<br /><span>Fork me on github</span></a></li>
+		</ul>
+	</nav>
+	<!-- ABOUT -->
+	<section id="about">
+		<h2>What is Parrot?</h2>
+        <p>
+            Parrot is a templating engine that has been simplified for quick and easy use.
+        </p>
+
+        <div class="code-block template-sample">
+            <div class="code">
+                <h3>Sample template</h3>
+                <code>doctype
+html {
+    head > title > "This is Parrot!"
+        body {
+        h1#header > @Header
+        p#tagname.small > "All new Asp.Net View Engine"
+        div#description.rounded-corners {
+            h2 > "Features"
+            ul(Features) > li > @this
+        }
+    }
+}</code></div>
+
+                <div class="code">
+                    <h3>Output</h3>
+                    <code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;This is Parrot!&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1 id="header"&gt;Parrot&lt;/h1&gt;
+    &lt;p class="small" id="tagname"&gt;
+        All new Asp.Net View Engine
+    &lt;/p&gt;
+    &lt;div class="rounded-corners" id="description"&gt;
+        &lt;h2&gt;Features&lt;/h2&gt;
+        &lt;ul&gt;
+          &lt;li&gt;Familiar syntax&lt;/li&gt;
+          &lt;li&gt;Extensible output&lt;/li&gt;
+          &lt;li&gt;Simple model binding&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></div>
+        </div>
+	</section>
+	
+	<!-- ABOUT -->
+	<section id="dotnet">
+        <h2>Parrot for .Net</h2>
+
+        <div class="code-block dotnet-sample">
+            <div class="code">
+                <h3>Register with ASP.NET MVC</h3>
+                    <code>protected void Application_Start()
+{
+    ViewEngines.Engines.Add(new ParrotViewEngine());
+}</code>
+            </div>
+
+            <div class="code">
+                <h3>Sample call</h3>
+                    <code>var model = new {
+  Header = "Parrot",
+  Tag = "All new Asp.Net View Engine",
+  Features = new [] {
+    "Familiar syntax",
+    "Extensible output",
+    "Simple model binding"
+  };
+                        
+return View(model);
+</code>
+            </div>
+         </div>
+
+	</section>
+	
+	<section id="nancy">
+		<h2>Nancy</h2>
+	</section>
+		
+	<section id="javascript">
+		<h2>Javascript</h2>
+	</section>
+		
+	<footer id="footer">
+		<p>Footer</p>
+	</footer>
+</body>
+</html>
