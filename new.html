@@ -30,7 +30,7 @@
                     $anchor.addClass("active");                    
 
                     $('html, body').stop().animate({
-                        scrollTop: $($anchor.attr('href')).offset().top - 60
+                        scrollTop: $($anchor.attr('href')).offset().top - 100
                     }, 1500, 'easeInOutExpo', function () {
                         window.location.hash = $anchor.attr("href");
                     });
@@ -39,9 +39,6 @@
 
             //// Sticky Nav
             $(window).scroll(function (e) {
-                var nav_anchor = $(".nav_anchor").offset().top;
-
-                
                 $("section").each(function (e) {
                     var section = $(this);
                     var top = section.offset().top - $(window).scrollTop();
@@ -53,24 +50,6 @@
                         $("nav ul li a[href='#" + id + "']").addClass("active");
                     }
                 });
-
-                //if ($(this).scrollTop() >= nav_anchor && $('#intro').css('position') != 'fixed')
-                //{
-                //    $('#intro').css({
-                //        'position': 'fixed',
-                //        'top': '0px'
-                //    });
-
-                //    $('.nav_anchor').css('height', '60px');
-                //}
-                //else if ($(this).scrollTop() < nav_anchor && $('#intro').css('position') != 'relative')
-                //{
-                //    $('.nav_anchor').css('height', '0px');
-
-                //    $('#intro').css({
-                //        'position': 'relative'
-                //    });
-                //}
             });
         });
     </script>
@@ -102,50 +81,39 @@
             Parrot is a templating engine that has been simplified for quick and easy use.
         </p>
 
-        <div class="code-block template-sample">
-            <div class="code">
-                <h3>Sample template</h3>
-                <code>doctype
-html {
-    head > title > "This is Parrot!"
-        body {
-        h1#header > @Header
-        p#tagname.small > "All new Asp.Net View Engine"
-        div#description.rounded-corners {
-            h2 > "Features"
-            ul(Features) > li > @this
-        }
-    }
-}</code></div>
-
-                <div class="code">
-                    <h3>Output</h3>
-                    <code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;This is Parrot!&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1 id="header"&gt;Parrot&lt;/h1&gt;
-    &lt;p class="small" id="tagname"&gt;
-        All new Asp.Net View Engine
-    &lt;/p&gt;
-    &lt;div class="rounded-corners" id="description"&gt;
-        &lt;h2&gt;Features&lt;/h2&gt;
-        &lt;ul&gt;
-          &lt;li&gt;Familiar syntax&lt;/li&gt;
-          &lt;li&gt;Extensible output&lt;/li&gt;
-          &lt;li&gt;Simple model binding&lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</code></div>
+        <div class="row">
+            <div class="one-third simple">
+                <img src="simple.png" />
+                <h3>Simplicity</h3>
+                <p>Parrot was designed to be simple by using the familiar CSS selector syntax.</p>
+            </div>
+            <div class="one-third flexible">
+                <img src="replace.png" />
+                <h3>Flexibility</h3>
+                <p>Easily extend and replace renderers to output custom html.</p>
+            </div>
+            <div class="one-third model">
+                <img src="dom.png" />
+                <h3>Model support</h3>
+                <p>The default html renderers that ship with Parrot.Mvc have great model support. Automatically scoped variables as well as support for IEnumerables.</p>
+            </div>
         </div>
 	</section>
 	
 	<!-- ABOUT -->
 	<section id="dotnet">
-        <h2>Parrot for .Net</h2>
+        <header style="">
+            <h2>Parrot for .Net</h2>
+            <p>Parrot for .net blah blah blah</p>
+        </header>
+
+        <div class="code-block">
+            <div class="code">
+                <h3>Install</h3>
+                <p>Run the following command in the <a href="http://docs.nuget.org/docs/start-here/using-the-package-manager-console">Package Manager Console</a></p>
+                <code>PM> Install-Package Parrot.Mvc</code>
+            </div>
+        </div>
 
         <div class="code-block dotnet-sample">
             <div class="code">
