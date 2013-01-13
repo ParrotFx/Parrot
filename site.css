@@ -122,8 +122,8 @@ section {
     width: 100%;
     min-width: 880px;
     position: relative;
+    padding: 0;
     min-height: 1000px;
-    padding: 3em 0;
 }
 
 section h2 {
@@ -166,8 +166,24 @@ section p {
         margin: 0;
     }
 
+#about {
+    margin-top: 100px;
+}
+
 #dotnet {
-    background: #a2ab4e;
+    min-height: 1px;
+    padding-top: 1em;
+    background: #3e4f31;
+}
+
+#dotnet header {
+    color: #fff; 
+    text-shadow: 0px 2px black;
+}
+
+#dotnet header h2 , #dotnet header p {
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 #javascript {
@@ -196,7 +212,6 @@ div.code-block {
     display: block;
     text-align: center;
     margin: 0 auto;
-    height: 400px;
 }
 
 div.code-block.template-sample {
@@ -231,3 +246,34 @@ div.code-block div.code {
         display: block;
         padding: .5em;
     }
+
+div.row {
+    margin: 0 auto;
+    width: 960px;
+}
+
+div.row div.one-third {
+    width: 300px;
+    float: left;
+    display: inline;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+div.row div.one-third h3 {
+    margin: 0;
+    margin-left: 50px;
+    font-size: 21px;
+    line-height: 30px;
+    margin-bottom: 4px;
+}
+
+div.row div.one-third p {
+    margin-left: 50px;
+    font-size: 12px;
+}
+
+div.row div.one-third img {
+    float: left;
+    margin: 0 10px 5px 0;
+}
