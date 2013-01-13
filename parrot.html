@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<meta charset="utf-8">
+	
+	<title>Parrot</title>
+	
+	<meta name="description" content="">
+
+	<!-- ClearType -->
+	<meta http-equiv="cleartype" content="on">
+	<title></title>
+    <link href="site.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+
+    
+    <script type="text/javascript" src="scripts/Lexer/token.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/tokenizer.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/tokens.js"></script>
+    <script type="text/javascript" src="scripts/Lexer/tokenType.js"></script>
+    <script type="text/javascript" src="scripts/Parser/parserError.js"></script>
+    <script type="text/javascript" src="scripts/Parser/parser.js"></script>
+    <script type="text/javascript" src="scripts/Parser/stream.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/baseRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/docTypeRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/htmlRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/listRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/stringRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/selfClosingRenderer.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/tagBuilder.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/parrotDocumentView.js"></script>
+    <script type="text/javascript" src="scripts/Renderers/rendererProvider.js"></script>
+    <script type="text/javascript" src="scripts/exceptions.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/ObjectModelValueProvider.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/ValueTypeProvider.js"></script>
+    <script type="text/javascript" src="scripts/Infrastructure/Locals.js"></script>
+
+
+    <script type="text/javascript" src="scripts/default.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var model = null;
+            var template = $("#homepage").html();
+
+            var parser = new Parser();
+            var view = new ParrotDocumentView(parser.parse(template));
+            var result = view.render([], null);
+
+            $("body").html(result);
+        });
+    </script>
+</head>
+<body>
+    <script type="parrot/template" id="homepage">
+        img[src="simple.png" ]
+    </script>
+</body>
+</html>

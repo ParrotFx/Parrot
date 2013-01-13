@@ -250,6 +250,8 @@ div.code-block div.code {
 div.row {
     margin: 0 auto;
     width: 960px;
+    clear: both;
+    overflow: auto;
 }
 
 div.row div.one-third {
@@ -260,7 +262,7 @@ div.row div.one-third {
     margin-right: 10px;
 }
 
-div.row div.one-third h3 {
+div.row h3 {
     margin: 0;
     margin-left: 50px;
     font-size: 21px;
@@ -268,7 +270,7 @@ div.row div.one-third h3 {
     margin-bottom: 4px;
 }
 
-div.row div.one-third p {
+div.row p {
     margin-left: 50px;
     font-size: 12px;
 }
@@ -276,4 +278,45 @@ div.row div.one-third p {
 div.row div.one-third img {
     float: left;
     margin: 0 10px 5px 0;
+}
+
+div.row div.half {
+    width: 400px;
+    float: left;
+    display:inline;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+div.row div.half textarea {
+    width:100%;
+    height: 300px;
+    float: none;
+    display: block;
+}
+
+div.row div.full {
+    width:100%;
+    clear:both;
+}
+
+div.tryit {
+    margin-top: 3em;
+    overflow: auto;
+}
+
+div.tryit h3 {
+    margin-left: 0;
+}
+
+div.full button {
+    float: right;
+}
+
+label { 
+    margin-right: .5em; 
+    font-weight: bold; 
+}
+h2 { 
+    margin-left: 50px;
 }
