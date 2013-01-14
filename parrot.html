@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 
@@ -56,7 +56,63 @@
 </head>
 <body>
     <script type="parrot/template" id="homepage">
-        img[src="simple.png" ]
+        div#intro {
+            h1 > "Parrot"
+            div#logo
+        }
+
+        nav > ul {
+            li > a.active[href="#about"] > "About" + br + span > "What is parrot?"
+            li > a[href="#dotnet"] > ".Net" + br + span > ".net version of parrot"
+            li > a[href="#nancy"] > "Nancy" + br + span > "Nancy version of parrot"
+            li > a[href="#javascript"] > "Javascript" + br + span > "javascript version of parrot"
+            li > a[href="https://github.com/ParrotFx"] > "Contribute" + br + span > "Fork me on github"
+        }
+
+        section#about {
+            h2 > "What is Parrot?"
+            p > "Parrot is a templating engine that has been simplified for quick and easy use."
+
+            div.row {
+                div.one-third.simple {
+                    img[src="simple.png"]
+                    h3 > "Simplicity"
+                    p > "Parrot was designed to be simple by using the familiar CSS selector syntax."
+                }
+                div.one-third.flexible {
+                    img[src="replace.png"]
+                    h3 > "Flexibility"
+                    p > "Easily extend and replace renderers to output custom html."
+                }
+                div.one-third.model {
+                    img[src="dom.png"]
+                    h3 > "Model support"
+                    p > "The default html renderers that ship with Parrot.Mvc have great model support. Automatically scoped variables as well as support for IEnumerables."
+                }
+            }
+
+            div.row.tryit {
+                h3 > "Try it right here in your browser"
+                div.half {
+                    h3 > "Template"
+                    textarea#template
+                }
+                div.half {
+                    h3 > "Model"
+                    textarea#model
+                }
+                div.full > button > "Parse"
+                div.full {
+                    h3 > "Output"
+                    div#output
+                }
+            }
+        }
+
+	
+	    section#nancy > h2 > "Nancy"
+	    section#javascript > h2 > "Javascript"
+        footer#footer > p > "Footer"
     </script>
 </body>
 </html>

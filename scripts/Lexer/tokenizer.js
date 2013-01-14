@@ -53,12 +53,20 @@ var Tokenizer = (function () {
         var result = this.consume();
         ; ;
         var character = this.peek();
-        while(character != quote) {
+        while(true) {
+            while(character != quote) {
+                this.consume();
+                result += character;
+                character = this.peek();
+            }
+            result += this.consume();
+            if(this.peek() != quote) {
+                break;
+            }
             this.consume();
-            result += character;
             character = this.peek();
         }
-        result += this.consume();
+        //result += this.consume();
         return result;
     };
     Tokenizer.prototype.isNewLine = function (character) {
@@ -193,7 +201,9 @@ var Tokenizer = (function () {
     return Tokenizer;
 })();
 var EndOfStreamException = (function () {
-    function EndOfStreamException() { }
+    function EndOfStreamException() {
+        this.message = "Unexpected end of stream";
+    }
     return EndOfStreamException;
 })();
 var UnexpectedTokenException = (function () {
