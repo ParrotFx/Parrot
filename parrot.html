@@ -41,18 +41,6 @@
 
 
     <script type="text/javascript" src="scripts/default.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            var model = null;
-            var template = $("#homepage").html();
-
-            var parser = new Parser();
-            var view = new ParrotDocumentView(parser.parse(template));
-            var result = view.render([], null);
-
-            $("body").html(result);
-        });
-    </script>
 </head>
 <body>
     <script type="parrot/template" id="homepage">
@@ -113,6 +101,15 @@
 	    section#nancy > h2 > "Nancy"
 	    section#javascript > h2 > "Javascript"
         footer#footer > p > "Footer"
+    </script>
+    <script type="text/javascript">
+        var template = $("#homepage").html();
+
+        var parser = new Parser();
+        var view = new ParrotDocumentView(parser.parse(template));
+        var result = view.render([], null);
+
+        $("body").html(result);
     </script>
 </body>
 </html>
