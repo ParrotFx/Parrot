@@ -73,6 +73,7 @@
     <Compile Include="ParameterRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\RendererFactory.cs" />
+    <Compile Include="ScriptRenderer.cs" />
     <Compile Include="SelfClosingRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
