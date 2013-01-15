@@ -170,19 +170,14 @@ namespace Parrot.Parser
                         //might be a single child or a statement list of siblings
                         tail = ParseSingleStatementTail(stream);
                         break;
-                        //case TokenType.Colon:
-                        //    //next thing must be an identifier
-                        //    var colon = stream.Next();
-                        //    identifier = stream.Next();
-                        //    statement = new EncodedOutput(identifier.Content);
-                        //    goto checkForSiblings;
-                        //case TokenType.Equal:
-                        //    //next thing must be an identifier
-                        //    var equal = stream.Next();
-                        //    identifier = stream.Next();
-                        //    statement = new RawOutput(identifier.Content);
-                        //    goto checkForSiblings;
-
+                    case TokenType.StringLiteralPipe:
+                        if (previousToken is StringLiteralPipeToken)
+                        {
+                            //if the previous token was a string literal pipe then we don't continue processing
+                            goto default;
+                        }
+                        tail = ParseSingleStatementTail(stream);
+                        break;
                     default:
                         GetStatementFromToken(identifier, tail);
                         goto checkForSiblings;

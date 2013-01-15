@@ -56,7 +56,7 @@ namespace Parrot.Tests
 
         [TestCase("div1", "div2")]
         [TestCase("div1", "div2", "div3")]
-        [TestCase("div1", "div2", "div3", "div4 > |child\r\n")]
+        [TestCase("div1", "div2", "div3", "div4 |child\r\n")]
         public void ElementWithMultipleChildrenElements(params object[] elements)
         {
             var document = Parse("div { " + string.Join(" ", elements) + " }");
@@ -95,7 +95,7 @@ namespace Parrot.Tests
         [Test]
         public void StatementWithLiteralChildFollowedByStatementWithChild()
         {
-            var document = Parse("parent > |child\r\nstatement > child2");
+            var document = Parse("parent |child\r\nstatement > child2");
             Assert.AreEqual(2, document.Children.Count);
             Assert.AreEqual("parent", document.Children[0].Name);
             Assert.AreEqual("statement", document.Children[1].Name);
@@ -109,7 +109,7 @@ namespace Parrot.Tests
             //This appears to be a bug in the gold engine
             //when converted to new lexer/parser remove
             //the \r\n
-            var document = Parse("parent > |child\r\nstatement > |child2\r\n");
+            var document = Parse("parent |child\r\nstatement |child2\r\n");
             Assert.AreEqual(2, document.Children.Count);
             Assert.AreEqual("parent", document.Children[0].Name);
             Assert.AreEqual("statement", document.Children[1].Name);
@@ -449,8 +449,8 @@ namespace Parrot.Tests
             public void StringLiteralPipeChildFollowedByStringLiteralPipeChild()
             {
                 var document = Parse(@"container { 
-                                            style[type='text/css'] > |label { margin-right: .5em; font-weight: bold; }
-                                            title > |Parrot Test Drive
+                                            style[type='text/css'] |label { margin-right: .5em; font-weight: bold; }
+                                            title |Parrot Test Drive
                                        }");
 
                 Assert.AreEqual(1, document.Children.Count);
