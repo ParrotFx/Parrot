@@ -12,7 +12,6 @@
 
 	<!-- ClearType -->
 	<meta http-equiv="cleartype" content="on">
-	<title></title>
     <link href="site.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
@@ -89,27 +88,20 @@
                     h3 > "Model"
                     textarea#model
                 }
-                div.full > button > "Parse"
+                div.full { button#parse > "Parse" button#clear > "Clear" }
                 div.full {
                     h3 > "Output"
                     div#output
                 }
             }
         }
-
 	
-	    section#nancy > h2 > "Nancy"
-	    section#javascript > h2 > "Javascript"
+        section#nancy > h2 > "Nancy"
+        section#javascript > h2 > "Javascript"
         footer#footer > p > "Footer"
     </script>
     <script type="text/javascript">
-        var template = $("#homepage").html();
-
-        var parser = new Parser();
-        var view = new ParrotDocumentView(parser.parse(template));
-        var result = view.render([], null);
-
-        $("body").html(result);
+        $("body").html($("#homepage").parrot());
     </script>
 </body>
 </html>
