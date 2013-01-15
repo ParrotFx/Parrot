@@ -143,6 +143,13 @@ var Parser = (function () {
                     break;
 
                 }
+                case TokenType.stringLiteralPipe: {
+                    if(!(previousToken instanceof StringLiteralPipeToken)) {
+                        tail = this.parseSingleStatementTail(stream);
+                        break;
+                    }
+
+                }
                 default: {
                     this.getStatementFromToken(identifier, tail, null);
                     exit = true;
@@ -793,7 +800,7 @@ var StringLiteral = (function (_super) {
 var StringLiteralPipe = (function (_super) {
     __extends(StringLiteralPipe, _super);
     function StringLiteralPipe(value, tail, index) {
-        _super.call(this, value, tail, index);
+        _super.call(this, "\"" + value + "\"", tail, index);
     }
     return StringLiteralPipe;
 })(StringLiteral);
