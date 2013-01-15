@@ -305,6 +305,11 @@ div.tryit {
     overflow: auto;
 }
 
+div.tryit h4 {
+    margin: 0;
+    padding: 0;
+}
+
 div.tryit h3 {
     margin-left: 0;
 }
