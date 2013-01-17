@@ -6,7 +6,7 @@
             var parser = new Parser();
             var view = new ParrotDocumentView(parser.parse(params.source));
 			
-			params.host["Model"] = model;
+			params.host["Model"] = params.model;
 			
             return view.render(params.host, params.model);
         }
