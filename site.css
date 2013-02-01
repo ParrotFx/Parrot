@@ -366,6 +366,20 @@ h2 {
     display:none;
 }
 
+.source a {
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 34px;
+    width: 40px;
+    background: url('/images/back.png');
+    opacity: .1;
+}
+
+.source a:hover {
+    opacity: 1;
+}
 
 #view-source {
   display: none;
