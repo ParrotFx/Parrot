@@ -132,6 +132,7 @@ section h2 {
 
 section p {
     margin-left: 10%;
+    margin-right: 10%;
 }
 
 #intro {
@@ -324,4 +325,39 @@ label {
 }
 h2 { 
     margin-left: 50px;
+}
+
+
+.nuget-badge code {
+    background-color: #202020;
+    border: 4px solid #C0C0C0;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 2px 2px 3px #6E6E6E;
+    color: #E2E2E2;
+    display: block;
+    font: 1.5em/1.5em 'andale mono','lucida console',monospace;
+    overflow: auto;
+    padding: 15px;
+}
+
+
+#output-container {
+    background: #fff;
+    position: absolute;
+    z-index: 50001;
+    border-radius: 5px;
+    border: solid 1px #222;
+    box-shadow: #000;
+    display:none;
+}
+
+#output-container h2 {
+    border-bottom: solid 1px #000;
+    margin: .5em 0 0 0;
+    padding: 0 0 .5em 1em;
+}
+
+#output {
+    padding: 1em 2em;
+    margin: 0 2em;
 }

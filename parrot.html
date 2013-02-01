@@ -50,9 +50,6 @@
 
         nav > ul {
             li > a.active[href="#about"] > "About" + br + span > "What is parrot?"
-            li > a[href="#dotnet"] > ".Net" + br + span > ".net version of parrot"
-            li > a[href="#nancy"] > "Nancy" + br + span > "Nancy version of parrot"
-            li > a[href="#javascript"] > "Javascript" + br + span > "javascript version of parrot"
             li > a[href="https://github.com/ParrotFx"] > "Contribute" + br + span > "Fork me on github"
         }
 
@@ -90,15 +87,18 @@
                 }
                 div.full { button#parse > "Parse" button#clear > "Clear" }
                 div.full {
-                    h3 |Output
-                    div#output
+                    div#output-container {
+                        h2 |Parrot Output
+                        div#output
+                    }
                 }
             }
+
+            h2 |Install Parrot
+            .nuget-badge > p > code|PM&gt; Install-Package Parrot.AspNet
+            .nuget-badge > p > code|PM&gt; Install-Package Nancy.ViewEngines.Parrot
         }
 	
-        section#dotnet > h2 |Asp.Net MVC
-        section#nancy > h2 |Nancy
-        section#javascript > h2 |Javascript
         footer#footer > p |Footer
     </script>
     <script type="text/javascript">
