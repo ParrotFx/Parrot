@@ -217,5 +217,48 @@ var modal = (function ($, undefined) {
             $("#output").html("");
         });
 
+        //$(document).on("click", "#view-source", function (e) {
+        //    e.preventDefault();
+        //    var source = $("#homepage").html();
+        //    $("div.source pre").html(source);
+        //    modal.showWindow("div.source");
+        //    return false;
+        //});
+
+        var pre = document.createElement('pre');
+        pre.id = "view-source"
+
+        // private scope to avoid conflicts with demos
+        $(document).on("click", function (event) {
+            if (event.target.hash == '#view-source') {
+                // event.preventDefault();
+                if (!document.getElementById('view-source')) {
+                    // pre.innerHTML = ('<!DOCTYPE html>\n<html>\n' + document.documentElement.innerHTML + '\n</html>').replace(/[<>]/g, function (m) { return {'<':'&lt;','>':'&gt;'}[m]});
+                    var xhr = new XMLHttpRequest();
+
+                    // original source - rather than rendered source
+                    xhr.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            console.log(this.responseText);
+                            pre.innerHTML = this.responseText.replace(/[<>]/g, function (m) { return { '<': '&lt;', '>': '&gt;' }[m] });
+                        }
+                    };
+
+                    document.body.appendChild(pre);
+                    // really need to be sync? - I like to think so
+                    xhr.open("GET", window.location, true);
+                    xhr.send();
+                }
+                document.body.className = 'view-source';
+
+                var sourceTimer = setInterval(function () {
+                    if (window.location.hash != '#view-source') {
+                        clearInterval(sourceTimer);
+                        document.body.className = '';
+                    }
+                }, 200);
+            }
+        });
+
     });
 })(jQuery);

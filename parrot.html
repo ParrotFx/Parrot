@@ -54,10 +54,9 @@
         }
 
         section#about {
-            h2 |What is Parrot?
-            p |Parrot: A CSS selector inspired view engine for .Net and Javascript.
+            h2 |Parrot: A CSS selector inspired view engine for .Net and Javascript.
 
-            p |This page was rendered using the Javascript engine. You can <a target="_blank" href='view-source:http://thisisparrot.com/parrot.html'>View the source</a>.
+            p |This page was rendered using the Javascript engine. You can <a href='#view-source'>View the source</a>.
             div.row {
                 div.one-third.simple {
                     img[src="simple.png"]
@@ -99,6 +98,8 @@
             .nuget-badge > p > code|PM&gt; Install-Package Parrot.AspNet
             .nuget-badge > p > code|PM&gt; Install-Package Nancy.ViewEngines.Parrot
         }
+
+        div.source > pre
     </script>
     <script type="text/javascript">
         $("body").html($("#homepage").parrot());

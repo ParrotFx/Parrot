@@ -361,3 +361,27 @@ h2 {
     padding: 1em 2em;
     margin: 0 2em;
 }
+
+.source {
+    display:none;
+}
+
+
+#view-source {
+  display: none;
+}
+
+body.view-source {
+  margin: 0;
+  background: #fff;
+  padding: 20px;
+}
+
+body.view-source > * {
+  display: none;
+}
+
+body.view-source #view-source {
+  display: block !important;
+  margin: 0;
+}
