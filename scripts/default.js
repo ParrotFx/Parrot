@@ -244,7 +244,7 @@ var modal = (function ($, undefined) {
                         }
                     };
 
-                    document.body.appendChild(pre);
+                    $("div.source").append(pre);
                     // really need to be sync? - I like to think so
                     xhr.open("GET", window.location, true);
                     xhr.send();
