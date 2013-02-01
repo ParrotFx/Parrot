@@ -113,7 +113,7 @@ var modal = (function ($, undefined) {
     $(document).ready(function () {
         // Page scrolling
         $(function () {
-            $('a').bind('click', function (e) {
+            $('nav a').bind('click', function (e) {
                 e.preventDefault();
 
                 var $anchor = $(this);
