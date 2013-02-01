@@ -246,6 +246,7 @@ var modal = (function ($, undefined) {
 
                     $("div.source").append(pre);
                     $("div.source").show();
+                    $("html").scrollTop();
                     // really need to be sync? - I like to think so
                     xhr.open("GET", window.location, true);
                     xhr.send();
