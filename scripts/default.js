@@ -114,9 +114,14 @@ var modal = (function ($, undefined) {
         // Page scrolling
         $(function () {
             $('nav a').bind('click', function (e) {
-                e.preventDefault();
+				if ($(this).hasClass("external")) {
+					return;
+				}
+			
+			    e.preventDefault();
 
                 var $anchor = $(this);
+				
 
                 $("nav ul li a.active").removeClass("active");
                 $anchor.addClass("active");
