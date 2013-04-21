@@ -168,7 +168,7 @@ namespace Parrot.Parser
                         stream.NextNoReturn();
 
                         //might be a single child or a statement list of siblings
-                        tail = ParseSingleStatementTail(stream);
+                        tail = ParseSingleStatementTail(stream, tail);
                         break;
                     case TokenType.StringLiteralPipe:
                         if (previousToken is StringLiteralPipeToken)
@@ -176,7 +176,8 @@ namespace Parrot.Parser
                             //if the previous token was a string literal pipe then we don't continue processing
                             goto default;
                         }
-                        tail = ParseSingleStatementTail(stream);
+                        //this overrides all previous tail elements
+                        tail = ParseSingleStatementTail(stream, tail);
                         break;
                     default:
                         GetStatementFromToken(identifier, tail);
@@ -244,11 +245,17 @@ namespace Parrot.Parser
             return new Statement(value, tail) {Index = identifier.Index};
         }
 
-        private StatementTail ParseSingleStatementTail(Stream stream)
+        private StatementTail ParseSingleStatementTail(Stream stream, StatementTail tail)
         {
             var statementList = ParseStatement(stream);
             //Parrot.Debugger.Debug.WriteLine("Found Single statement tail");
-            return new StatementTail {Children = statementList};
+            if (tail == null)
+            {
+                tail = new StatementTail();
+            }
+            tail.Children = statementList;
+
+            return tail;
         }
 
         private StatementTail ParseStatementTail(Stream stream)

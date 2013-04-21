@@ -21,6 +21,8 @@ namespace Parrot.Renderers
         private readonly IHost _host;
         private readonly Document _document;
 
+        public const string ModelName = "Model";
+
         public DocumentView(IHost host, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, Document document)
         {
             DocumentHost = documentHost;
@@ -34,7 +36,11 @@ namespace Parrot.Renderers
             foreach (var element in _document.Children)
             {
                 var renderer = _rendererFactory.GetRenderer(element.Name);
-                renderer.Render(writer, _rendererFactory, element, DocumentHost, DocumentHost.GetValueOrDefault("Model"));
+                var model = DocumentHost.GetValueOrDefault(ModelName);
+
+                renderer.BeforeRender(writer, _rendererFactory, element, DocumentHost, model);
+                renderer.Render(writer, _rendererFactory, element, DocumentHost, model);
+                renderer.AfterRender(writer, _rendererFactory, element, DocumentHost, model);
             }
         }
     }

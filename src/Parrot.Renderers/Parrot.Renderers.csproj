@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseRenderer.cs" />
     <Compile Include="ConditionalRenderer.cs" />
     <Compile Include="DictionaryHelpers.cs" />
     <Compile Include="DocTypeRenderer.cs">
@@ -70,7 +71,6 @@
     <Compile Include="ListRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ParameterRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\RendererFactory.cs" />
     <Compile Include="ScriptRenderer.cs" />
@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parrot\Parrot.csproj">
-      <Project>{5101087D-966B-403B-911C-4F657AEBF623}</Project>
+      <Project>{5101087d-966b-403b-911c-4f657aebf623}</Project>
       <Name>Parrot</Name>
     </ProjectReference>
   </ItemGroup>

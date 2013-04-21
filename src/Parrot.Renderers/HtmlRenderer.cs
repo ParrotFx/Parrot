@@ -151,34 +151,4 @@
             }
         }
     }
-
-    public abstract class BaseRenderer
-    {
-        protected abstract IHost Host { get; set; }
-
-        protected object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
-        {
-            object value;
-            if (statement.Parameters.Count > 0)
-            {
-                //check here first
-                if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].Value, out value))
-                {
-                    return value;
-                }
-            }
-
-            if (model != null)
-            {
-                //check DocumentHost next
-                //if (modelValueProvider.GetValue(documentHost, model, null, out value))
-                if (modelValueProvider.GetValue(documentHost, model, Parrot.Infrastructure.ValueType.Property, null, out value))
-                {
-                    return value;
-                }
-            }
-            return model;
-        }
-
-    }
 }

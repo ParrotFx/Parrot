@@ -46,6 +46,8 @@ namespace Parrot.Renderers
             get { yield return "string"; }
         }
 
+        public void BeforeRender(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model) { }
+
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             var modelValueProviderFactory = _host.ModelValueProviderFactory;
@@ -71,5 +73,7 @@ namespace Parrot.Renderers
 
             writer.Write(result);
         }
+
+        public void AfterRender(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model) { }
     }
 }

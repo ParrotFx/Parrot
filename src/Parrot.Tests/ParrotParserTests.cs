@@ -272,6 +272,13 @@ namespace Parrot.Tests
             }
 
             [Test]
+            public void ElementWithAttributeValueAndChildPrintsOutProperAttributes()
+            {
+                var document = Parse("a[href='/blah/blah'] |Child\r\n");
+                Assert.AreEqual("href", document.Children[0].Attributes[0].Key);
+            }
+
+            [Test]
             public void ElementWithAttributeWithNoValueProducesAttributeWithValueSetToNull()
             {
                 var document = Parse("div[attr]");

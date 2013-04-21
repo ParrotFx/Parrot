@@ -20,9 +20,13 @@ namespace Parrot.Renderers
             get { yield break; }
         }
 
+        public void BeforeRender(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model) { }
+
         public void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
             _renderer(statement, writer, documentHost, model);
         }
+
+        public void AfterRender(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model) { }
     }
 }

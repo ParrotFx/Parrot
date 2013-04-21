@@ -54,20 +54,29 @@ namespace Parrot.Renderers
                 defaultTag = DefaultChildTag;
             }
 
-            if (model is IEnumerable)
+            //get model from parameter
+            if (statement.Parameters != null && statement.Parameters.Count == 1)
             {
-                //create locals object to handle local values to the method
-                Locals locals = new Locals(documentHost);
+                Type modelType = model != null ? model.GetType() : null;
+                var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
 
-                IList<object> items = ToList(model as IEnumerable);
-                for (int i = 0; i < items.Count; i++)
+                var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
+
+                if (localModel is IEnumerable)
                 {
-                    var localItem = items[i];
-                    locals.Push(IteratorItem(i, items));
-                    
-                    base.RenderChildren(writer, statement.Children, rendererFactory, documentHost, defaultTag, localItem);
+                    //create locals object to handle local values to the method
+                    Locals locals = new Locals(documentHost);
 
-                    locals.Pop();
+                    IList<object> items = ToList(model as IEnumerable);
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        var localItem = items[i];
+                        locals.Push(IteratorItem(i, items));
+
+                        base.RenderChildren(writer, statement.Children, rendererFactory, documentHost, defaultTag, localItem);
+
+                        locals.Pop();
+                    }
                 }
             }
             else
