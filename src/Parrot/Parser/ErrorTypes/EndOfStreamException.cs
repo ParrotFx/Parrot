@@ -1,6 +1,6 @@
 ﻿namespace Parrot.Parser.ErrorTypes
 {
-    public class EndOfStream : ParserError
+    public class EndOfStreamException : ParserError
     {
         public override string Message
         {

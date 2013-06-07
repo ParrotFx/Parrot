@@ -13,6 +13,7 @@ namespace Parrot.Parser
     using Parrot.Lexer;
     using Parrot.Nodes;
     using Parrot.Parser.ErrorTypes;
+    using EndOfStreamException = Parrot.Parser.ErrorTypes.EndOfStreamException;
 
     public class Parser
     {
@@ -44,9 +45,9 @@ namespace Parrot.Parser
                     }
                 }
             }
-            catch (EndOfStreamException)
+            catch (System.IO.EndOfStreamException)
             {
-                Errors.Add(new EndOfStream {Index = (int) stream.Length});
+                Errors.Add(new EndOfStreamException {Index = (int) stream.Length});
             }
 
             document.Errors = Errors;
@@ -108,7 +109,7 @@ namespace Parrot.Parser
             var previousToken = stream.Peek();
             if (previousToken == null)
             {
-                Errors.Add(new EndOfStream());
+                Errors.Add(new EndOfStreamException());
                 return new StatementList();
             }
 

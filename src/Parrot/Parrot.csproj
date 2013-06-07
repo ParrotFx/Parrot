@@ -94,7 +94,7 @@
     <Compile Include="Parser\ErrorTypes\AttributeIdentifierMissing.cs" />
     <Compile Include="Parser\ErrorTypes\AttributeListEmpty.cs" />
     <Compile Include="Parser\ErrorTypes\AttributeValueMissing.cs" />
-    <Compile Include="Parser\ErrorTypes\EndOfStream.cs" />
+    <Compile Include="Parser\ErrorTypes\EndOfStreamException.cs" />
     <Compile Include="Parser\ErrorTypes\MissingClassDeclaration.cs" />
     <Compile Include="Parser\ErrorTypes\MissingIdDeclaration.cs" />
     <Compile Include="Parser\ErrorTypes\MultipleIdDeclarations.cs" />

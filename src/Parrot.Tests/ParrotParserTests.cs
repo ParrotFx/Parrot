@@ -322,7 +322,7 @@ namespace Parrot.Tests
             public void AttributeValueWithMissingClosingQuoteAddsErrorToDocumentErrors()
             {
                 var document = Parse("div[attr1=\"missing closing quote");
-                Assert.IsAssignableFrom<EndOfStream>(document.Errors[0]);
+                Assert.IsAssignableFrom<EndOfStreamException>(document.Errors[0]);
             }
 
             [Test]
