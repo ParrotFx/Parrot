@@ -100,7 +100,7 @@
                     return new StringLiteralPipeToken
                         {
                             Index = _currentIndex,
-                            Content = ConsumeUntilNewline(),
+                            Content = ConsumeUntilNewlineOrEndOfStream(),
                             Type = TokenType.StringLiteralPipe,
                         };
                 case '"': //quoted string literal
@@ -127,7 +127,7 @@
             }
         }
 
-        private string ConsumeUntilNewline()
+        private string ConsumeUntilNewlineOrEndOfStream()
         {
             //(char)Consume() + ReadUntil(IsNewLine)
             StringBuilder sb = new StringBuilder();
@@ -136,10 +136,19 @@
 
             while (!IsNewLine(currentCharacter))
             {
-                Consume();
-                sb.Append(currentCharacter);
-                peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char) peek;
+                try
+                {
+                    Consume();
+                    sb.Append(currentCharacter);
+                    peek = _reader.Peek();
+                    currentCharacter = peek == -1 ? '\0' : (char) peek;
+                }
+                catch (EndOfStreamException)
+                {
+                    //end of stream exception
+                    //we're at the end of the line return
+                    break;
+                }
             }
 
             return sb.ToString();
