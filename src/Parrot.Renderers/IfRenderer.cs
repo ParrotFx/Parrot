@@ -15,17 +15,11 @@
 
         public override void Render(Parrot.Infrastructure.IParrotWriter writer, IRendererFactory rendererFactory, Nodes.Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
+            var localModel = GetLocalModel(documentHost, statement, model);
 
-            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
-
-            if (localModel != null && localModel is bool)
+            if (localModel is bool && (bool)localModel)
             {
-                if ((bool) localModel)
-                {
-                    RenderChildren(writer, statement.Children, rendererFactory, documentHost, base.DefaultChildTag, model);
-                }
+                RenderChildren(writer, statement.Children, rendererFactory, documentHost, base.DefaultChildTag, model);
             }
         }
     }

@@ -30,10 +30,7 @@ namespace Parrot.Renderers
 
         public override void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
-
-            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
+            var localModel = GetLocalModel(documentHost, statement, model);
 
             //Assert that we're looping over something
             IEnumerable loop = localModel as IEnumerable;

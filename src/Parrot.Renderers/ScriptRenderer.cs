@@ -14,7 +14,7 @@ namespace Parrot.Renderers
         public ScriptRenderer(IHost host) : base(host) { }
 
 
-        protected override void CreateTag(Parrot.Infrastructure.IParrotWriter writer, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Nodes.Statement statement, IModelValueProvider modelValueProvider)
+        protected override void CreateTag(Parrot.Infrastructure.IParrotWriter writer, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Nodes.Statement statement)
         {
             var xhtml = false;
             if (documentHost.ContainsKey("doctype"))

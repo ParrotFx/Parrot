@@ -17,7 +17,16 @@ namespace Parrot.Renderers
     {
         protected abstract IHost Host { get; set; }
 
-        protected object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
+
+        protected object GetLocalModel(IDictionary<string, object> documentHost, Statement statement, object model)
+        {
+            Type modelType = model != null ? model.GetType() : null;
+            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
+
+            return GetLocalModelValue(documentHost, statement, modelValueProvider, model);
+        }
+
+        private object GetLocalModelValue(IDictionary<string, object> documentHost, Statement statement, IModelValueProvider modelValueProvider, object model)
         {
             object value;
             if (statement.Parameters.Count > 0)

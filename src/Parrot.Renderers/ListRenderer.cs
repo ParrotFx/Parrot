@@ -57,10 +57,7 @@ namespace Parrot.Renderers
             //get model from parameter
             if (statement.Parameters != null && statement.Parameters.Count == 1)
             {
-                Type modelType = model != null ? model.GetType() : null;
-                var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
-
-                var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
+                var localModel = GetLocalModel(documentHost, statement, model);
 
                 if (localModel is IEnumerable)
                 {

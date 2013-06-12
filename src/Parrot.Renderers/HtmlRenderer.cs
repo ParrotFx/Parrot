@@ -29,15 +29,11 @@
 
         public virtual void Render(IParrotWriter writer, IRendererFactory rendererFactory, Statement statement, IDictionary<string, object> documentHost, object model)
         {
-            Type modelType = model != null ? model.GetType() : null;
-            var modelValueProvider = Host.ModelValueProviderFactory.Get(modelType);
-
-            var localModel = GetLocalModelValue(documentHost, statement, modelValueProvider, model);
-
-            CreateTag(writer, rendererFactory, documentHost, localModel, statement, modelValueProvider);
+            var localModel = GetLocalModel(documentHost, statement, model);
+            CreateTag(writer, rendererFactory, documentHost, localModel, statement);
         }
 
-        protected virtual void CreateTag(IParrotWriter writer, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Statement statement, IModelValueProvider modelValueProvider)
+        protected virtual void CreateTag(IParrotWriter writer, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, object model, Statement statement)
         {
             string tagName = string.IsNullOrWhiteSpace(statement.Name) ? DefaultChildTag : statement.Name;
 
@@ -80,17 +76,6 @@
             }
         }
         
-        private IList<object> ToList(IEnumerable loop)
-        {
-            var list = new List<object>();
-            foreach (var item in loop)
-            {
-                list.Add(item);
-            }
-
-            return list;
-        }
-
         protected void RenderChildren(IParrotWriter writer, StatementList children, IRendererFactory rendererFactory, IDictionary<string, object> documentHost, string defaultTag, object model)
         {
             Func<string, string> tagName = s => string.IsNullOrEmpty(s) ? defaultTag : s;
