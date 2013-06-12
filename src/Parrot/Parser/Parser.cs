@@ -47,7 +47,7 @@ namespace Parrot.Parser
             }
             catch (System.IO.EndOfStreamException)
             {
-                Errors.Add(new EndOfStreamException {Index = (int) stream.Length});
+                Errors.Add(new EndOfStreamException { Index = (int)stream.Length });
             }
 
             document.Errors = Errors;
@@ -94,7 +94,7 @@ namespace Parrot.Parser
                         Errors.Add(new UnexpectedToken(token));
                         stream.Next();
                         break;
-                        //throw new ParserException(token);
+                    //throw new ParserException(token);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace Parrot.Parser
                 default:
                     Errors.Add(new UnexpectedToken(previousToken));
                     return new StatementList();
-                    //throw new ParserException(stream.Peek());
+                //throw new ParserException(stream.Peek());
             }
 
 
@@ -187,7 +187,7 @@ namespace Parrot.Parser
             }
 
 
-            checkForSiblings:
+        checkForSiblings:
             statement = GetStatementFromToken(identifier, tail, previousToken);
 
 
@@ -225,10 +225,10 @@ namespace Parrot.Parser
                 {
                     case TokenType.StringLiteral:
                     case TokenType.QuotedStringLiteral:
-                        return new StringLiteral(value, tail) {Index = identifier.Index};
+                        return new StringLiteral(value, tail) { Index = identifier.Index };
 
                     case TokenType.StringLiteralPipe:
-                        return new StringLiteralPipe(value.Substring(1), tail) {Index = identifier.Index};
+                        return new StringLiteralPipe(value.Substring(1), tail) { Index = identifier.Index };
                 }
             }
 
@@ -237,13 +237,13 @@ namespace Parrot.Parser
                 switch (previousToken.Type)
                 {
                     case TokenType.At:
-                        return new EncodedOutput(value) {Index = previousToken.Index};
+                        return new EncodedOutput(value) { Index = previousToken.Index };
                     case TokenType.Equal:
-                        return new RawOutput(value) {Index = previousToken.Index};
+                        return new RawOutput(value) { Index = previousToken.Index };
                 }
             }
 
-            return new Statement(value, tail) {Index = identifier.Index};
+            return new Statement(value, tail) { Index = identifier.Index };
         }
 
         private StatementTail ParseSingleStatementTail(Stream stream, StatementTail tail)
@@ -298,7 +298,7 @@ namespace Parrot.Parser
                 }
             }
 
-            productionFound:
+        productionFound:
             return new StatementTail
                 {
                     Attributes = additional[0] as AttributeList,
@@ -311,29 +311,18 @@ namespace Parrot.Parser
         {
             var child = new StatementList();
 
-            var open = stream.Next();
+            stream.Next();
 
-            while (stream.Peek() != null)
+            var token = stream.Peek();
+            if (token != null)
             {
-                var token = stream.Peek();
-                if (token == null)
+                var statements = ParseStatement(stream);
+                foreach (var statement in statements)
                 {
-                    break;
-                }
-
-                switch (token.Type)
-                {
-                    default:
-                        var statements = ParseStatement(stream);
-                        foreach (var statement in statements)
-                        {
-                            child.Add(statement);
-                        }
-                        goto doneWithChildren;
+                    child.Add(statement);
                 }
             }
 
-            doneWithChildren:
             return child;
         }
 
@@ -370,7 +359,7 @@ namespace Parrot.Parser
                 }
             }
 
-            doneWithChildren:
+        doneWithChildren:
             return statement;
         }
 
@@ -408,11 +397,11 @@ namespace Parrot.Parser
                         //read until )
                         Errors.Add(new UnexpectedToken(token));
                         return parameterList;
-                        //throw new ParserException(token);
+                    //throw new ParserException(token);
                 }
             }
 
-            doneWithParameter:
+        doneWithParameter:
             return parameterList;
         }
 
@@ -448,10 +437,6 @@ namespace Parrot.Parser
             while (stream.Peek() != null)
             {
                 token = stream.Peek();
-                if (token == null)
-                {
-                    break;
-                }
 
                 switch (token.Type)
                 {
@@ -473,7 +458,7 @@ namespace Parrot.Parser
                 }
             }
 
-            doneWithAttribute:
+        doneWithAttribute:
             if (attributes.Count == 0)
             {
                 //must be empty attribute list
@@ -508,7 +493,7 @@ namespace Parrot.Parser
                 if (valueToken.Type == TokenType.CloseBracket)
                 {
                     //then it's an invalid declaration
-                    Errors.Add(new AttributeValueMissing {Index = valueToken.Index});
+                    Errors.Add(new AttributeValueMissing { Index = valueToken.Index });
                 }
 
                 Statement value = ParseStatement(stream).SingleOrDefault();
