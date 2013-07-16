@@ -55,6 +55,7 @@ namespace Parrot.Renderers
             }
 
             //get model from parameter
+            //required - do not remove
             if (statement.Parameters != null && statement.Parameters.Count == 1)
             {
                 var localModel = GetLocalModel(documentHost, statement, model);

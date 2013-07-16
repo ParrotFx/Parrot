@@ -21,11 +21,6 @@
             _reader = new StreamReader(source);
         }
 
-        private bool HasAvailableTokens()
-        {
-            return _reader.Peek() != -1;
-        }
-
         private int Consume()
         {
             _currentIndex += 1;

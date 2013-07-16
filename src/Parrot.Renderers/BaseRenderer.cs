@@ -31,11 +31,25 @@ namespace Parrot.Renderers
             object value;
             if (statement.Parameters.Count > 0)
             {
-                //check here first
-                if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].Value, out value))
+                if (statement.Parameters.Count == 1)
                 {
-                    return value;
+                    //check here first
+                    if (modelValueProvider.GetValue(documentHost, model, statement.Parameters[0].Value, out value))
+                    {
+                        return value;
+                    }
                 }
+
+                List<object> parameters = new List<object>();
+                foreach (var parameter in statement.Parameters)
+                {
+                    if (modelValueProvider.GetValue(documentHost, model, parameter.Value, out value))
+                    {
+                        parameters.Add(value);
+                    }
+                }
+
+                return parameters;
             }
 
             if (model != null)
