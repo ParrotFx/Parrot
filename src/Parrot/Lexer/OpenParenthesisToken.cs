@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class OpenParenthesisToken : Token
     {
-        public OpenParenthesisToken()
+        public override TokenType Type
         {
-            Content = "(";
-            Type = TokenType.OpenParenthesis;
+            get { return TokenType.OpenParenthesis; }
         }
     }
 }

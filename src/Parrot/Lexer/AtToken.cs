@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class AtToken : Token
     {
-        public AtToken()
+        public override TokenType Type
         {
-            Content = "@";
-            Type = TokenType.At;
+            get { return TokenType.At; }
         }
     }
 }

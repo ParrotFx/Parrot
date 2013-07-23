@@ -54,6 +54,7 @@
     <Compile Include="Infrastructure\ValueType.cs" />
     <Compile Include="Infrastructure\ValueTypeProvider.cs" />
     <Compile Include="Infrastructure\ValueTypeResult.cs" />
+    <Compile Include="Lexer\TokenFactory.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\AbstractNodeList.cs" />
     <Compile Include="Nodes\Attribute.cs" />

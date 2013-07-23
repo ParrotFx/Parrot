@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class PlusToken : Token
     {
-        public PlusToken()
+        public override TokenType Type
         {
-            Content = "+";
-            Type = TokenType.Plus;
+            get { return TokenType.Plus; }
         }
     }
 }

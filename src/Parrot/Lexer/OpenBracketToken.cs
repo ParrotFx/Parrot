@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class OpenBracketToken : Token
     {
-        public OpenBracketToken()
+        public override TokenType Type
         {
-            Content = "[";
-            Type = TokenType.OpenBracket;
+            get { return TokenType.OpenBracket; }
         }
     }
 }

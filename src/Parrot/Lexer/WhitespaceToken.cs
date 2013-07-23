@@ -2,9 +2,9 @@ namespace Parrot.Lexer
 {
     internal class WhitespaceToken : Token
     {
-        public WhitespaceToken()
+        public override TokenType Type
         {
-            Type = TokenType.Whitespace;
+            get { return TokenType.Whitespace; }
         }
     }
 }

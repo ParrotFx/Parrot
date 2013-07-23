@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class GreaterThanToken : Token
     {
-        public GreaterThanToken()
+        public override TokenType Type
         {
-            Content = ">";
-            Type = TokenType.GreaterThan;
+            get { return TokenType.GreaterThan; }
         }
     }
 }

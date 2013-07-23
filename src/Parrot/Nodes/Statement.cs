@@ -15,7 +15,7 @@ namespace Parrot.Nodes
         public IList<Identifier> IdentifierParts { get; private set; }
         internal List<ParserError> Errors { get; set; }
 
-        internal Statement()
+        private Statement()
         {
             Attributes = new AttributeList();
             Children = new StatementList();
@@ -24,7 +24,7 @@ namespace Parrot.Nodes
             Errors = new List<ParserError>();
         }
 
-        protected Statement(string name) : this()
+        private Statement(string name) : this()
         {
             //required bullshit
             if (name.IndexOfAny(new[] {'.', '#', ':'}) > -1)
@@ -169,7 +169,7 @@ namespace Parrot.Nodes
             int index = 0;
 
             var partType = IdentifierType.Literal;
-            IdentifierType nextType = IdentifierType.None;
+            var nextType = IdentifierType.None;
 
             for (int i = 0; i < source.Length; i++)
             {
