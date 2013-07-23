@@ -2,9 +2,9 @@ namespace Parrot.Lexer
 {
     internal class QuotedStringLiteralToken : Token
     {
-		public QuotedStringLiteralToken()
-		{
-			Type = TokenType.QuotedStringLiteral;
-		}
+        public override TokenType Type
+        {
+            get { return TokenType.QuotedStringLiteral; }
+        }
     }
 }

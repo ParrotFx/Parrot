@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public EqualToken()
         {
             Content = "=";
-            Type = TokenType.Equal;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.Equal; }
         }
     }
 }

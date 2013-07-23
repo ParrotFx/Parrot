@@ -2,9 +2,9 @@ namespace Parrot.Lexer
 {
     internal class StringLiteralPipeToken : Token
     {
-		public StringLiteralPipeToken()
-		{
-			Type = TokenType.StringLiteralPipe;
-		}
+        public override TokenType Type
+        {
+            get { return TokenType.StringLiteralPipe; }
+        }
     }
 }

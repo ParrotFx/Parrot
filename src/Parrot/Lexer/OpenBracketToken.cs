@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public OpenBracketToken()
         {
             Content = "[";
-            Type = TokenType.OpenBracket;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.OpenBracket; }
         }
     }
 }

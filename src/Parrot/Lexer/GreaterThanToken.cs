@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public GreaterThanToken()
         {
             Content = ">";
-            Type = TokenType.GreaterThan;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.GreaterThan; }
         }
     }
 }

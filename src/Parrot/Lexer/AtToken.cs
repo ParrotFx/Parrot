@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public AtToken()
         {
             Content = "@";
-            Type = TokenType.At;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.At; }
         }
     }
 }

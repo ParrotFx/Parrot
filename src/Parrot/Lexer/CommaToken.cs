@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public CommaToken()
         {
             Content = ",";
-            Type = TokenType.Comma;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.Comma; }
         }
     }
 }

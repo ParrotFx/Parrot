@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public PlusToken()
         {
             Content = "+";
-            Type = TokenType.Plus;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.Plus; }
         }
     }
 }

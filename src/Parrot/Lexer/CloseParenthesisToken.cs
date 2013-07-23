@@ -5,7 +5,11 @@ namespace Parrot.Lexer
         public CloseParenthesisToken()
         {
             Content = ")";
-            Type = TokenType.CloseParenthesis;
+        }
+
+        public override TokenType Type
+        {
+            get { return TokenType.CloseParenthesis; }
         }
     }
 }

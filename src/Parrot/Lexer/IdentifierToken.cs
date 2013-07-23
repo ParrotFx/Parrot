@@ -2,9 +2,9 @@ namespace Parrot.Lexer
 {
 	internal class IdentifierToken : Token
 	{
-		public IdentifierToken()
-		{
-			Type = TokenType.Identifier;
-		}
+	    public override TokenType Type
+	    {
+	        get { return TokenType.Identifier; }
+	    }
 	}
 }
