@@ -42,17 +42,17 @@
             _reader = new StreamReader(source);
         }
 
-        private int Consume()
+        private char Consume()
         {
             _currentIndex += 1;
-            var character = _reader.Read();
+            int character = _reader.Read();
 
             if (character == -1)
             {
                 throw new EndOfStreamException();
             }
 
-            return character;
+            return (char) character;
         }
 
         private Token GetNextToken()
@@ -108,9 +108,9 @@
 
         private Token ConsumeSingleCharToken(char currentCharacter)
         {
-            Consume();
             Token token = TokenFactory.Create(currentCharacter);
             token.Index = _currentIndex;
+            token.Content = Consume().ToString();
             return token;
         }
 
@@ -185,7 +185,7 @@
         private string ConsumeQuotedStringLiteral(char quote)
         {
             var sb = new StringBuilder();
-            sb.Append((char)Consume());
+            sb.Append(Consume());
             char currentCharacter = PeekCurrentCharacter();
 
             //extra quote for continuations
@@ -198,7 +198,7 @@
                     sb.Append(currentCharacter);
                     currentCharacter = PeekCurrentCharacter();
                 }
-                sb.Append((char)Consume());
+                sb.Append(Consume());
                 if (_reader.Peek() != quote)
                 {
                     break;
