@@ -12,9 +12,30 @@
         private int _currentIndex;
         private readonly StreamReader _reader;
 
-        public Tokenizer(string source) : this(new MemoryStream(Encoding.Default.GetBytes(source)))
-        {
-        }
+        private static readonly HashSet<char> _whitespaceChars = new HashSet<char>(new[] { '\r', '\n', ' ', '\f', '\t', '\u000B' });
+        private static readonly HashSet<char> _newLineChars = new HashSet<char>(new[]
+            {
+                '\r', // Carriage return
+                '\n', // Linefeed
+                '\u0085', // Next Line
+                '\u2028', // Line separator
+                '\u2029' // Paragraph separator
+            });
+
+        private static readonly HashSet<char> _tokenChars = new HashSet<char>(new[]
+            {
+                ',', //this is for the future
+                '(', //parameter list start
+                ')', //parameter list end
+                '[', //attribute list start
+                ']', //attribute list end
+                '=', //attribute assignment, raw output
+                '{', //child block start
+                '}', //child block end
+                '>', //child assignment
+                '+', //sibling assignment
+                '@' //Encoded output
+            });
 
         public Tokenizer(Stream source)
         {
@@ -36,85 +57,30 @@
 
         private Token GetNextToken()
         {
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char) peek;
+            char currentCharacter = PeekCurrentCharacter();
 
             if (IsIdentifierHead(currentCharacter))
             {
-                return new IdentifierToken
-                    {
-                        Index = _currentIndex,
-                        Content = ConsumeIdentifier(),
-                        Type = TokenType.Identifier
-                    };
+                return ConsumeToken(TokenType.Identifier, ConsumeIdentifier);
             }
 
             if (IsWhitespace(currentCharacter))
             {
-                return new WhitespaceToken
-                    {
-                        Index = _currentIndex,
-                        Content = ConsumeWhitespace(),
-                        Type = TokenType.Whitespace
-                    };
+                return ConsumeToken(TokenType.Whitespace, ConsumeWhitespace);
+            }
+
+            if (IsSingleCharToken(currentCharacter))
+            {
+                return ConsumeSingleCharToken(currentCharacter);
             }
 
             switch (currentCharacter)
             {
-                case ',': //this is for the future
-                    Consume();
-                    return new CommaToken {Index = _currentIndex};
-                case '(': //parameter list start
-                    Consume();
-                    return new OpenParenthesisToken {Index = _currentIndex};
-                case ')': //parameter list end
-                    Consume();
-                    return new CloseParenthesisToken {Index = _currentIndex};
-                case '[': //attribute list start
-                    Consume();
-                    return new OpenBracketToken {Index = _currentIndex};
-                case ']': //attribute list end
-                    Consume();
-                    return new CloseBracketToken {Index = _currentIndex};
-                case '=': //attribute assignment, raw output
-                    Consume();
-                    return new EqualToken {Index = _currentIndex};
-                case '{': //child block start
-                    Consume();
-                    return new OpenBracesToken {Index = _currentIndex};
-                case '}': //child block end
-                    Consume();
-                    return new CloseBracesToken {Index = _currentIndex};
-                case '>': //child assignment
-                    Consume();
-                    return new GreaterThanToken {Index = _currentIndex};
-                case '+': //sibling assignment
-                    Consume();
-                    return new PlusToken {Index = _currentIndex};
                 case '|': //string literal pipe
-                    return new StringLiteralPipeToken
-                        {
-                            Index = _currentIndex,
-                            Content = ConsumeUntilNewlineOrEndOfStream(),
-                            Type = TokenType.StringLiteralPipe,
-                        };
+                    return ConsumeMultiCharToken(currentCharacter, ConsumeUntilNewlineOrEndOfStream);
                 case '"': //quoted string literal
-                    return new QuotedStringLiteralToken
-                        {
-                            Index = _currentIndex,
-                            Content = ConsumeQuotedStringLiteral('"'),
-                            Type = TokenType.QuotedStringLiteral,
-                        };
                 case '\'': //quoted string literal
-                    return new QuotedStringLiteralToken
-                        {
-                            Index = _currentIndex,
-                            Content = ConsumeQuotedStringLiteral('\''),
-                            Type = TokenType.QuotedStringLiteral,
-                        };
-                case '@': //Encoded output
-                    Consume();
-                    return new AtToken {Index = _currentIndex};
+                    return ConsumeMultiCharToken(currentCharacter, () => ConsumeQuotedStringLiteral(currentCharacter));
                 case '\0':
                     return null;
                 default:
@@ -122,12 +88,43 @@
             }
         }
 
+        private static bool IsSingleCharToken(char currentCharacter)
+        {
+            return _tokenChars.Contains(currentCharacter);
+        }
+
+        private Token ConsumeMultiCharToken(char currentCharacter, Func<string> contentFunc)
+        {
+            Token token = TokenFactory.Create(currentCharacter);
+            return initToken(token, contentFunc);
+        }
+
+        private Token initToken(Token token, Func<string> contentFunc)
+        {
+            token.Index = _currentIndex;
+            token.Content = contentFunc();
+            return token;
+        }
+
+        private Token ConsumeSingleCharToken(char currentCharacter)
+        {
+            Consume();
+            Token token = TokenFactory.Create(currentCharacter);
+            token.Index = _currentIndex;
+            return token;
+        }
+
+        private Token ConsumeToken(TokenType type, Func<string> contentFunc)
+        {
+            Token token = TokenFactory.Create(type);
+            return initToken(token, contentFunc);
+        }
+
         private string ConsumeUntilNewlineOrEndOfStream()
         {
             //(char)Consume() + ReadUntil(IsNewLine)
-            StringBuilder sb = new StringBuilder();
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char) peek;
+            var sb = new StringBuilder();
+            char currentCharacter = PeekCurrentCharacter();
 
             while (!IsNewLine(currentCharacter))
             {
@@ -135,8 +132,7 @@
                 {
                     Consume();
                     sb.Append(currentCharacter);
-                    peek = _reader.Peek();
-                    currentCharacter = peek == -1 ? '\0' : (char) peek;
+                    currentCharacter = PeekCurrentCharacter();
                 }
                 catch (EndOfStreamException)
                 {
@@ -149,18 +145,23 @@
             return sb.ToString();
         }
 
+        private char PeekCurrentCharacter()
+        {
+            int peek = _reader.Peek();
+            return peek == -1 ? '\0' : (char)peek;
+        }
+
         private string ConsumeIdentifier()
         {
-            StringBuilder sb = new StringBuilder();
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char) peek;
+            var sb = new StringBuilder();
+            char currentCharacter = PeekCurrentCharacter();
 
             while ((IsIdTail(currentCharacter)))
             {
                 Consume();
                 sb.Append(currentCharacter);
-                peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char) peek;
+                int peek = _reader.Peek();
+                currentCharacter = peek == -1 ? '\0' : (char)peek;
             }
 
             return sb.ToString();
@@ -168,16 +169,14 @@
 
         private string ConsumeWhitespace()
         {
-            StringBuilder sb = new StringBuilder();
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char) peek;
+            var sb = new StringBuilder();
+            char currentCharacter = PeekCurrentCharacter();
 
             while ((IsWhitespace(currentCharacter)))
             {
                 Consume();
                 sb.Append(currentCharacter);
-                peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char) peek;
+                currentCharacter = PeekCurrentCharacter();
             }
 
             return sb.ToString();
@@ -185,10 +184,9 @@
 
         private string ConsumeQuotedStringLiteral(char quote)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append((char) Consume());
-            int peek = _reader.Peek();
-            var currentCharacter = peek == -1 ? '\0' : (char) peek;
+            var sb = new StringBuilder();
+            sb.Append((char)Consume());
+            char currentCharacter = PeekCurrentCharacter();
 
             //extra quote for continuations
 
@@ -198,17 +196,15 @@
                 {
                     Consume();
                     sb.Append(currentCharacter);
-                    peek = _reader.Peek();
-                    currentCharacter = peek == -1 ? '\0' : (char) peek;
+                    currentCharacter = PeekCurrentCharacter();
                 }
-                sb.Append((char) Consume());
+                sb.Append((char)Consume());
                 if (_reader.Peek() != quote)
                 {
                     break;
                 }
                 Consume();
-                peek = _reader.Peek();
-                currentCharacter = peek == -1 ? '\0' : (char)peek;
+                currentCharacter = PeekCurrentCharacter();
             }
 
             //sb.Append((char) Consume());
@@ -217,14 +213,7 @@
 
         private bool IsWhitespace(char character)
         {
-            return
-                character == '\r' ||
-                character == '\n' ||
-                character == ' ' ||
-                character == '\f' ||
-                character == '\t' ||
-                character == '\u000B' || // Vertical Tab
-                Char.GetUnicodeCategory(character) == UnicodeCategory.SpaceSeparator;
+            return _whitespaceChars.Contains(character) || Char.GetUnicodeCategory(character) == UnicodeCategory.SpaceSeparator;
         }
 
         private bool IsIdentifierHead(char character)
@@ -257,14 +246,10 @@
 
         private bool IsNewLine(char character)
         {
-            return character == '\r' // Carriage return
-                   || character == '\n' // Linefeed
-                   || character == '\u0085' // Next Line
-                   || character == '\u2028' // Line separator
-                   || character == '\u2029'; // Paragraph separator
+            return _newLineChars.Contains(character);
         }
 
-        public List<Token> Tokenize()
+        private List<Token> Tokenize()
         {
             Token token;
             while ((token = GetNextToken()) != null)
