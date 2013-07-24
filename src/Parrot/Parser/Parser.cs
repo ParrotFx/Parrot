@@ -31,9 +31,7 @@ namespace Parrot.Parser
             try
             {
                 var tokenizer = new Tokenizer(stream);
-
-                var tokens = tokenizer.Tokens();
-
+                IList<Token> tokens = tokenizer.Tokens();
                 var tokenStream = new Stream(tokens);
 
                 foreach (var statement in Parse(tokenStream))

@@ -2,10 +2,9 @@ namespace Parrot.Lexer
 {
     internal class CommaToken : Token
     {
-        public CommaToken()
+        public override TokenType Type
         {
-            Content = ",";
-            Type = TokenType.Comma;
+            get { return TokenType.Comma; }
         }
     }
 }

@@ -1,8 +1,8 @@
 namespace Parrot.Lexer
 {
-    public class Token
+    public abstract class Token
     {
-        public TokenType Type { get; set; }
+        public abstract TokenType Type { get; }
         public string Content { get; set; }
         public int Index { get; set; }
     }
