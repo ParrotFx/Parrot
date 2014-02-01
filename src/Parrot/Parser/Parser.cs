@@ -13,7 +13,7 @@ namespace Parrot.Parser
     using Parrot.Lexer;
     using Parrot.Nodes;
     using Parrot.Parser.ErrorTypes;
-    using EndOfStreamException = Parrot.Parser.ErrorTypes.EndOfStreamException;
+    using Attribute = Nodes.Attribute;
 
     public class Parser
     {
@@ -45,7 +45,7 @@ namespace Parrot.Parser
             }
             catch (System.IO.EndOfStreamException)
             {
-                Errors.Add(new EndOfStreamException { Index = (int)stream.Length });
+                Errors.Add(new ErrorTypes.EndOfStreamException { Index = (int)stream.Length });
             }
 
             document.Errors = Errors;
@@ -85,14 +85,12 @@ namespace Parrot.Parser
                     case TokenType.OpenParenthesis:
                     case TokenType.Equal:
                     case TokenType.At:
-                        var statement = ParseStatement(stream);
-                        yield return statement;
+                        yield return ParseStatement(stream);
                         break;
                     default:
                         Errors.Add(new UnexpectedToken(token));
                         stream.Next();
                         break;
-                    //throw new ParserException(token);
                 }
             }
         }
@@ -105,11 +103,6 @@ namespace Parrot.Parser
         private StatementList ParseStatement(Stream stream)
         {
             var previousToken = stream.Peek();
-            if (previousToken == null)
-            {
-                Errors.Add(new EndOfStreamException());
-                return new StatementList();
-            }
 
             var tokenType = previousToken.Type;
             Token identifier = null;
@@ -169,6 +162,31 @@ namespace Parrot.Parser
                         //might be a single child or a statement list of siblings
                         tail = ParseSingleStatementTail(stream, tail);
                         break;
+                    case TokenType.Caret:
+                        //if previous token was a caret then we're done since this is not a related element
+                        if (previousToken is CaretToken || tail == null)
+                        {
+                            goto default;
+                        }
+
+                        stream.NextNoReturn();
+                        //is the next token a caret - if so we're done let the upper level handle it
+                        if (stream.Peek() != null && stream.Peek().Type == TokenType.Caret)
+                        {
+                            //    stream.Next();
+                            goto default;
+                        }
+
+                        //parse the new tail
+                        var t = ParseSingleStatementTail(stream, tail);
+
+                        //we only expect children, no attributes or parameters here
+                        if (t != null && t.Children.Count == 1)
+                        {
+                            //there should be only one child
+                            tail.Children.Add(t.Children[0]);
+                        }
+                        break;
                     case TokenType.StringLiteralPipe:
                         if (previousToken is StringLiteralPipeToken)
                         {
@@ -210,7 +228,6 @@ namespace Parrot.Parser
                     break;
                 }
             }
-
             return list;
         }
 
@@ -252,7 +269,12 @@ namespace Parrot.Parser
             {
                 tail = new StatementTail();
             }
-            tail.Children = statementList;
+
+            foreach (var statement in statementList)
+            {
+                tail.Children.Add(statement);
+            }
+            //tail.Children = statementList;
 
             return tail;
         }
@@ -283,9 +305,6 @@ namespace Parrot.Parser
                     case TokenType.OpenBracket:
                         additional[0] = ParseAttributes(stream);
                         break;
-                    case TokenType.GreaterThan:
-                        additional[2] = ParseChild(stream);
-                        break;
                     case TokenType.OpenBrace:
                         //parse children
                         additional[2] = ParseChildren(stream);
@@ -299,9 +318,9 @@ namespace Parrot.Parser
         productionFound:
             return new StatementTail
                 {
-                    Attributes = additional[0] as AttributeList,
-                    Parameters = additional[1] as ParameterList,
-                    Children = additional[2] as StatementList
+                    Attributes = additional[0] as AttributeList ?? new AttributeList(),
+                    Parameters = additional[1] as ParameterList ?? new ParameterList(),
+                    Children = additional[2] as StatementList ?? new StatementList()
                 };
         }
 

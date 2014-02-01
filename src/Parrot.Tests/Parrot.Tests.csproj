@@ -53,6 +53,7 @@
     <Compile Include="ExpandoObjectModelValueProviderTests.cs" />
     <Compile Include="Parser\AttributeTests.cs" />
     <Compile Include="Parser\ClassTests.cs" />
+    <Compile Include="Parser\ClimbUpTests.cs" />
     <Compile Include="Parser\ColonTests.cs" />
     <Compile Include="Parser\IdTests.cs" />
     <Compile Include="ModelValueProviderTests.cs" />

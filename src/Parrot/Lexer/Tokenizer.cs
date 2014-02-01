@@ -34,7 +34,8 @@
                 '}', //child block end
                 '>', //child assignment
                 '+', //sibling assignment
-                '@' //Encoded output
+                '@', //Encoded output
+                '^', //Climb up token
             });
 
         public Tokenizer(Stream source)

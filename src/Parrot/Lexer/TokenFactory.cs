@@ -21,6 +21,7 @@ namespace Parrot.Lexer
 				{'"', typeof(QuotedStringLiteralToken)},
 				{'\'', typeof(QuotedStringLiteralToken)},
 				{'@', typeof(AtToken)},
+				{'^', typeof(CaretToken)},
 			};
 		private static readonly Dictionary<TokenType, Type> _tokenTypeByTypeKey =
 			new Dictionary<TokenType, Type> {
